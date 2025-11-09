@@ -6,14 +6,13 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:56 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/07 15:42:00 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/09 17:22:10 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef AST_H
 # define AST_H
 
-# include "pipex.h"
 # include <stdlib.h>
 
 typedef struct s_ast_node
