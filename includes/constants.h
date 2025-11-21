@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/09 18:12:28 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/21 19:10:47 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define CONSTANTS_H
 
 # define WHICH_CMD "/usr/bin/which"
+# define OK 1
+# define ERROR 0
 # define HERE_DOC "here_doc"
 # define MINISHELL "minishell: "
 # define COLON ": "
