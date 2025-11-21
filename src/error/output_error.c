@@ -1,0 +1,40 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   output_error.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/21 18:52:49 by ybutkov           #+#    #+#             */
+/*   Updated: 2025/11/21 18:52:54 by ybutkov          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+#include "constants.h"
+#include "shell.h"
+#include <errno.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+void	output_error(const char *obj, char *error)
+{
+	write(STDERR_FILENO, MINISHELL, ft_strlen(MINISHELL));
+	if (error)
+		write(STDERR_FILENO, error, ft_strlen(error));
+	else
+		write(STDERR_FILENO, strerror(errno), ft_strlen(strerror(errno)));
+	write(STDERR_FILENO, COLON, ft_strlen(COLON));
+	write(STDERR_FILENO, obj, ft_strlen(obj));
+	write(STDERR_FILENO, "\n", 1);
+}
+
+void	output_error_and_exit(const char *obj, char *error, t_shell *shell,
+		int exit_error_code)
+{
+	output_error(obj, error);
+	if (shell)
+		shell->free(shell);
+	exit(exit_error_code);
+}
