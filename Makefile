@@ -42,10 +42,14 @@ C_SHELL_FILES = \
 	shell/redirect.c \
 	shell/commands.c \
 	shell/contex.c \
+	shell/enams.c \
 	error/output_error.c \
 	utils/free_str_array.c \
-	parcer/parcer.c \
-	parcer/get_cmd_path.c 
+	test/token_fixtures.c \
+	test/get_cmd_path.c \
+	printer/print_shell.c
+# 	parcer/parcer.c \
+# 	parcer/get_cmd_path.c \
 
 
 

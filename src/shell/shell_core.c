@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:47:26 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/09 17:56:26 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/22 19:42:36 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include <limits.h>
 
 static void	free_shell_node_bridge(void *content)
 {
@@ -48,12 +49,34 @@ static void	free_shell(t_shell *shell)
 	free(shell);
 }
 
-static void	execute_shell(t_shell *shell)
+static int	execute_shell(t_shell *shell)
 {
-	t_ast_node	*root;
+	t_ast_node		*root;
+	int 			status;
+	pid_t			pid;
 
 	root = shell->ast->get_root(shell->ast);
-	execute_shell_node(root, shell, STDIN_FILENO, STDOUT_FILENO);
+	if (!root)
+		return (1);
+
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		return (EXIT_FAILURE_CREATE_FORK);
+	}
+	if (pid == 0)
+	{
+		int exit_code = execute_shell_node(root, shell, STDIN_FILENO, STDOUT_FILENO);
+		shell->free(shell);
+		printf("execute_shell end\n");
+		exit(exit_code);
+	}
+
+	// Parent: wait for child
+	waitpid(pid, &status, 0);
+	shell->ctx->last_exit_status = WEXITSTATUS(status);
+	return (shell->ctx->last_exit_status);
 }
 
 t_shell	*create_shell(char **envp)
