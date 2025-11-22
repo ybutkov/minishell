@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/21 16:39:40 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/22 12:59:00 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,15 +63,20 @@ static void	apply_redirect(t_cmd *cmd, t_shell *shell)
 	}
 }
 
-int	builtin(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
+int	builtin(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 {
 	// spy
+	(void)cmd;
+	(void)shell;
+	(void)in_fd;
+	(void)out_fd;
 	return (0);
 }
 
 int	is_builtin(char *command)
 {
 	// spy
+	(void)command;
 	return (0);
 }
 

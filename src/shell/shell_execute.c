@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:51:39 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/21 16:01:07 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/22 13:01:36 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,11 @@ int	execute_and(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 {
 	int		status_code;
 
-
+	status_code = 0;
+	(void)node;
+	(void)shell;
+	(void)in_fd;
+	(void)out_fd;
 	return (status_code);
 }
 
@@ -78,6 +82,11 @@ int	execute_or(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 {
 	int		status_code;
 
+	status_code = 0;
+	(void)node;
+	(void)shell;
+	(void)in_fd;
+	(void)out_fd;
 	return (status_code);
 }
 
@@ -85,6 +94,11 @@ int	execute_simicolon(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 {
 	int		status_code;
 
+	status_code = 0;
+	(void)node;
+	(void)shell;
+	(void)in_fd;
+	(void)out_fd;
 	return (status_code);
 }
 
@@ -96,9 +110,9 @@ int	execute_shell_node(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	shell_node = (t_shell_node *)node->get_content(node);
 	if (shell_node->type == NODE_PIPE)
 		return (execute_pipe(node, shell, in_fd, out_fd));
-	if (shell_node == NODE_SEMICOLON)
+	if (shell_node->type == NODE_SEMICOLON)
 		return (execute_simicolon(node, shell, in_fd, out_fd));
-	if (shell_node == NODE_AND)
+	if (shell_node->type == NODE_AND)
 		return (execute_and(node, shell, in_fd, out_fd));
 	else if (shell_node->type == NODE_OR)
 		return (execute_or(node, shell, in_fd, out_fd));

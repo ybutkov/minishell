@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:25:11 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/09 17:25:13 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/22 13:02:15 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 typedef enum e_node_type
 {
 	NODE_CMD,
+	NODE_SEMICOLON,
 	NODE_PIPE,
 	NODE_AND,
 	NODE_OR,
