@@ -6,36 +6,36 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/21 19:11:14 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/22 20:20:29 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "constants.h"
-#include "parcer.h"
+#include "parsing.h"
 #include "shell_internal.h"
 
 /* Forward declaration */
 t_ast_node	*build_ast(t_shell *shell, t_ast_node **node, t_token *start_tkn,
 				t_token *end_tkn);
 
-static void	handle_heredoc(t_shell *shell, char **commands, int *i,
-		t_ast_node *curr_node)
-{
-	t_redir			*redirect;
-	t_shell_node	*node;
-	t_ast_node		*ast_node;
-	t_cmd			*cmd;
+// static void	handle_heredoc(t_shell *shell, char **commands, int *i,
+// 		t_ast_node *curr_node)
+// {
+// 	t_redir			*redirect;
+// 	t_shell_node	*node;
+// 	t_ast_node		*ast_node;
+// 	t_cmd			*cmd;
 
-	redirect = create_redir(REDIR_HEREDOC, commands[*i]);
-	node = create_shell_node(NODE_REDIR_HEREDOC, redirect);
-	ast_node = create_ast_node(node);
-	curr_node->set_left(curr_node, ast_node);
-	(*i)++;
-	cmd = create_cmd_from_raw_str(commands[*i], shell);
-	node = create_shell_node(NODE_CMD, cmd);
-	ast_node->set_left(ast_node, create_ast_node(node));
-	(*i)++;
-}
+// 	redirect = create_redir(REDIR_HEREDOC, commands[*i]);
+// 	node = create_shell_node(NODE_REDIR_HEREDOC, redirect);
+// 	ast_node = create_ast_node(node);
+// 	curr_node->set_left(curr_node, ast_node);
+// 	(*i)++;
+// 	cmd = create_cmd_from_raw_str(commands[*i], shell);
+// 	node = create_shell_node(NODE_CMD, cmd);
+// 	ast_node->set_left(ast_node, create_ast_node(node));
+// 	(*i)++;
+// }
 
 void	put_shell_node_to_ast(t_ast_node **curr_node, t_shell_node *node, int i,
 		int argc)
@@ -59,21 +59,21 @@ void	put_shell_node_to_ast(t_ast_node **curr_node, t_shell_node *node, int i,
 	}
 }
 
-static void	add_output_redirect(t_shell_node *node, char **commands, int argc)
-{
-	t_redir	*redirect;
-	t_list	*redir;
+// static void	add_output_redirect(t_shell_node *node, char **commands, int argc)
+// {
+// 	t_redir	*redirect;
+// 	t_list	*redir;
 
-	if (!ft_strcmp(HERE_DOC, commands[0]))
-		redirect = create_redir(REDIR_APPEND, commands[argc - 1]);
-	else
-		redirect = create_redir(REDIR_OUT, commands[argc - 1]);
-	redir = ft_lstnew(redirect);
-	if (node->data.cmd->redirs)
-		ft_lstadd_back(&node->data.cmd->redirs, redir);
-	else
-		node->data.cmd->redirs = redir;
-}
+// 	if (!ft_strcmp(HERE_DOC, commands[0]))
+// 		redirect = create_redir(REDIR_APPEND, commands[argc - 1]);
+// 	else
+// 		redirect = create_redir(REDIR_OUT, commands[argc - 1]);
+// 	redir = ft_lstnew(redirect);
+// 	if (node->data.cmd->redirs)
+// 		ft_lstadd_back(&node->data.cmd->redirs, redir);
+// 	else
+// 		node->data.cmd->redirs = redir;
+// }
 
 t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
 		int lvl)
@@ -217,7 +217,7 @@ int	collect_redirs(t_cmd *cmd, t_token **start_tkn, t_token **end_tkn)
 }
 
 t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
-	t_token *end_tkn)
+		t_token *end_tkn)
 {
 	t_cmd	*cmd;
 	char	**argv;
@@ -263,11 +263,6 @@ t_cmd	*create_cmd_from_tokens(t_shell *shell, t_token *start_tkn,
 {
 	t_cmd	*cmd;
 
-	// char	**argv;
-	// char	*path;
-	// argv = parse_tokens_to_argv(start_tkn, end_tkn);
-	// path = get_cmd_path(argv[0], shell->ctx->envp);
-	// cmd = create_cmd(argv, path);
 	cmd = parse_tokens_to_cmd(shell, start_tkn, end_tkn);
 	return (cmd);
 }
@@ -321,19 +316,10 @@ t_ast_node	*build_ast(t_shell *shell, t_ast_node **node, t_token *start_tkn,
 
 void	build_shell(t_shell *shell, t_token *token)
 {
-	t_ast_node	*curr_node;
+	t_ast_node	*root_node;
 
-	(void)token;
-	curr_node = NULL;
-	// curr_node = init_ast_tree(shell);
-	curr_node = build_ast(shell, &curr_node, token, NULL);
-	shell->ast->set_root(shell->ast, curr_node);
-	// For avoid warnings
-	(void)curr_node;
-	if (0)
-	{
-		add_output_redirect(NULL, NULL, 0);
-		handle_heredoc(shell, NULL, &(int){1}, curr_node);
-	}
-	// End avoiding warnings
+	root_node = NULL;
+	root_node = build_ast(shell, &root_node, token, NULL);
+	shell->ast->set_root(shell->ast, root_node);
+
 }

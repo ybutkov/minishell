@@ -6,12 +6,12 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 19:09:28 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/21 19:09:31 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/22 17:47:52 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell_node.h"
-#include "parcer.h"
+#include "parsing.h"
 
 static void	init_node_type_mapping(t_node_type *node_type_map)
 {

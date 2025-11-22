@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/20 16:31:19 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/22 18:01:38 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,19 @@ typedef enum	s_token_type
 	TOKEN_END = 13
 }					t_token_type;
 
+typedef enum	s_quotes_status
+{
+	NO_QUOTES = 1,
+	SINGLE_Q = 2,
+	DOUBLE_Q = 3,
+	MIXED = 4,
+}	e_quotes_status;
+
 typedef struct	s_piece
 {
 	char			*full_str;
-	t_quotes_status	quotes;
-	t_piece			*next;
+	e_quotes_status	quotes;
+	struct	s_piece	*next;
 }	t_piece;
 
 
@@ -63,19 +71,16 @@ typedef struct s_token
 {
 	// is there a space after? int is_space_after
 	t_token_type	type;
-	t_quotes_status	stat;
+	e_quotes_status	stat;
 	char			*value;
 	t_piece			*pieces;
 	struct s_token	*prev;
 	struct s_token	*next;
+	void 			(*free)(struct s_token *token);
 }					t_token;
 
-typedef enum	s_quotes_status
-{
-	NO_QUOTES = 1,
-	SINGLE_Q = 2,
-	DOUBLE_Q = 3,
-	MIXED = 4,
-}	t_quotes_status;
+char				*get_cmd_path(char *cmd, char **envp);
+
+
 
 #endif
