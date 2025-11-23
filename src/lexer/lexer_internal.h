@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/22 18:08:44 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/23 22:30:16 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,21 +29,55 @@ typedef struct	s_lex_inf
 
 }	t_lex_inf;
 
+typedef enum	s_mix
+{
+	ALL_CLOSED = 0,
+	STILL_DOUBLE = 1,
+	STILL_SINGLE = 2,
+}	e_mix;
+
+typedef struct	s_pieces_internal
+{
+	int		i;
+	int		cur_start;
+	int		cur_end;
+	e_mix	q_stat;
+	char	quotes;
+}	t_pieces_internal;
+
+
 //lexer
 t_token	*lexicalization(char *line);
+void	lex_struct_init(char *line, t_lex_inf *lex);
+
+//spaces & quotes
 void	is_space(t_lex_inf *lex);
-void	quotes_within(t_lex_inf *lex, char quotes);
+void	quotes_within(t_lex_inf *lex);
 void	is_single_quote(t_lex_inf *lex);
 void	is_double_quote(t_lex_inf *lex);
-void	lex_struct_init(char *line, t_lex_inf *lex);
 
 //tokenizer
 void	new_token(t_lex_inf *lex, e_quotes_status status);
+void	simple_value(t_lex_inf *lex, t_token *tok);
 void	push_token(t_lex_inf *lex, t_token *tok);
 void	type_of_token(t_token *tok);
 
+//mixed token values
+void	mixed_value_assign(t_lex_inf *l, t_token *t);
+void	assign_quoted_pieces(char quote, t_lex_inf *l, t_token *t, t_pieces_internal *pi);
+void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_status q);
+void	decide_on_extra(t_piece *p);
+void	push_piece(t_token *t, t_piece *p);
+
 //utils
+int		cust_strchr(char c, char *str);
+void	decide_on_quotes(t_lex_inf *l, e_mix *q, char *quotes);
+
+//symbol identification
 int		is_whitespace(char c);
+int		is_whitespace_or_special(char c);
+int		is_special(char c);
+int		is_space_or_quotes(char c);
 
 #endif
 
