@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 15:24:35 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/22 19:59:35 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/23 18:54:44 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -649,5 +649,35 @@ t_token *tokens_complex_multi_redirect_2(void)
 	t11->next = t12;
 	t12->next = t13;
 	t13->next = t14;
+	return (set_prev_links(t1));
+}
+
+// ls -la > out_.txt
+t_token *tokens_single_command(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("ls"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("-la"));
+	t_token *t3 = create_token(TOKEN_REDIR_OUT, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("out_22.txt"));
+	// t_token *t5 = create_token(TOKEN_REDIR_IN, NULL);
+	// t_token *t6 = create_token(TOKEN_WORD, dupstr("/dev/null"));
+	// t_token *t7 = create_token(TOKEN_PIPE, NULL);
+	// t_token *t8 = create_token(TOKEN_WORD, dupstr("grep"));
+	// t_token *t9 = create_token(TOKEN_WORD, dupstr("ell"));
+	// t_token *t10 = create_token(TOKEN_REDIR_APPEND, NULL);
+	// t_token *t11 = create_token(TOKEN_WORD, dupstr("out_23.txt"));
+	t_token *t12 = create_token(TOKEN_END, NULL);
+
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t12;
+	// t5->next = t6;
+	// t6->next = t7;
+	// t7->next = t8;
+	// t8->next = t9;
+	// t9->next = t10;
+	// t10->next = t11;
+	// t11->next = t12;
 	return (set_prev_links(t1));
 }
