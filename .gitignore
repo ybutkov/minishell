@@ -1,0 +1,7 @@
+.DS*
+.vscode
+*.o
+*.out
+*.dSYM/
+*/build/*
+minishell_test.log
