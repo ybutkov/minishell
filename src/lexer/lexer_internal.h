@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/21 16:23:10 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/22 18:08:44 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "parsing.h"
 #include <unistd.h>
+#include <stdlib.h>
 
 typedef struct	s_lex_inf
 {
@@ -37,11 +38,12 @@ void	is_double_quote(t_lex_inf *lex);
 void	lex_struct_init(char *line, t_lex_inf *lex);
 
 //tokenizer
-t_token	*new_token(t_lex_inf *lex);
+void	new_token(t_lex_inf *lex, e_quotes_status status);
 void	push_token(t_lex_inf *lex, t_token *tok);
 void	type_of_token(t_token *tok);
 
 //utils
-int		is_whitespace(char *c);
+int		is_whitespace(char c);
 
 #endif
+
