@@ -6,13 +6,24 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 16:32:29 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/20 16:37:12 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/22 23:46:55 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
 
-int	is_whitespace(char *c)
+int	is_whitespace(char c)
 {
 	return ((c >= 9 && c<= 12) || (c == 32));
+}
+
+int	is_whitespace_or_special(char c)
+{
+	return (c == '<' || c == '>' || c == '|' || c == '&'
+			|| c == ';' || (c >= 9 && c<= 12) || (c == 32));
+}
+
+int	is_special(char c)
+{
+	return (c == '<' || c == '>' || c == '|' || c == '&' || c == ';');
 }

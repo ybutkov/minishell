@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 11:26:58 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/21 16:19:41 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/22 23:39:59 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	is_space(t_lex_inf *lex)
 {
 	int	quotes;
 
-	quotes == 0;
+	quotes = 0;
 	while (lex->line[lex->i] == ' ')
 		lex->i++;
 	if ((lex->line[lex->i] == '"') || (lex->line[lex->i] == '\''))
@@ -64,7 +64,7 @@ void	is_space(t_lex_inf *lex)
 	lex->i++;
 	lex->end = lex->i - 1;
 	if (quotes == 0)
-		new_token(&lex);
+		new_token(lex, NO_QUOTES);
 }
 
 void	quotes_within(t_lex_inf *lex, char quotes)
@@ -78,16 +78,36 @@ void	quotes_within(t_lex_inf *lex, char quotes)
 		lex->error_code = 0;
 		while (!is_whitespace(lex->line[lex->i])
 			&& lex->line[lex->i] != '\0')
-			// i should probably look for further
-			//unclosed quotes here as well, but not in terms
-			//of creating new tokens - just checking whether 
-			//they're closing
+			// further unclosed quotes here as well
+		{
+			if (lex->line[lex->i] == '\'' || lex->line[lex->i] == '"')
+			{
+				lex->error_code = 1;
+				lex->i++;
+				while (lex->line[lex->i] != '\'' || lex->line[lex->i] != '\0')
+					lex->i++;
+				if (lex->line[lex->i] == '\'')
+				{
+					lex->error_code = 0;
+					if (is_whitespace_or_special(lex->line[lex->i + 1]))
+					{
+						lex->i++;
+						break ;
+					}
+					else 
+				}
+			}
 			lex->i++;
+		}
 		lex->end = lex->i - 1;
-		new_token(&lex);
+		new_token(lex, MIXED);
 	}
 }
 
+// check_if_closed(t_lex_inf *lex)
+// {
+	
+// }
 
 void	is_single_quote(t_lex_inf *lex)
 {
@@ -100,7 +120,7 @@ void	is_single_quote(t_lex_inf *lex)
 	{
 		lex->error_code = 0;
 		lex->end = lex->i - 1;
-		new_token(&lex);
+		new_token(lex, SINGLE_Q);
 	}
 }
 
@@ -115,7 +135,7 @@ void	is_double_quote(t_lex_inf *lex)
 	{
 		lex->error_code = 0;
 		lex->end = lex->i - 1;
-		new_token(&lex);
+		new_token(lex, DOUBLE_Q);
 	}
 }
 

@@ -6,11 +6,12 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/21 16:10:00 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/22 18:15:02 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
+
 
 // create a token
 // append a token
@@ -20,31 +21,37 @@
 	
 
 
-t_token	*new_token(t_lex_inf *lex)
+void	new_token(t_lex_inf *lex, e_quotes_status status)
 {
 	t_token *tok;
-	int		len;
 
 	tok = malloc(sizeof(t_token));
 	if (!tok)
 		return (NULL);
-	len = lex->end - lex->start + 1;
+	tok->stat = status;
 	if (tok->stat == MIXED)
-		mixed_value_assign(&tok, &lex);
+		mixed_value_assign(lex, tok);
 	else
-	{
-		tok->value = malloc(sizeof(char) * len + 1);
-		if (!tok->value)
-		{
-			free(tok);
-			return (NULL);
-		}
-		ft_memcpy(tok->value, lex->line + lex->start, len);
-		tok->value[len] = '\0';
-	}
+		not_mixed(lex, tok);
 	type_of_token(tok);
 	tok->prev = NULL;
 	tok->next = NULL;
+	push_token(lex, tok);
+}
+	
+void	not_mixed(t_lex_inf *lex, t_token *tok)
+{
+	int		len;
+
+	len = lex->end - lex->start + 1;
+	tok->value = malloc(sizeof(char) * len + 1);
+	if (!tok->value)
+	{
+		free(tok);
+		return (NULL);
+	}
+	ft_memcpy(tok->value, lex->line + lex->start, len);
+	tok->value[len] = '\0';
 }
 
 void	push_token(t_lex_inf *lex, t_token *tok)
@@ -62,7 +69,7 @@ void	push_token(t_lex_inf *lex, t_token *tok)
 	lex->tail = tok;
 }
 
-void	mixed_value_assign(t_token *tok, t_lex_inf *lex)
+void	mixed_value_assign(t_lex_inf *lex, t_token *tok)
 {
 	int	i;
 
@@ -98,3 +105,14 @@ void	type_of_token(t_token *tok)
 		tok->type = TOKEN_WORD;
 }
 
+// void	assign_stat(t_token *tok, int status)
+// {
+// 	if (status == 1)
+// 		tok->stat = NO_QUOTES;
+// 	else if (status == 2)
+// 		tok->stat = SINGLE_Q;
+// 	else if (status == 3)
+// 		tok->stat = DOUBLE_Q;
+// 	else if (status = 4)
+// 		tok->stat = MIXED;
+// }
