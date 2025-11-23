@@ -6,12 +6,12 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/22 19:43:46 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/23 18:49:37 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "error.h"
 #include "constants.h"
+#include "error.h"
 #include "get_next_line.h"
 #include "libft.h"
 #include "shell.h"
@@ -80,9 +80,77 @@ int	is_builtin(char *command)
 	return (0);
 }
 
-static int	execute_cmd_child(t_cmd *cmd, t_shell *shell, int input_fd,
+// static int	execute_cmd_child(t_cmd *cmd, t_shell *shell, int input_fd,
+// 		int output_fd)
+// {
+// 	if (input_fd != STDIN_FILENO)
+// 	{
+// 		dup2(input_fd, STDIN_FILENO);
+// 		close(input_fd);
+// 	}
+// 	if (output_fd != STDOUT_FILENO)
+// 	{
+// 		dup2(output_fd, STDOUT_FILENO);
+// 		close(output_fd);
+// 	}
+// 	apply_redirect(cmd, shell);
+// 	if (is_builtin(cmd->argv[0]))
+// 		return (builtin(cmd, shell, input_fd, output_fd));
+// 	if (!cmd->path || access(cmd->path, X_OK) != 0)
+// 		output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
+// 			EXIT_CMD_NOT_FOUND);
+// 	execve(cmd->path, cmd->argv, shell->ctx->envp);
+// 	shell->free(shell);
+// 	exit(EXIT_FAILURE);
+// }
+
+// int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
+// {
+// 	return (execute_cmd_child(cmd, shell, input_fd, output_fd));
+// }
+
+void dup2_and_close(int oldfd, int newfd)
+{
+	dup2(oldfd, newfd);
+	close(oldfd);
+}
+
+int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 		int output_fd)
 {
+	pid_t	pid;
+	int		status;
+
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("fork");
+		return (EXIT_FAILURE);
+	}
+	else if (pid == 0)
+	{
+		if (input_fd != STDIN_FILENO)
+			dup2_and_close(input_fd, STDIN_FILENO);
+		if (output_fd != STDOUT_FILENO)
+			dup2_and_close(output_fd, STDOUT_FILENO);
+		apply_redirect(cmd, shell);
+		if (!cmd->path || access(cmd->path, X_OK) != 0)
+			output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
+				EXIT_CMD_NOT_FOUND);
+		execve(cmd->path, cmd->argv, shell->ctx->envp);
+		shell->free(shell);
+		exit(EXIT_FAILURE);
+	}
+	waitpid(pid, &status, 0);
+	return (status);
+}
+
+int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
+{
+	if (is_builtin(cmd->argv[0]))
+		return (builtin(cmd, shell, input_fd, output_fd));
+	if (input_fd == STDIN_FILENO && output_fd == STDOUT_FILENO)
+		return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
 	if (input_fd != STDIN_FILENO)
 	{
 		dup2(input_fd, STDIN_FILENO);
@@ -94,17 +162,10 @@ static int	execute_cmd_child(t_cmd *cmd, t_shell *shell, int input_fd,
 		close(output_fd);
 	}
 	apply_redirect(cmd, shell);
-	if (is_builtin(cmd->argv[0]))
-		return (builtin(cmd, shell, input_fd, output_fd));
 	if (!cmd->path || access(cmd->path, X_OK) != 0)
 		output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
 			EXIT_CMD_NOT_FOUND);
 	execve(cmd->path, cmd->argv, shell->ctx->envp);
 	shell->free(shell);
 	exit(EXIT_FAILURE);
-}
-
-int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
-{
-	return (execute_cmd_child(cmd, shell, input_fd, output_fd));
 }
