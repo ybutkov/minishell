@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/23 13:57:19 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/23 14:10:25 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,8 @@ typedef enum	s_quotes_status
 typedef struct	s_piece
 {
 	char			*full_str;
-	t_quotes_status	quotes;
-	t_piece			*next;
+	e_quotes_status	quotes;
+	struct	s_piece	*next;
 }	t_piece;
 
 typedef struct s_token
@@ -78,13 +78,7 @@ typedef struct s_token
 	void 			(*free)(struct s_token *token);
 }					t_token;
 
-typedef enum	s_quotes_status
-{
-	NO_QUOTES = 1,
-	SINGLE_Q = 2,
-	DOUBLE_Q = 3,
-	MIXED = 4,
-}	t_quotes_status;
+
 
 char				*get_cmd_path(char *cmd, char **envp);
 
