@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 15:24:25 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/22 18:03:20 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/23 18:51:53 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,5 +41,6 @@ t_token	*tokens_multi_pipe_multi_redirect(void);
 t_token	*tokens_dual_redirect_pipe(void);
 t_token	*tokens_complex_multi_redirect(void);
 t_token *tokens_complex_multi_redirect_2(void);
+t_token *tokens_single_command(void);
 
 #endif

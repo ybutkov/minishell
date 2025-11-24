@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/22 20:17:26 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/24 15:42:44 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,16 @@ void test_shells(char **envp, int isprint)
 	test_shell(tokens_complex_multi_redirect_2(), envp,
 		"ls -la > out_21.txt > out_22.txt | <out_22.txt grep ell >> out_23.txt",
 		isprint);
+	test_shell(tokens_single_command(), envp, "ls -la > out_.txt", isprint);
+	// echo 'single quotes'"and double" ; printf "%s\n" "done" >> log.txt
+	test_shell(tokens_quotes_semi_append(), envp,
+		"echo 'single quotes'\"and double\" ; printf \"%s\n\" \"done\" >> log.txt",
+		isprint);
+	test_shell(tokens_multiple_semicolon(), envp, "ls ; pwd ; echo done", isprint);
+	test_shell(tokens_redirect_and_command(), envp, "echo test > out.txt && cat out.txt",
+		isprint);
+	test_shell(tokens_and_commands(), envp, "echo hello && echo world", isprint);
+
 
 }
 
