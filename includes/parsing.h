@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/23 14:10:25 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/27 15:42:14 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ typedef enum	s_token_type
 	TOKEN_LEFT_PAREN = 11,
 	TOKEN_RIGHT_PAREN = 12,
 
-	TOKEN_END = 13
+	TOKEN_END = 13,
+	TOKEN_WILDCARD = 14
 }					t_token_type;
 
 typedef enum	s_quotes_status
@@ -61,18 +62,20 @@ typedef enum	s_quotes_status
 
 typedef struct	s_piece
 {
-	char			*full_str;
+	char			*text;
 	e_quotes_status	quotes;
+	int				has_wild;
+	int				has_env_v;
 	struct	s_piece	*next;
 }	t_piece;
 
 typedef struct s_token
 {
-	// is there a space after? int is_space_after
 	t_token_type	type;
 	e_quotes_status	stat;
 	char			*value;
 	t_piece			*pieces;
+	t_piece			*pieces_tail;
 	struct s_token	*prev;
 	struct s_token	*next;
 	void 			(*free)(struct s_token *token);
@@ -81,5 +84,7 @@ typedef struct s_token
 
 
 char				*get_cmd_path(char *cmd, char **envp);
+t_token				*lexicalization(char *line);
+t_token				*read_and_lexicalize();
 
 #endif

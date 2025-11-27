@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/23 22:23:33 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/26 15:29:54 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void	new_token(t_lex_inf *lex, e_quotes_status status)
 		lex->error_code = 2;
 		return ;
 	}
+	token_init(tok);
 	tok->stat = status;
 	if (tok->stat == MIXED)
 	{
@@ -36,8 +37,6 @@ void	new_token(t_lex_inf *lex, e_quotes_status status)
 	else
 		simple_value(lex, tok);
 	type_of_token(tok);
-	tok->prev = NULL;
-	tok->next = NULL;
 	push_token(lex, tok);
 }
 	
@@ -98,14 +97,22 @@ void	type_of_token(t_token *tok)
 		tok->type = TOKEN_WORD;
 }
 
-// void	assign_stat(t_token *tok, int status)
-// {
-// 	if (status == 1)
-// 		tok->stat = NO_QUOTES;
-// 	else if (status == 2)
-// 		tok->stat = SINGLE_Q;
-// 	else if (status == 3)
-// 		tok->stat = DOUBLE_Q;
-// 	else if (status = 4)
-// 		tok->stat = MIXED;
-// }
+void	end_token(t_lex_inf *lex)
+{
+	t_token	*tok;
+
+	tok = malloc(sizeof(t_token));
+	if (!tok)
+	{
+		lex->error_code = 2;
+		return ;
+	}
+	tok->type = TOKEN_END;
+	tok->value = NULL;
+	if(lex->tail) 
+		lex->tail->next = tok;
+	tok->prev = lex->tail;
+	lex->tail = tok;
+	tok->next = NULL;
+}
+

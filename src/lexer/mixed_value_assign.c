@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/23 21:34:56 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/27 16:35:45 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,25 @@ void	mixed_value_assign(t_lex_inf *l, t_token *t)
 	t_pieces_internal	pi;
 
 	pi.i = 0;
+	initialize_pieces(&pi);
 	while (t->value[pi.i] != '\0')
 	{
-		if (is_whitespace(t->value[pi.i]) && pi.q_stat == 0)
+		if (t->value[pi.i] == '"')
+		assign_quoted_pieces('"', l, t, &pi);
+		else if (t->value[pi.i] == '\'')
+		assign_quoted_pieces('\'', l, t, &pi);
+		else
 		{
 			pi.cur_start = pi.i;
 			while (is_whitespace(t->value[pi.i]))
 				pi.i++;
-			while (!is_space_or_quotes(t->value[pi.i]))
+			while (!is_space_or_quotes(t->value[pi.i]) && t->value[pi.i] != '$')
 				pi.i++;
-			new_piece(t, &pi, l, 1);
+			pi.cur_end = pi.i - 1;
+			new_piece(t, &pi, l, NO_QUOTES);
 		}
-		else if (t->value[pi.i] == '"')
-			assign_quoted_pieces('"', l, t, &pi);
-		else if (t->value[pi.i] == '\'')
-			assign_quoted_pieces('\'', l, t, &pi);
+		// else
+		// 	pi.i++;
 	}
 }
 
@@ -44,14 +48,25 @@ void	assign_quoted_pieces(char quote, t_lex_inf *l, t_token *t, t_pieces_interna
 		return ;
 	}
 	pi->cur_start = pi->i;
-	while (t->value[pi->i] != quote)
-		pi->i++;
-	pi->cur_end = pi->i - 1;
-	if (quote == "\'")
-		new_piece(t, &pi, l, SINGLE_Q);
 	if (quote == '"')
-		new_piece(t, &pi, l, DOUBLE_Q);
-	pi->i++;
+	{
+		while (t->value[pi->i] != quote && t->value[pi->i] != '$'
+				&& t->value[pi->i] != '\0')
+			pi->i++;
+	}
+	else if (quote == '\'')
+	{
+		while (t->value[pi->i] != quote
+				&& t->value[pi->i] != '\0')
+			pi->i++;
+	}
+	pi->cur_end = pi->i - 1;
+	if (quote == '\'')
+		new_piece(t, pi, l, SINGLE_Q);
+	else if (quote == '"')
+		new_piece(t, pi, l, DOUBLE_Q);
+	else if (t->value[pi->i] != quote)
+		pi->i++;
 }
 
 void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_status q)
@@ -65,7 +80,7 @@ void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_statu
 		lex->error_code = 2;
 		return ;
 	}
-	len = pi->cur_end - pi->cur_end + 1;
+	len = pi->cur_end - pi->cur_start + 1;
 	p->text = malloc(sizeof(char) * (len + 1));
 	if (!p->text)
 	{
@@ -83,7 +98,9 @@ void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_statu
 void	decide_on_extra(t_piece *p)
 {
 	int	i;
-
+	
+	if (!p || !p->text)
+		return ;
 	i = 0;
 	p->has_wild = 0;
 	p->has_env_v = 0;
@@ -95,6 +112,7 @@ void	decide_on_extra(t_piece *p)
 			p->has_wild = 1;
 		if (p->text[i] == '$') //don't know if there are any other specific conditions yet
 			p->has_env_v = 1;
+		i++;
 	}
 }
 
@@ -110,4 +128,5 @@ void	push_piece(t_token *t, t_piece *p)
 	}
 	t->pieces_tail->next = p;
 	t->pieces_tail = p;
+	p->next = NULL;
 }
