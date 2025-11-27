@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/23 22:30:16 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/27 15:41:48 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,10 @@
 # define LEXER_INTERNAL
 
 # include "parsing.h"
-#include <unistd.h>
-#include <stdlib.h>
+# include "libft.h"
+# include <unistd.h>
+# include <stdlib.h>
+# include <readline/history.h>
 
 typedef struct	s_lex_inf
 {
@@ -47,6 +49,7 @@ typedef struct	s_pieces_internal
 
 
 //lexer
+t_token	*read_and_lexicalize();
 t_token	*lexicalization(char *line);
 void	lex_struct_init(char *line, t_lex_inf *lex);
 
@@ -61,6 +64,7 @@ void	new_token(t_lex_inf *lex, e_quotes_status status);
 void	simple_value(t_lex_inf *lex, t_token *tok);
 void	push_token(t_lex_inf *lex, t_token *tok);
 void	type_of_token(t_token *tok);
+void	end_token(t_lex_inf *lex);
 
 //mixed token values
 void	mixed_value_assign(t_lex_inf *l, t_token *t);
@@ -72,6 +76,8 @@ void	push_piece(t_token *t, t_piece *p);
 //utils
 int		cust_strchr(char c, char *str);
 void	decide_on_quotes(t_lex_inf *l, e_mix *q, char *quotes);
+void	initialize_pieces(t_pieces_internal *pieces);
+void	token_init(t_token *tok);
 
 //symbol identification
 int		is_whitespace(char c);
