@@ -47,7 +47,14 @@ C_SHELL_FILES = \
 	utils/free_str_array.c \
 	test/token_fixtures.c \
 	test/get_cmd_path.c \
-	printer/print_shell.c
+	printer/print_shell.c \
+	lexer/lexer.c \
+	lexer/mixed_value_assign.c \
+	lexer/spaces_quotes.c \
+	lexer/symbol_identifier.c \
+	lexer/tokenizer.c \
+	lexer/utils.c \
+	lexer/read_line.c
 # 	parcer/parcer.c \
 # 	parcer/get_cmd_path.c \
 
