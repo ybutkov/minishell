@@ -1,0 +1,4 @@
+This is a simple file.
+It has a few lines.
+The third line is here.
+End of file.

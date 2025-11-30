@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/30 15:13:23 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/11/30 17:33:34 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,19 @@ void test_shells(char **envp, int isprint)
 	test_shell(tokens_complex_multi_redirect_2(), envp,
 		"ls -la > out_21.txt > out_22.txt | <out_22.txt grep ell >> out_23.txt",
 		isprint);
+	// 	"ls -la > out_21.txt > out_22.txt | <out_22.txt grep ell >> out_23.txt",
+	// 	isprint);
+	// test_shell(tokens_single_command(), envp, "ls -la > out_.txt", isprint);
+	// // echo 'single quotes'"and double" ; printf "%s\n" "done" >> log.txt
+	// test_shell(tokens_quotes_semi_append(), envp,
+	// 	"echo 'single quotes'\"and double\" ; printf \"%s\n\" \"done\" >> log.txt",
+	// 	isprint);
+	// test_shell(tokens_multiple_semicolon(), envp, "ls ; pwd ; echo done", isprint);
+	// test_shell(tokens_redirect_and_command(), envp, "echo test > out.txt && cat out.txt",
+	// 	isprint);
+	// test_shell(tokens_and_commands(), envp, "echo hello && echo world", isprint);
+	test_shell(tokens_mixed_pipe_redir(), envp,
+		"cat tests/in/lines.txt | sort > tests/out/sorted_lines.txt", isprint);
 
 }
 // static void print_tokens_brief_once(t_token *toks)
@@ -111,7 +124,7 @@ int	main(int argc, char **argv, char **envp)
 		// printf("---------------------------------------------------------------\n");
 		shell->execute(shell);
 		exit_status = shell->ctx->last_exit_status;
-		
+
 	}
 	shell->free(shell);
 	// test_shells(envp, 1);
