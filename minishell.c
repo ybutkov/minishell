@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/04 21:41:44 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 15:31:27 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,34 +61,47 @@ void test_shells(char **envp, int isprint)
 	test_shell(tokens_complex_multi_redirect_2(), envp,
 		"ls -la > out_21.txt > out_22.txt | <out_22.txt grep ell >> out_23.txt",
 		isprint);
+	// 	"ls -la > out_21.txt > out_22.txt | <out_22.txt grep ell >> out_23.txt",
+	// 	isprint);
+	// test_shell(tokens_single_command(), envp, "ls -la > out_.txt", isprint);
+	// // echo 'single quotes'"and double" ; printf "%s\n" "done" >> log.txt
+	// test_shell(tokens_quotes_semi_append(), envp,
+	// 	"echo 'single quotes'\"and double\" ; printf \"%s\n\" \"done\" >> log.txt",
+	// 	isprint);
+	// test_shell(tokens_multiple_semicolon(), envp, "ls ; pwd ; echo done", isprint);
+	// test_shell(tokens_redirect_and_command(), envp, "echo test > out.txt && cat out.txt",
+	// 	isprint);
+	// test_shell(tokens_and_commands(), envp, "echo hello && echo world", isprint);
+	test_shell(tokens_mixed_pipe_redir(), envp,
+		"cat tests/in/lines.txt | sort > tests/out/sorted_lines.txt", isprint);
 
 }
-static void print_tokens_brief_once(t_token *toks)
-{
-    t_token *t;
-    t_piece *p;
-    int ti;
-    int pi;
+// static void print_tokens_brief_once(t_token *toks)
+// {
+//     t_token *t;
+//     t_piece *p;
+//     int ti;
+//     int pi;
 
-    if (!toks)
-    {
-        printf("no tokens\n");
-        return;
-    }
-    ti = 0;
-    for (t = toks; t; t = t->next, ++ti)
-    {
-        printf("Token[%d]: ~%s~\n", ti, t->value ? t->value : "(null)");
-        if (!t->pieces)
-            continue;
-        pi = 0;
-        for (p = t->pieces; p; p = p->next, ++pi)
-            printf("  piece[%d] q=%d text=~%s~\n",
-                pi,
-                (int)p->quotes,
-                p->text ? p->text : "(null)");
-    }
-}
+//     if (!toks)
+//     {
+//         printf("no tokens\n");
+//         return;
+//     }
+//     ti = 0;
+//     for (t = toks; t; t = t->next, ++ti)
+//     {
+//         printf("Token[%d]: '%s'\n", ti, t->value ? t->value : "(null)");
+//         if (!t->pieces)
+//             continue;
+//         pi = 0;
+//         for (p = t->pieces; p; p = p->next, ++pi)
+//             printf("  piece[%d] q=%d text='%s'\n",
+//                 pi,
+//                 (int)p->quotes,
+//                 p->text ? p->text : "(null)");
+//     }
+// }
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -113,7 +126,7 @@ int	main(int argc, char **argv, char **envp)
 		// printf("---------------------------------------------------------------\n");
 		shell->execute(shell);
 		exit_status = shell->ctx->last_exit_status;
-		
+
 	}
 	shell->free(shell);
 	// test_shells(envp, 1);

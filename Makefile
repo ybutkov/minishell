@@ -1,6 +1,10 @@
 NAME = minishell
 NAME_C = minishell.c
 
+TEST_SRC = tests/run_tests.c
+TEST_OBJ = $(BUILD_DIR)/tests/run_tests.o
+TEST_RUNNER = test_runner
+
 SRC = src
 BUILD_DIR =	build
 
@@ -84,20 +88,26 @@ ${NAME} : $(LIBFT) $(BUILD_DIRS) $(C_OBJ_FIlES)
 	$(CC) $(CFLAGS) $(C_OBJ_FIlES) $(NAME_C) $(LFLAGS) -o $(NAME)
 	@echo "Build OK"
 
+test: $(LIBFT) $(BUILD_DIRS) $(C_OBJ_FIlES) $(TEST_OBJ)
+	$(CC) $(CFLAGS) $(C_OBJ_FIlES) $(TEST_OBJ) $(LFLAGS) -o $(TEST_RUNNER)
+	./$(TEST_RUNNER)
+
 clean :
 	@rm -rf $(BUILD_DIR)
+	@rm -f $(TEST_RUNNER)
 	@make -C $(LIBFT_DIR) clean $(PRINT_FLAG)
 	@echo "clean OK"
 
 fclean f: clean
 	@rm -f $(NAME)
+	@rm -f $(TEST_RUNNER)
 	@make -C $(LIBFT_DIR) fclean $(PRINT_FLAG)
 	@echo "fclean OK"
 
 re	: fclean all
 s : all
 
-# adds AddressSanitizer and UndefinedBehaviorSanitizer flags 
+# adds AddressSanitizer and UndefinedBehaviorSanitizer flags
 asan: CFLAGS += $(SAN_ASAN)
 asan: re
 
@@ -105,12 +115,14 @@ $(BUILD_DIRS):
 	@mkdir -p $@
 
 $(BUILD_DIR)/%.o : %.c
+# ???
+	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
 $(LIBFT) :
 	@make -C $(LIBFT_DIR) all $(PRINT_FLAG)
 
-.PHONY : all clean fclean re bonus s
+.PHONY : all clean fclean re bonus s test
 
 #valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all -s ./pipex "infiles/basic.txt" "nonexistingcommand" "cat -e" "outfiles/outfile"
 # minishell_test

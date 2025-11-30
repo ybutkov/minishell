@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 15:24:35 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/23 18:54:44 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/27 16:08:43 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -679,5 +679,296 @@ t_token *tokens_single_command(void)
 	// t9->next = t10;
 	// t10->next = t11;
 	// t11->next = t12;
+	return (set_prev_links(t1));
+}
+
+// New Fixtures for expanded tests
+
+// Absolute path tests
+t_token *tokens_abs_ls(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("/bin/ls"));
+	t_token *t2 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_abs_pwd(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("/bin/pwd"));
+	t_token *t2 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_abs_echo(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("/bin/echo"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("hello"));
+	t_token *t3 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	return (set_prev_links(t1));
+}
+
+// Relative path tests
+t_token *tokens_rel_ls(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("ls"));
+	t_token *t2 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_rel_pwd(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("pwd"));
+	t_token *t2 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_rel_echo(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("echo"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("hello relative"));
+	t_token *t3 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	return (set_prev_links(t1));
+}
+
+// Redirection tests
+t_token *tokens_redir_in(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("cat"));
+	t_token *t2 = create_token(TOKEN_REDIR_IN, NULL);
+	t_token *t3 = create_token(TOKEN_WORD, dupstr("tests/in/simple.txt"));
+	t_token *t4 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_redir_out(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("echo"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("redirect out"));
+	t_token *t3 = create_token(TOKEN_REDIR_OUT, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("tests/out/redir_out.txt"));
+	t_token *t5 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_redir_append(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("echo"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("redirect append"));
+	t_token *t3 = create_token(TOKEN_REDIR_APPEND, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("tests/out/redir_append.txt"));
+	t_token *t5 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_redir_in_out(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("cat"));
+	t_token *t2 = create_token(TOKEN_REDIR_IN, NULL);
+	t_token *t3 = create_token(TOKEN_WORD, dupstr("tests/in/simple.txt"));
+	t_token *t4 = create_token(TOKEN_REDIR_OUT, NULL);
+	t_token *t5 = create_token(TOKEN_WORD, dupstr("tests/out/redir_in_out.txt"));
+	t_token *t6 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_redir_heredoc(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("cat"));
+	t_token *t2 = create_token(TOKEN_HEREDOC, NULL);
+	t_token *t3 = create_token(TOKEN_WORD, dupstr("EOF"));
+	t_token *t4 = create_token(TOKEN_END, NULL);
+	// Here-doc content "heredoc line" is handled by the executor
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	return (set_prev_links(t1));
+}
+
+// Pipe tests
+t_token *tokens_pipe_simple(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("ls"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("-l"));
+	t_token *t3 = create_token(TOKEN_PIPE, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("wc"));
+	t_token *t5 = create_token(TOKEN_WORD, dupstr("-l"));
+	t_token *t6 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_pipe_double(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("cat"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("tests/in/lines.txt"));
+	t_token *t3 = create_token(TOKEN_PIPE, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("sort"));
+	t_token *t5 = create_token(TOKEN_PIPE, NULL);
+	t_token *t6 = create_token(TOKEN_WORD, dupstr("uniq"));
+	t_token *t7 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	t6->next = t7;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_pipe_grep(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("cat"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("tests/in/lines.txt"));
+	t_token *t3 = create_token(TOKEN_PIPE, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("grep"));
+	t_token *t5 = create_token(TOKEN_WORD, dupstr("bravo"));
+	t_token *t6 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_pipe_long(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("cat"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("tests/in/lines.txt"));
+	t_token *t3 = create_token(TOKEN_PIPE, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("grep"));
+	t_token *t5 = create_token(TOKEN_WORD, dupstr("a"));
+	t_token *t6 = create_token(TOKEN_PIPE, NULL);
+	t_token *t7 = create_token(TOKEN_WORD, dupstr("sort"));
+	t_token *t8 = create_token(TOKEN_PIPE, NULL);
+	t_token *t9 = create_token(TOKEN_WORD, dupstr("uniq"));
+	t_token *t10 = create_token(TOKEN_PIPE, NULL);
+	t_token *t11 = create_token(TOKEN_WORD, dupstr("wc"));
+	t_token *t12 = create_token(TOKEN_WORD, dupstr("-l"));
+	t_token *t13 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	t6->next = t7;
+	t7->next = t8;
+	t8->next = t9;
+	t9->next = t10;
+	t10->next = t11;
+	t11->next = t12;
+	t12->next = t13;
+	return (set_prev_links(t1));
+}
+
+// Mixed command tests
+t_token *tokens_mixed_redir_pipe(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("cat"));
+	t_token *t2 = create_token(TOKEN_REDIR_IN, NULL);
+	t_token *t3 = create_token(TOKEN_WORD, dupstr("tests/in/lines.txt"));
+	t_token *t4 = create_token(TOKEN_PIPE, NULL);
+	t_token *t5 = create_token(TOKEN_WORD, dupstr("wc"));
+	t_token *t6 = create_token(TOKEN_WORD, dupstr("-l"));
+	t_token *t7 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	t6->next = t7;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_mixed_pipe_redir(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("cat"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("tests/in/lines.txt"));
+	t_token *t3 = create_token(TOKEN_PIPE, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("sort"));
+	t_token *t5 = create_token(TOKEN_REDIR_OUT, NULL);
+	t_token *t6 = create_token(TOKEN_WORD, dupstr("tests/out/sorted_lines.txt"));
+	t_token *t7 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	t6->next = t7;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_mixed_heredoc_grep(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("grep"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("world"));
+	t_token *t3 = create_token(TOKEN_HEREDOC, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("EOF"));
+	t_token *t5 = create_token(TOKEN_END, NULL);
+	// Here-doc content "hello world" is handled by executor
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_mixed_and(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("mkdir"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("tests/out/tmp_dir"));
+	t_token *t3 = create_token(TOKEN_AND, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("rmdir"));
+	t_token *t5 = create_token(TOKEN_WORD, dupstr("tests/out/tmp_dir"));
+	t_token *t6 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	return (set_prev_links(t1));
+}
+
+t_token *tokens_mixed_or(void)
+{
+	t_token *t1 = create_token(TOKEN_WORD, dupstr("cat"));
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("non_existent_file"));
+	t_token *t3 = create_token(TOKEN_OR, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("echo"));
+	t_token *t5 = create_token(TOKEN_WORD, dupstr("fallback"));
+	t_token *t6 = create_token(TOKEN_END, NULL);
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
 	return (set_prev_links(t1));
 }
