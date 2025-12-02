@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/22 20:20:29 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/03 00:13:14 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
 	t_token			*curr_token;
 	t_token_type	lvl_start;
 	t_token_type	lvl_end;
+	char			is_subshell_opened;
 
 	if (lvl == 1)
 	{
@@ -100,9 +101,23 @@ t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
 	else
 		return (NULL);
 	curr_token = start_token;
+	is_subshell_opened = 0;
 	while (curr_token != end_token)
 	{
-		if (curr_token && curr_token->type >= lvl_start
+		if (curr_token && curr_token->type == TOKEN_LEFT_PAREN)
+		{
+			is_subshell_opened = 1;
+			curr_token = curr_token->next;
+			continue ;
+		}
+		else if (is_subshell_opened && curr_token
+			&& curr_token->type == TOKEN_RIGHT_PAREN)
+		{
+			is_subshell_opened = 0;
+			curr_token = curr_token->next;
+			continue ;
+		}
+		if (!is_subshell_opened && curr_token && curr_token->type >= lvl_start
 			&& curr_token->type <= lvl_end)
 			return (curr_token);
 		curr_token = curr_token->next;
@@ -267,6 +282,20 @@ t_cmd	*create_cmd_from_tokens(t_shell *shell, t_token *start_tkn,
 	return (cmd);
 }
 
+int	create_node_for_subshell(t_shell *shell, t_ast_node **node,
+		t_token *start_tkn, t_token *end_tkn)
+{
+	t_shell_node	*shell_node;
+	t_ast_node		*left_node;
+
+	shell_node = create_shell_node(NODE_SUBSHELL, NULL);
+	(*node)->set_content(*node, shell_node);
+	left_node = create_ast_node(NULL);
+	(*node)->set_left(*node, left_node);
+	build_ast(shell, &left_node, start_tkn->next, end_tkn->prev);
+	return (1);
+}
+
 int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
 		t_token *start_tkn, t_token *end_tkn, int lvl)
 {
@@ -291,12 +320,18 @@ int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
 			build_ast(shell, &right_node, curr_tkn->next, end_tkn);
 			return (1);
 		}
+
+		if (start_tkn->type == TOKEN_LEFT_PAREN && end_tkn->type == TOKEN_RIGHT_PAREN)
+			return (create_node_for_subshell(shell, node, start_tkn, end_tkn));
+
 		shell_node = create_shell_node(NODE_CMD, NULL);
 		(*node)->set_content(*node, shell_node);
 		shell_node->data.cmd = create_cmd_from_tokens(shell, start_tkn,
 				end_tkn);
 		return (1);
 	}
+	if (start_tkn->type == TOKEN_LEFT_PAREN && (end_tkn->type == TOKEN_RIGHT_PAREN))
+			return (create_node_for_subshell(shell, node, start_tkn, end_tkn));
 	return (0);
 }
 
@@ -317,9 +352,14 @@ t_ast_node	*build_ast(t_shell *shell, t_ast_node **node, t_token *start_tkn,
 void	build_shell(t_shell *shell, t_token *token)
 {
 	t_ast_node	*root_node;
+	t_token		*end_token;
 
 	root_node = NULL;
-	root_node = build_ast(shell, &root_node, token, NULL);
+	end_token = token;
+	while (end_token->next)
+		end_token = end_token->next;
+	end_token = end_token->prev;
+	root_node = build_ast(shell, &root_node, token, end_token);
 	shell->ast->set_root(shell->ast, root_node);
 
 }

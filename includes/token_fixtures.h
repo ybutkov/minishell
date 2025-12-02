@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 15:24:25 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/27 16:05:21 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/03 00:27:11 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,5 +64,11 @@ t_token *tokens_mixed_pipe_redir(void);
 t_token *tokens_mixed_heredoc_grep(void);
 t_token *tokens_mixed_and(void);
 t_token *tokens_mixed_or(void);
+// Parentheses/subshell fixtures
+t_token *tokens_paren_echo_redirect(void);
+t_token *tokens_paren_ls(void);
+t_token *tokens_paren_group_semicolon_pipe(void);
+t_token *tokens_paren_pwd_cd_chain_pipe(void);
+t_token *tokens_paren_group_semicolon(void);
 
 #endif

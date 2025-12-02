@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 15:24:35 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/27 16:08:43 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/03 00:27:00 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -244,6 +244,141 @@ t_token *tokens_and_commands(void)
 	t3->next = t4;
 	t4->next = t5;
 	t5->next = t6;
+	return (set_prev_links(t1));
+}
+
+// Parentheses/subshell tests
+// (echo hello) > out_paren.txt
+t_token *tokens_paren_echo_redirect(void)
+{
+	t_token *t1 = create_token(TOKEN_LEFT_PAREN, NULL);
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("echo"));
+	t_token *t3 = create_token(TOKEN_WORD, dupstr("hello"));
+	t_token *t4 = create_token(TOKEN_RIGHT_PAREN, NULL);
+	t_token *t5 = create_token(TOKEN_REDIR_OUT, NULL);
+	t_token *t6 = create_token(TOKEN_WORD, dupstr("out_paren.txt"));
+	t_token *t7 = create_token(TOKEN_END, NULL);
+
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	t6->next = t7;
+	return (set_prev_links(t1));
+}
+
+// (ls -la)
+t_token *tokens_paren_ls(void)
+{
+	t_token *t1 = create_token(TOKEN_LEFT_PAREN, NULL);
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("ls"));
+	t_token *t3 = create_token(TOKEN_WORD, dupstr("-la"));
+	t_token *t4 = create_token(TOKEN_RIGHT_PAREN, NULL);
+	t_token *t5 = create_token(TOKEN_END, NULL);
+
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	return (set_prev_links(t1));
+}
+
+// (echo foo ; echo bar) | wc -l
+t_token *tokens_paren_group_semicolon_pipe(void)
+{
+	t_token *t1 = create_token(TOKEN_LEFT_PAREN, NULL);
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("echo"));
+	t_token *t3 = create_token(TOKEN_WORD, dupstr("foo"));
+	t_token *t4 = create_token(TOKEN_SEMICOLON, NULL);
+	t_token *t5 = create_token(TOKEN_WORD, dupstr("echo"));
+	t_token *t6 = create_token(TOKEN_WORD, dupstr("bar"));
+	t_token *t7 = create_token(TOKEN_RIGHT_PAREN, NULL);
+	t_token *t8 = create_token(TOKEN_PIPE, NULL);
+	t_token *t9 = create_token(TOKEN_WORD, dupstr("wc"));
+	t_token *t10 = create_token(TOKEN_WORD, dupstr("-l"));
+	t_token *t11 = create_token(TOKEN_END, NULL);
+
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	t6->next = t7;
+	t7->next = t8;
+	t8->next = t9;
+	t9->next = t10;
+	t10->next = t11;
+	return (set_prev_links(t1));
+}
+
+// (echo foo ; echo bar)
+t_token *tokens_paren_group_semicolon(void)
+{
+	t_token *t1 = create_token(TOKEN_LEFT_PAREN, NULL);
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("echo"));
+	t_token *t3 = create_token(TOKEN_WORD, dupstr("foo"));
+	t_token *t4 = create_token(TOKEN_SEMICOLON, NULL);
+	t_token *t5 = create_token(TOKEN_WORD, dupstr("echo"));
+	t_token *t6 = create_token(TOKEN_WORD, dupstr("bar"));
+	t_token *t7 = create_token(TOKEN_RIGHT_PAREN, NULL);
+	t_token *t8 = create_token(TOKEN_END, NULL);
+
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	t6->next = t7;
+	t7->next = t8;
+	return (set_prev_links(t1));
+}
+
+// (pwd; cd ..; pwd) | (cd .. && pwd && cd .. && pwd)
+t_token *tokens_paren_pwd_cd_chain_pipe(void)
+{
+	t_token *t1 = create_token(TOKEN_LEFT_PAREN, NULL);
+	t_token *t2 = create_token(TOKEN_WORD, dupstr("pwd"));
+	t_token *t3 = create_token(TOKEN_SEMICOLON, NULL);
+	t_token *t4 = create_token(TOKEN_WORD, dupstr("cd"));
+	t_token *t5 = create_token(TOKEN_WORD, dupstr(".."));
+	t_token *t6 = create_token(TOKEN_SEMICOLON, NULL);
+	t_token *t7 = create_token(TOKEN_WORD, dupstr("pwd"));
+	t_token *t8 = create_token(TOKEN_RIGHT_PAREN, NULL);
+	t_token *t9 = create_token(TOKEN_PIPE, NULL);
+	t_token *t10 = create_token(TOKEN_LEFT_PAREN, NULL);
+	t_token *t11 = create_token(TOKEN_WORD, dupstr("cd"));
+	t_token *t12 = create_token(TOKEN_WORD, dupstr(".."));
+	t_token *t13 = create_token(TOKEN_AND, NULL);
+	t_token *t14 = create_token(TOKEN_WORD, dupstr("pwd"));
+	t_token *t15 = create_token(TOKEN_AND, NULL);
+	t_token *t16 = create_token(TOKEN_WORD, dupstr("cd"));
+	t_token *t17 = create_token(TOKEN_WORD, dupstr(".."));
+	t_token *t18 = create_token(TOKEN_AND, NULL);
+	t_token *t19 = create_token(TOKEN_WORD, dupstr("pwd"));
+	t_token *t20 = create_token(TOKEN_RIGHT_PAREN, NULL);
+	t_token *t21 = create_token(TOKEN_END, NULL);
+
+	t1->next = t2;
+	t2->next = t3;
+	t3->next = t4;
+	t4->next = t5;
+	t5->next = t6;
+	t6->next = t7;
+	t7->next = t8;
+	t8->next = t9;
+	t9->next = t10;
+	t10->next = t11;
+	t11->next = t12;
+	t12->next = t13;
+	t13->next = t14;
+	t14->next = t15;
+	t15->next = t16;
+	t16->next = t17;
+	t17->next = t18;
+	t18->next = t19;
+	t19->next = t20;
+	t20->next = t21;
 	return (set_prev_links(t1));
 }
 
