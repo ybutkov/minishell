@@ -54,7 +54,14 @@ C_SHELL_FILES = \
 	lexer/symbol_identifier.c \
 	lexer/tokenizer.c \
 	lexer/utils.c \
-	lexer/read_line.c
+	lexer/read_line.c \
+	built_ins/cd.c \
+	built_ins/echo.c \
+	built_ins/env.c \
+	built_ins/exit.c \
+	built_ins/export.c \
+	built_ins/pwd.c \
+	built_ins/unset.c
 # 	parcer/parcer.c \
 # 	parcer/get_cmd_path.c \
 
