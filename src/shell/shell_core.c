@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:47:26 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/23 17:18:47 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/01 22:18:31 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,17 @@ static void	free_shell(t_shell *shell)
 	free(shell);
 }
 
+static void	clear_shell(t_shell *shell)
+{
+	if (!shell)
+		return ;
+	if (shell->ast)
+	{
+		shell->ast->free(shell->ast, free_shell_node_bridge);
+		shell->ast = NULL;
+	}
+}
+
 // static int	execute_shell(t_shell *shell)
 // {
 // 	t_ast_node		*root;
@@ -86,7 +97,7 @@ static int	execute_shell(t_shell *shell)
 
 	root = shell->ast->get_root(shell->ast);
 	status = execute_shell_node(root, shell, STDIN_FILENO, STDOUT_FILENO);
-	shell->ctx->last_exit_status = WEXITSTATUS(status);
+	shell->ctx->last_exit_status = status;
 	return (shell->ctx->last_exit_status);
 }
 
@@ -112,6 +123,7 @@ t_shell	*create_shell(char **envp)
 		return (NULL);
 	}
 	shell->free = free_shell;
+	shell->clear = clear_shell;
 	shell->build = build_shell;
 	shell->execute = execute_shell;
 	return (shell);

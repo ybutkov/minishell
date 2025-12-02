@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:24:57 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/22 18:00:40 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/01 22:17:22 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ typedef struct s_shell
 
 	void		(*build)(struct s_shell *shell, t_token *token);
 	void		(*free)(struct s_shell *shell);
+	void		(*clear)(struct s_shell *shell);
 	int			(*execute)(struct s_shell *shell);
 }				t_shell;
 

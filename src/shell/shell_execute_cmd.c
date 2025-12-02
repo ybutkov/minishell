@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/23 18:49:37 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/02 13:45:26 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,13 +70,40 @@ int	builtin(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 	(void)shell;
 	(void)in_fd;
 	(void)out_fd;
+	printf("builtin %s\n", cmd->argv[0]);
 	return (0);
+}
+
+char	**get_built_in_list(void)
+{
+	static char *builtins[8];
+
+	builtins[0] = "echo";
+	builtins[1] = "cd";
+	builtins[2] = "pwd";
+	builtins[3] = "export";
+	builtins[4] = "unset";
+	builtins[5] = "env";
+	builtins[6] = "exit";
+	builtins[7] = NULL;
+	return (builtins);
 }
 
 int	is_builtin(char *command)
 {
-	// spy
-	(void)command;
+	char	**built_in;
+
+	if (!command)
+		return (0);
+	//
+	return (0);
+	built_in = get_built_in_list();
+	while (*built_in)
+	{
+		if (ft_strcmp(command, *built_in) == 0)
+			return (1);
+		built_in++;
+	}
 	return (0);
 }
 
@@ -109,7 +136,7 @@ int	is_builtin(char *command)
 // 	return (execute_cmd_child(cmd, shell, input_fd, output_fd));
 // }
 
-void dup2_and_close(int oldfd, int newfd)
+void	dup2_and_close(int oldfd, int newfd)
 {
 	dup2(oldfd, newfd);
 	close(oldfd);
@@ -133,6 +160,8 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 			dup2_and_close(input_fd, STDIN_FILENO);
 		if (output_fd != STDOUT_FILENO)
 			dup2_and_close(output_fd, STDOUT_FILENO);
+		else
+			dup2(STDOUT_FILENO, STDOUT_FILENO);
 		apply_redirect(cmd, shell);
 		if (!cmd->path || access(cmd->path, X_OK) != 0)
 			output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
@@ -142,6 +171,8 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 		exit(EXIT_FAILURE);
 	}
 	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
 	return (status);
 }
 
