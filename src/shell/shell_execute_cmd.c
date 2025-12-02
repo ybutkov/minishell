@@ -6,10 +6,11 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/02 13:45:26 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/02 23:32:46 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "shell_internal.h"
 #include "constants.h"
 #include "error.h"
 #include "get_next_line.h"
@@ -107,6 +108,12 @@ int	is_builtin(char *command)
 	return (0);
 }
 
+// void	dup2_and_close(int oldfd, int newfd)
+// {
+// 	dup2(oldfd, newfd);
+// 	close(oldfd);
+// }
+
 // static int	execute_cmd_child(t_cmd *cmd, t_shell *shell, int input_fd,
 // 		int output_fd)
 // {
@@ -136,11 +143,11 @@ int	is_builtin(char *command)
 // 	return (execute_cmd_child(cmd, shell, input_fd, output_fd));
 // }
 
-void	dup2_and_close(int oldfd, int newfd)
-{
-	dup2(oldfd, newfd);
-	close(oldfd);
-}
+// void	dup2_and_close(int oldfd, int newfd)
+// {
+// 	dup2(oldfd, newfd);
+// 	close(oldfd);
+// }
 
 int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 		int output_fd)

@@ -47,6 +47,7 @@ C_SHELL_FILES = \
 	shell/commands.c \
 	shell/contex.c \
 	shell/enams.c \
+	shell/shell_execute_utils.c \
 	error/output_error.c \
 	utils/free_str_array.c \
 	test/token_fixtures.c \

@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/02 16:10:32 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/03 00:27:47 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	test_shell(t_token *tokens, char **envp, char *test_comm, int isprint)
 	shell = create_shell(envp);
 	shell->build(shell, tokens);
 
-	// print_shell_tree(shell);
+	print_shell_tree(shell);
 	printf("---------------------------------------------------------------\n");
 	shell->execute(shell);
 	exit_status = shell->ctx->last_exit_status;
@@ -39,29 +39,29 @@ int	test_shell(t_token *tokens, char **envp, char *test_comm, int isprint)
 
 void test_shells(char **envp, int isprint)
 {
-	test_shell(tokens_simple_pipe(), envp,
-		"ls | wc -l", isprint);
-	test_shell(tokens_echo_grep_redirect(), envp,
-		"echo \"Hello World\" | grep Hello > out.txt", isprint);
-	test_shell(tokens_pipe_with_redirects(), envp,
-		"cat NEW_TOKEN_FIXTURES.md | grep WORD > output.txt", isprint);
-	test_shell(tokens_five_pipe_chain(), envp,
-		"cat minishell.c | grep int | sort | uniq | wc -l", isprint);
-	test_shell(tokens_triple_pipe(), envp,
-		"ls | grep i | wc -l", isprint);
-	test_shell(tokens_triple_pipe_error(), envp,
-		"ls | grep i | wc -tt", isprint);
-	test_shell(tokens_input_pipe_chain(), envp,
-		"cat < minishell_test.log | grep home | wc -l", isprint);
-	test_shell(tokens_input_pipe_chain_1_redir(), envp,
-		"< minishell_test.log cat  | grep home | wc -l", isprint);
-	test_shell(tokens_dual_redirect_pipe(), envp,
-		"cat < NEW_TOKEN_FIXTURES.md > output_21.txt | wc -l", isprint);
-	test_shell(tokens_complex_multi_redirect(), envp,
-		"ls -la > out_22.txt < /dev/null | grep ell >> out_23.txt", isprint);
-	test_shell(tokens_complex_multi_redirect_2(), envp,
-		"ls -la > out_21.txt > out_22.txt | <out_22.txt grep ell >> out_23.txt",
-		isprint);
+	// test_shell(tokens_simple_pipe(), envp,
+	// 	"ls | wc -l", isprint);
+	// test_shell(tokens_echo_grep_redirect(), envp,
+	// 	"echo \"Hello World\" | grep Hello > out.txt", isprint);
+	// test_shell(tokens_pipe_with_redirects(), envp,
+	// 	"cat NEW_TOKEN_FIXTURES.md | grep WORD > output.txt", isprint);
+	// test_shell(tokens_five_pipe_chain(), envp,
+	// 	"cat minishell.c | grep int | sort | uniq | wc -l", isprint);
+	// test_shell(tokens_triple_pipe(), envp,
+	// 	"ls | grep i | wc -l", isprint);
+	// test_shell(tokens_triple_pipe_error(), envp,
+	// 	"ls | grep i | wc -tt", isprint);
+	// test_shell(tokens_input_pipe_chain(), envp,
+	// 	"cat < minishell_test.log | grep home | wc -l", isprint);
+	// test_shell(tokens_input_pipe_chain_1_redir(), envp,
+	// 	"< minishell_test.log cat  | grep home | wc -l", isprint);
+	// test_shell(tokens_dual_redirect_pipe(), envp,
+	// 	"cat < NEW_TOKEN_FIXTURES.md > output_21.txt | wc -l", isprint);
+	// test_shell(tokens_complex_multi_redirect(), envp,
+	// 	"ls -la > out_22.txt < /dev/null | grep ell >> out_23.txt", isprint);
+	// test_shell(tokens_complex_multi_redirect_2(), envp,
+	// 	"ls -la > out_21.txt > out_22.txt | <out_22.txt grep ell >> out_23.txt",
+	// 	isprint);
 	// 	"ls -la > out_21.txt > out_22.txt | <out_22.txt grep ell >> out_23.txt",
 	// 	isprint);
 	// test_shell(tokens_single_command(), envp, "ls -la > out_.txt", isprint);
@@ -73,10 +73,16 @@ void test_shells(char **envp, int isprint)
 	// test_shell(tokens_redirect_and_command(), envp, "echo test > out.txt && cat out.txt",
 	// 	isprint);
 	// test_shell(tokens_and_commands(), envp, "echo hello && echo world", isprint);
-	test_shell(tokens_mixed_pipe_redir(), envp,
-		"cat tests/in/lines.txt | sort > tests/out/sorted_lines.txt", isprint);
+	// test_shell(tokens_mixed_pipe_redir(), envp,
+	// 	"cat tests/in/lines.txt | sort > tests/out/sorted_lines.txt", isprint);
 
-	test_shell(tokens_group_and_pipe(), envp, "(cd /tmp && ls -la) | wc -l", isprint);
+	// test_shell(tokens_group_and_pipe(), envp, "(cd /tmp && ls -la) | wc -l", isprint);
+
+	// test_shell(tokens_paren_echo_redirect(), envp, "(echo hello) > out_paren.txt", isprint);
+	// test_shell(tokens_paren_ls(), envp, "(ls -la)", isprint);
+	test_shell(tokens_paren_group_semicolon(), envp, "(echo foo ; echo bar)", isprint);
+	// test_shell(tokens_paren_group_semicolon_pipe(), envp, "(echo foo ; echo bar) | wc -l", isprint);
+	// test_shell(tokens_paren_pwd_cd_chain_pipe(), envp, "(pwd; cd ..; pwd) | (cd .. && pwd && cd .. && pwd)", isprint);
 
 }
 static void print_tokens_brief_once(t_token *toks)
@@ -132,7 +138,9 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)envp;
 
-	print_tokens_brief_once(NULL);
+	print_tokens_brief_once(NULL); // tmp
+	test_shells(envp, 1); // tmp
+	return (0);
 	shell = create_shell(envp);
 	exit_status = 0;
 	while (1)
@@ -140,7 +148,7 @@ int	main(int argc, char **argv, char **envp)
 		t_token *tokens = read_and_lexicalize();
 		if (!tokens)
 			break ;
-		print_tokens_brief_once(tokens);
+		// print_tokens_brief_once(tokens);
 		if (check_for_echo_$(tokens, exit_status) == 1)
 			continue ;
 		shell = create_shell(envp);
