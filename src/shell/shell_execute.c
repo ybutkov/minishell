@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:51:39 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/23 19:12:28 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/02 14:53:57 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,7 @@ int	execute_shell_node(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	t_shell_node	*shell_node;
 
 	shell_node = (t_shell_node *)node->get_content(node);
+	// create array of wrapper funcs
 	if (shell_node->type == NODE_PIPE)
 		return (execute_pipe(node, shell, in_fd, out_fd));
 	if (shell_node->type == NODE_SEMICOLON)

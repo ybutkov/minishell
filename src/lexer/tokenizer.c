@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 00:08:08 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 15:34:06 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,49 @@
 // free the whole token thing
 // recognize a token type
 
+static void	free_token(t_token *token)
+{
+	if (!token)
+		return ;
+	if (token->value)
+		free(token->value);
+	free(token);
+}
+
+static t_token	*create_token(void)
+{
+	t_token	*token;
+
+	token = malloc(sizeof(t_token));
+	if (!token)
+		return (NULL);
+	token_init(token);
+	// token->type = type;
+	// token->value = value;
+	// token->next = NULL;
+	// token->prev = NULL;
+	token->free = free_token;
+	return (token);
+}
+
 void	new_token(t_lex_inf *lex, e_quotes_status status)
 {
 	t_token *tok;
 
-	tok = malloc(sizeof(t_token));
+	// tok = malloc(sizeof(t_token));
+	// if (!tok)
+	// {
+	// 	lex->error_code = 2;
+	// 	return ;
+	// }
+	// token_init(tok);
+
+	tok = create_token();
 	if (!tok)
 	{
 		lex->error_code = 2;
 		return ;
 	}
-	token_init(tok);
 	tok->stat = status;
 	if (tok->stat == MIXED)
 	{
@@ -39,7 +71,7 @@ void	new_token(t_lex_inf *lex, e_quotes_status status)
 	type_of_token(tok);
 	push_token(lex, tok);
 }
-	
+
 void	simple_value(t_lex_inf *lex, t_token *tok)
 {
 	int		len;
@@ -111,7 +143,7 @@ void	end_token(t_lex_inf *lex)
 	}
 	tok->type = TOKEN_END;
 	tok->value = NULL;
-	if(lex->tail) 
+	if(lex->tail)
 		lex->tail->next = tok;
 	tok->prev = lex->tail;
 	lex->tail = tok;

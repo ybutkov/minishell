@@ -6,13 +6,14 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 15:31:27 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/06 15:33:12 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "token_fixtures.h"
 #include "shell.h"
 #include "print_shell.h"
+#include <errno.h>
 
 int	test_shell(t_token *tokens, char **envp, char *test_comm, int isprint)
 {
@@ -75,33 +76,52 @@ void test_shells(char **envp, int isprint)
 	test_shell(tokens_mixed_pipe_redir(), envp,
 		"cat tests/in/lines.txt | sort > tests/out/sorted_lines.txt", isprint);
 
-}
-// static void print_tokens_brief_once(t_token *toks)
-// {
-//     t_token *t;
-//     t_piece *p;
-//     int ti;
-//     int pi;
+	test_shell(tokens_group_and_pipe(), envp, "(cd /tmp && ls -la) | wc -l", isprint);
 
-//     if (!toks)
-//     {
-//         printf("no tokens\n");
-//         return;
-//     }
-//     ti = 0;
-//     for (t = toks; t; t = t->next, ++ti)
-//     {
-//         printf("Token[%d]: '%s'\n", ti, t->value ? t->value : "(null)");
-//         if (!t->pieces)
-//             continue;
-//         pi = 0;
-//         for (p = t->pieces; p; p = p->next, ++pi)
-//             printf("  piece[%d] q=%d text='%s'\n",
-//                 pi,
-//                 (int)p->quotes,
-//                 p->text ? p->text : "(null)");
-//     }
-// }
+}
+static void print_tokens_brief_once(t_token *toks)
+{
+    t_token *t;
+    t_piece *p;
+    int ti;
+    int pi;
+
+    if (!toks)
+    {
+        // printf("no tokens\n");
+        return;
+    }
+    ti = 0;
+    for (t = toks; t; t = t->next, ++ti)
+    {
+        printf("Token[%d]: type=%u '%s'\n", ti, t->type, t->value ? t->value : "(null)");
+        if (!t->pieces)
+            continue;
+		write(1, "GGG\n", 4);
+        pi = 0;
+        for (p = t->pieces; p; p = p->next, ++pi)
+            printf("  piece[%d] q=%d text='%s'\n",
+                pi,
+                (int)p->quotes,
+                p->text ? p->text : "(null)");
+    }
+}
+
+int	check_for_echo_$(t_token *tokens, int exit_status)
+{
+	if (tokens->type == TOKEN_WORD
+		&& ft_strcmp(tokens->value, "echo") == 0)
+	{
+		if (tokens->next->type == TOKEN_WORD
+		&& ft_strcmp(tokens->next->value, "$?") == 0)
+		{
+			printf("%d\n", exit_status);
+			return (1);
+		}
+	}
+	return (0);
+}
+
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -112,6 +132,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)envp;
 
+	print_tokens_brief_once(NULL);
 	shell = create_shell(envp);
 	exit_status = 0;
 	while (1)
@@ -120,13 +141,18 @@ int	main(int argc, char **argv, char **envp)
 		print_tokens_brief_once(tokens);
 		if (!tokens)
 			break ;
-		continue ;
+		print_tokens_brief_once(tokens);
+		if (check_for_echo_$(tokens, exit_status) == 1)
+			continue ;
+		shell = create_shell(envp);
+		// write(1, "111\n", 4);
 		shell->build(shell, tokens);
-		// print_shell_tree(shell);
-		// printf("---------------------------------------------------------------\n");
+		// write(1, "222\n", 4);
+		// print_shell_tree(shell); getchar();
+
 		shell->execute(shell);
 		exit_status = shell->ctx->last_exit_status;
-
+		shell->clear(shell);
 	}
 	shell->free(shell);
 	// test_shells(envp, 1);
