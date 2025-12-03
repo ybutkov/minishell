@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 15:34:40 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/06 15:35:44 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,8 +139,8 @@ int	main(int argc, char **argv, char **envp)
 	(void)envp;
 
 	print_tokens_brief_once(NULL); // tmp
-	test_shells(envp, 1); // tmp
-	return (0);
+	// test_shells(envp, 1); // tmp
+	// return (0);
 	shell = create_shell(envp);
 	exit_status = 0;
 	while (1)
@@ -149,14 +149,14 @@ int	main(int argc, char **argv, char **envp)
 		print_tokens_brief_once(tokens);
 		if (!tokens)
 			break ;
-		// print_tokens_brief_once(tokens);
+		print_tokens_brief_once(tokens); getchar();
 		if (check_for_echo_$(tokens, exit_status) == 1)
 			continue ;
 		shell = create_shell(envp);
 		// write(1, "111\n", 4);
 		shell->build(shell, tokens);
 		// write(1, "222\n", 4);
-		// print_shell_tree(shell); getchar();
+		print_shell_tree(shell); getchar();
 
 		shell->execute(shell);
 		exit_status = shell->ctx->last_exit_status;

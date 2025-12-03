@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/02 23:32:46 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/03 18:21:42 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ static void	apply_redirect(t_cmd *cmd, t_shell *shell)
 				STDOUT_FILENO, shell);
 		else if (redirect->type == REDIR_HEREDOC)
 		{
+			execute_redir_heredoc(shell, redirect, STDIN_FILENO);
 		}
 		redir = redir->next;
 	}
@@ -187,6 +188,7 @@ int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 {
 	if (is_builtin(cmd->argv[0]))
 		return (builtin(cmd, shell, input_fd, output_fd));
+	// check for single command. execute in sep fork
 	if (input_fd == STDIN_FILENO && output_fd == STDOUT_FILENO)
 		return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
 	if (input_fd != STDIN_FILENO)
