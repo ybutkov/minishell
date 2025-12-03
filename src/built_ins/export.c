@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 15:35:12 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/02 17:53:23 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/02 18:12:58 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,13 @@ int	bi_export(t_env *envp, char **args)
 {
 	int				i;
 	t_export_par	*var;
-	
+
 	if (!args[1])
 	{
 		print_export_sorted();
 		return (0);
 	}
+	var = NULL;
 	i = 1;
 	while(args[i])
 	{
@@ -40,7 +41,7 @@ int	bi_export(t_env *envp, char **args)
 			printf("minishell: export: '%s': not a valid identifier\n", args[i]);
 		i++;
 	}
-	
+	return (0);
 }
 
 void	split_key(char *line, t_export_par *var)

@@ -26,7 +26,8 @@ endif
 CC = cc
 # CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address,undefined
 CFLAGS = -Wall -Wextra -Werror -g -O0 $(INCLUDES)
-LFLAGS = -L$(LIBFT_DIR) -l$(LIBFT_NAME)
+LFLAGS = -L$(LIBFT_DIR) -l$(LIBFT_NAME) -lreadline -lncurses
+#two last flags are for compiling an external library for readline
 SAN_ASAN = -fsanitize=address,undefined -fno-omit-frame-pointer
 
 C_SHELL_FILES = \

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   constants.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/21 19:10:47 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/11/30 18:31:15 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,5 +21,6 @@
 # define COLON ": "
 # define EXIT_CMD_NOT_FOUND 127
 # define CMD_NOT_FOUND_MSG "command not found"
+# define BUFFER_PATH 4096
 
 #endif

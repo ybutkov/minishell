@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 23:18:22 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/02 13:11:22 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/02 18:13:53 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	bi_unset(t_env **envp, char **args)
 	any_invalid = 0;
 	while (args[i])
 	{
-		if (!remove_var(&envp, args[i]))
+		if (!remove_var(envp, args[i]))
 			any_invalid = 1;
 		i++;
 	}
