@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/03 21:27:55 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/03 23:41:08 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static void	apply_redirect(t_cmd *cmd, t_shell *shell)
 	while (redir)
 	{
 		redirect = (t_redir *)redir->content;
-		if (redirect->type == REDIR_IN)
+		if (redirect->type == REDIR_IN || redirect->type == REDIR_HEREDOC)
 			open_file_and_dup2(redirect->target, O_RDONLY, STDIN_FILENO, shell);
 		else if (redirect->type == REDIR_OUT)
 			open_file_and_dup2(redirect->target, O_WRONLY | O_CREAT | O_TRUNC,
@@ -59,7 +59,7 @@ static void	apply_redirect(t_cmd *cmd, t_shell *shell)
 				STDOUT_FILENO, shell);
 		else if (redirect->type == REDIR_HEREDOC)
 		{
-			execute_redir_heredoc(shell, redirect, STDIN_FILENO);
+			// execute_redir_heredoc(shell, redirect, STDIN_FILENO);
 		}
 		redir = redir->next;
 	}
@@ -184,24 +184,24 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 	return (status);
 }
 
-static void	apply_heredoc(t_cmd *cmd, t_shell *shell)
-{
-	t_list	*redir;
-	t_redir	*redirect;
+// static void	apply_heredoc(t_cmd *cmd, t_shell *shell)
+// {
+// 	t_list	*redir;
+// 	t_redir	*redirect;
 
-	if (!cmd)
-		return ;
-	redir = cmd->redirs;
-	while (redir)
-	{
-		redirect = (t_redir *)redir->content;
-		if (redirect->type == REDIR_HEREDOC)
-		{
-			execute_redir_heredoc(shell, redirect, STDIN_FILENO);
-		}
-		redir = redir->next;
-	}
-}
+// 	if (!cmd)
+// 		return ;
+// 	redir = cmd->redirs;
+// 	while (redir)
+// 	{
+// 		redirect = (t_redir *)redir->content;
+// 		if (redirect->type == REDIR_HEREDOC)
+// 		{
+// 			execute_redir_heredoc(shell, redirect, STDIN_FILENO);
+// 		}
+// 		redir = redir->next;
+// 	}
+// }
 
 int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 {
@@ -210,7 +210,7 @@ int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 	// check for single command. execute in sep fork
 	if (input_fd == STDIN_FILENO && output_fd == STDOUT_FILENO)
 		return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
-	apply_heredoc(cmd, shell);
+	// apply_heredoc(cmd, shell);
 	if (input_fd != STDIN_FILENO)
 	{
 		dup2(input_fd, STDIN_FILENO);

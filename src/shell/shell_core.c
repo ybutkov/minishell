@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:47:26 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/01 22:18:31 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/03 23:00:17 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,16 @@ static int	execute_shell(t_shell *shell)
 	return (shell->ctx->last_exit_status);
 }
 
+static int	collect_heredocs(t_shell *shell)
+{
+	t_ast_node	*root;
+	int 		status;
+
+	root = shell->ast->get_root(shell->ast);
+	status = collect_heredoc_node(root, shell);
+	return (status);
+}
+
 t_shell	*create_shell(char **envp)
 {
 	t_shell	*shell;
@@ -126,5 +136,6 @@ t_shell	*create_shell(char **envp)
 	shell->clear = clear_shell;
 	shell->build = build_shell;
 	shell->execute = execute_shell;
+	shell->collect_heredoc = collect_heredocs;
 	return (shell);
 }

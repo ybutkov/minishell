@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   constants.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/30 18:31:15 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 15:37:51 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # define OK 1
 # define ERROR 0
 # define HERE_DOC "here_doc"
+# define HEREDOC_PREFIX_FILE "tmp/heredoc_"
 # define MINISHELL "minishell: "
 # define COLON ": "
 # define EXIT_CMD_NOT_FOUND 127
