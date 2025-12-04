@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 22:22:09 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/26 14:40:51 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/04 15:40:24 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ void	is_space(t_lex_inf *lex)
 	if ((lex->line[lex->i] == '"') || (lex->line[lex->i] == '\''))
 		return ;
 	lex->start = lex->i;
-	while (lex->line[lex->i] != '\0' && !is_whitespace(lex->line[lex->i]))
+	while (lex->line[lex->i] != '\0' && !is_whitespace(lex->line[lex->i])
+			&& !is_special(lex))
 	{
 		if (lex->line[lex->i] == '\'' || lex->line[lex->i] == '"')
 		{
@@ -84,4 +85,26 @@ void	is_double_quote(t_lex_inf *lex)
 		new_token(lex, DOUBLE_Q);
 		lex->i++;
 	}
+}
+// && || : \ < > >> << ( ) 
+void	is_operator(t_lex_inf *lex)
+{
+	char sym;
+	
+	lex->start = lex->i;
+	lex->i++;
+	sym = lex->line[lex->i];
+	if ((sym == '/' || sym == '&' || sym == '|' || sym == '>'
+			|| sym == '<') && sym == lex->line[lex->i - 1])
+	{
+		lex->end = lex->i;
+		new_token(lex, NO_QUOTES);
+	}
+	else
+	{
+		lex->i--;
+		lex->end = lex->i;
+		new_token(lex, NO_QUOTES);
+	}
+	lex->i++;
 }

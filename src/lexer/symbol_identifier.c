@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:35:24 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/23 22:28:17 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/04 15:51:08 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,21 @@ int	is_whitespace_or_special(char c)
 	return (c == '<' || c == '>' || c == '|' || c == '&'
 			|| c == ';' || (c >= 9 && c<= 12) || (c == 32));
 }
-
-int	is_special(char c)
+// && || ; \ < > >> << ( ) 
+int	is_special(t_lex_inf *lex)
 {
-	return (c == '<' || c == '>' || c == '|' || c == '&' || c == ';');
+	char	c;
+	
+	c = lex->line[lex->i];
+	if (c == ';' || c == '(' || c == ')')
+		return (1);
+	if (c == '<' || c == '>' || c == '|' || c == '&')
+	{
+		if (lex->line[lex->i + 1] == c)
+			return (1);
+	}
+	return (0);
+	
 }
 
 int	is_space_or_quotes(char c)
