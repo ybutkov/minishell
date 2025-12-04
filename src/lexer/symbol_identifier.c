@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:35:24 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/04 15:51:08 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/04 20:07:22 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ int	is_whitespace(char c)
 int	is_whitespace_or_special(char c)
 {
 	return (c == '<' || c == '>' || c == '|' || c == '&'
-			|| c == ';' || (c >= 9 && c<= 12) || (c == 32));
+			|| c == ';' || (c >= 9 && c<= 12) || (c == 32)
+			|| c == '\0');
 }
 // && || ; \ < > >> << ( ) 
 int	is_special(t_lex_inf *lex)
@@ -28,9 +29,10 @@ int	is_special(t_lex_inf *lex)
 	char	c;
 	
 	c = lex->line[lex->i];
-	if (c == ';' || c == '(' || c == ')')
+	if (c == ';' || c == '(' || c == ')' || c == '<'
+		|| c == '>' || c == '|')
 		return (1);
-	if (c == '<' || c == '>' || c == '|' || c == '&')
+	if (c == '&')
 	{
 		if (lex->line[lex->i + 1] == c)
 			return (1);
