@@ -6,21 +6,23 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/04 12:42:01 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/04 16:37:00 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONSTANTS_H
 # define CONSTANTS_H
 
-# define WHICH_CMD "/usr/bin/which"
 # define OK 1
 # define ERROR 0
-# define HERE_DOC "here_doc"
-# define HEREDOC_PREFIX_FILE "tmp/heredoc_"
-# define MINISHELL "minishell: "
-# define COLON ": "
 # define EXIT_CMD_NOT_FOUND 127
 # define CMD_NOT_FOUND_MSG "command not found"
+# define EXIT_FAILURE_CREATE_PIPE 1
+# define EXIT_FAILURE_CREATE_FORK 1
+
+# define HEREDOC_PREFIX_FILE "/tmp/heredoc_tmp_"
+# define SHELL_ERROR_PREFIX "minishell: "
+# define COLON_SPACE ": "
+# define NEW_LINE "/n"
 
 #endif

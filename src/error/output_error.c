@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 18:52:49 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/21 18:52:54 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/04 16:35:32 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@
 
 void	output_error(const char *obj, char *error)
 {
-	write(STDERR_FILENO, MINISHELL, ft_strlen(MINISHELL));
+	write(STDERR_FILENO, SHELL_ERROR_PREFIX, ft_strlen(SHELL_ERROR_PREFIX));
+	write(STDERR_FILENO, obj, ft_strlen(obj));
+	write(STDERR_FILENO, COLON_SPACE, ft_strlen(COLON_SPACE));
 	if (error)
 		write(STDERR_FILENO, error, ft_strlen(error));
 	else
 		write(STDERR_FILENO, strerror(errno), ft_strlen(strerror(errno)));
-	write(STDERR_FILENO, COLON, ft_strlen(COLON));
-	write(STDERR_FILENO, obj, ft_strlen(obj));
-	write(STDERR_FILENO, "\n", 1);
+	write(STDERR_FILENO, NEW_LINE, 1);
 }
 
 void	output_error_and_exit(const char *obj, char *error, t_shell *shell,
