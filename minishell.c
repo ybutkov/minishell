@@ -6,12 +6,13 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/03 20:38:29 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/04 13:58:44 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "token_fixtures.h"
 #include "shell.h"
+#include "shell_utils.h"
 #include "print_shell.h"
 #include <errno.h>
 
@@ -157,7 +158,9 @@ int	main(int argc, char **argv, char **envp)
 		// write(1, "222\n", 4);
 		// print_shell_tree(shell); getchar();
 
+		shell->collect_heredoc(shell);
 		shell->execute(shell);
+		clear_tmp_folder(get_file_n(0));
 		exit_status = shell->ctx->last_exit_status;
 		shell->clear(shell);
 	}

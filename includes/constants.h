@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/21 19:10:47 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/04 12:42:01 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # define OK 1
 # define ERROR 0
 # define HERE_DOC "here_doc"
+# define HEREDOC_PREFIX_FILE "tmp/heredoc_"
 # define MINISHELL "minishell: "
 # define COLON ": "
 # define EXIT_CMD_NOT_FOUND 127

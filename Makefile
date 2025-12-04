@@ -36,7 +36,9 @@ SAN_ASAN = -fsanitize=address,undefined -fno-omit-frame-pointer
 C_SHELL_FILES = \
 	ast/ast_core.c \
 	ast/ast_node_core.c \
-	ast/ast_node_core_2.c \
+	ast/ast_node_core_2.c
+
+C_SHELL_FILES += \
  	shell/shell_core.c \
 	shell/shell_build.c \
 	shell/shell_execute.c \
@@ -47,12 +49,17 @@ C_SHELL_FILES = \
 	shell/commands.c \
 	shell/contex.c \
 	shell/enams.c \
-	shell/shell_execute_utils.c \
+	shell/shell_execute_utils.c
+
+C_SHELL_FILES += \
 	error/output_error.c \
 	utils/free_str_array.c \
+	utils/heredoc_file_util.c \
 	test/token_fixtures.c \
 	test/get_cmd_path.c \
-	printer/print_shell.c \
+	printer/print_shell.c
+
+C_SHELL_FILES += \
 	lexer/lexer.c \
 	lexer/mixed_value_assign.c \
 	lexer/spaces_quotes.c \
