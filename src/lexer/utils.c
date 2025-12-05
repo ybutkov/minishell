@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 16:32:29 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/02 22:50:13 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 00:07:46 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,12 @@ void	token_init(t_token *tok)
 	tok->pieces_tail = NULL;
 	tok->prev = NULL;
 	tok->next = NULL;
+}
 
+void	type_of_parenthesis(t_token *tok)
+{
+	if (ft_strcmp(tok->value, "(") == 0)
+		tok->type = TOKEN_LEFT_PAREN;
+	else if (ft_strcmp(tok->value, ")") == 0)
+		tok->type = TOKEN_RIGHT_PAREN;	
 }
