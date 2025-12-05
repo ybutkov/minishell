@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   constants.h                                        :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/30 18:31:15 by ashadrin         ###   ########.fr       */
+/*   Created: 2025/11/30 18:27:18 by ashadrin          #+#    #+#             */
+/*   Updated: 2025/11/30 18:59:40 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONSTANTS_H
-# define CONSTANTS_H
+// getcwd(buffer, size) - a function, returning the current
+//working directory of the process
+#include "builtin_internal.h"
 
-# define OK 1
-# define ERROR 0
-# define EXIT_CMD_NOT_FOUND 127
-# define CMD_NOT_FOUND_MSG "command not found"
-# define EXIT_FAILURE_CREATE_PIPE 1
-# define EXIT_FAILURE_CREATE_FORK 1
-
-# define HEREDOC_PREFIX_FILE "/tmp/heredoc_tmp_"
-# define SHELL_ERROR_PREFIX "minishell: "
-# define COLON_SPACE ": "
-# define NEW_LINE "\n"
-# define BUFFER_PATH 4096
-
-#endif
+int	bi_pwd()
+{
+	char buffer[BUFFER_PATH];
+	if (getcwd(buffer, BUFFER_PATH) == NULL)
+		return (1);
+	else
+	{
+		printf("%s\n", buffer);
+		return (0);
+	}
+}

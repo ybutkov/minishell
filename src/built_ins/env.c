@@ -1,29 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   constants.h                                        :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/30 18:31:15 by ashadrin         ###   ########.fr       */
+/*   Created: 2025/11/29 16:35:25 by ashadrin          #+#    #+#             */
+/*   Updated: 2025/12/02 12:49:13 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONSTANTS_H
-# define CONSTANTS_H
+#include "builtin_internal.h"
 
-# define OK 1
-# define ERROR 0
-# define EXIT_CMD_NOT_FOUND 127
-# define CMD_NOT_FOUND_MSG "command not found"
-# define EXIT_FAILURE_CREATE_PIPE 1
-# define EXIT_FAILURE_CREATE_FORK 1
-
-# define HEREDOC_PREFIX_FILE "/tmp/heredoc_tmp_"
-# define SHELL_ERROR_PREFIX "minishell: "
-# define COLON_SPACE ": "
-# define NEW_LINE "\n"
-# define BUFFER_PATH 4096
-
-#endif
+int	bi_env(t_env *envp)
+{
+	t_env *current;
+	
+	if (!envp)
+		return (1);
+	current = envp;
+	while (current != NULL)
+	{
+		if (current->key)
+		{
+			printf("%s=", current->key);
+			printf("%s\n", current->value);
+		}
+		current = current->next;
+	}
+	return (0);
+}

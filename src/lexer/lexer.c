@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 11:26:58 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/24 15:40:06 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/04 15:44:09 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@ t_token	*lexicalization(char *line)
 	{
 		if (is_whitespace(line[lex.i]))
 			is_space(&lex);
+		else if (is_special(&lex))
+			is_operator(&lex);
 		else if (line[lex.i] == '\'')
 			is_single_quote(&lex);
 		else if (line[lex.i] == '"')
