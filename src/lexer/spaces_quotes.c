@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 22:22:09 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/05 15:22:49 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 00:20:50 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ void	is_space(t_lex_inf *lex)
 		lex->i++;
 	}	
 	lex->end = lex->i - 1;
-	new_token(lex, NO_QUOTES);
+	if (lex->end >= lex->start)
+		new_token(lex, NO_QUOTES);
 }
 
 void	quotes_within(t_lex_inf *l)

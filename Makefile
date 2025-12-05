@@ -62,7 +62,10 @@ C_SHELL_FILES = \
 	built_ins/exit.c \
 	built_ins/export.c \
 	built_ins/pwd.c \
-	built_ins/unset.c
+	built_ins/unset.c \
+	envp/envp_copy.c \
+	envp/copy_to_array.c \
+	envp/envp_list_init.c
 # 	parcer/parcer.c \
 # 	parcer/get_cmd_path.c \
 
