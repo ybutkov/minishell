@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 22:22:09 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/04 20:23:52 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/05 14:51:03 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,9 @@
 
 void	is_space(t_lex_inf *lex)
 {
-	while (lex->line[lex->i] == ' ')
+	while (is_whitespace(lex->line[lex->i]))
 		lex->i++;
-	if ((lex->line[lex->i] == '"') || (lex->line[lex->i] == '\''))
+	if ((lex->line[lex->i] == '"') || (lex->line[lex->i] == '\'') || is_special(lex))
 		return ;
 	lex->start = lex->i;
 	while (lex->line[lex->i] != '\0' && !is_whitespace(lex->line[lex->i])
@@ -38,8 +38,6 @@ void	quotes_within(t_lex_inf *l)
 	e_mix	quo_closed;
 	char	quotes;
 
-	// printf("Type: %d\n",(int)quo_closed);
-	printf("hi! i got within\n");
 	quo_closed = ALL_CLOSED;
 	while (l->line[l->i] != '\0')
 	{
@@ -111,28 +109,25 @@ void	is_operator(t_lex_inf *lex)
 	char sym;
 	
 	lex->start = lex->i;
-	lex->i++;
 	sym = lex->line[lex->i];
 	if ((sym == '/' || sym == '&' || sym == '|' || sym == '>'
 			|| sym == '<'))
 	{
-		if (sym == lex->line[lex->i - 1])
+		if (sym == lex->line[lex->i + 1])
 		{
+			lex->i++;
 			lex->end = lex->i;
 			new_token(lex, NO_QUOTES);
+			return ;
 		}
 	}
-	else
-	{
-		lex->i--;
-		lex->end = lex->i;
-		new_token(lex, NO_QUOTES);
-	}
+	lex->end = lex->i;
+	new_token(lex, NO_QUOTES);
 	lex->i++;
 }
 
-// void	quotes_within(t_lex_inf *l)
-// {
+// // void	quotes_within(t_lex_inf *l)
+// // {
 // 	e_mix	quo_closed;
 // 	char	quotes;
 

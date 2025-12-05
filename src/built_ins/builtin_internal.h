@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:47:16 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/02 17:53:30 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/04 16:27:53 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,7 @@
 # include "libft.h"
 # include "constants.h"
 # include "shell.h"
-
-typedef struct	s_env
-{
-	char			*value;
-	char			*key;
-	struct s_env	*next;
-}	t_env;
-//REMOVE LATER!!
+# include "envp_copy.h"
 
 typedef struct s_export_par
 {

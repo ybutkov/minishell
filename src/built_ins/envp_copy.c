@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 16:26:06 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/04 18:54:48 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/04 20:46:36 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,3 +54,7 @@ void	create_node(char *line, t_env **envp)
 	}
 }
 
+char	*copying_back(t_env **envp)
+{
+	
+}
