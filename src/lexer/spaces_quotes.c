@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 22:22:09 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/05 14:51:03 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/05 15:22:49 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,15 +111,13 @@ void	is_operator(t_lex_inf *lex)
 	lex->start = lex->i;
 	sym = lex->line[lex->i];
 	if ((sym == '/' || sym == '&' || sym == '|' || sym == '>'
-			|| sym == '<'))
+			|| sym == '<') && (sym == lex->line[lex->i + 1]))
 	{
-		if (sym == lex->line[lex->i + 1])
-		{
-			lex->i++;
-			lex->end = lex->i;
-			new_token(lex, NO_QUOTES);
-			return ;
-		}
+		lex->i++;
+		lex->end = lex->i;
+		new_token(lex, NO_QUOTES);
+		lex->i++;
+		return ;
 	}
 	lex->end = lex->i;
 	new_token(lex, NO_QUOTES);

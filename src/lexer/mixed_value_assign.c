@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/02 22:49:42 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/05 22:43:47 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,9 +29,14 @@ void	mixed_value_assign(t_lex_inf *l, t_token *t)
 			pi.cur_start = pi.i;
 			while (is_whitespace(t->value[pi.i]))
 				pi.i++;
-			while (!is_space_or_quotes(t->value[pi.i]) && t->value[pi.i] != '$')
+			while (!is_space_or_quotes(t->value[pi.i]) && t->value[pi.i] != '\0')
 				pi.i++;
 			pi.cur_end = pi.i - 1;
+			if (pi.cur_end < pi.i - 1)
+			{
+				if (t->value[pi.i] != '\0')
+					pi.i++;
+			}
 			new_piece(t, &pi, l, NO_QUOTES);
 		}
 		// else
@@ -65,8 +70,7 @@ void	assign_quoted_pieces(char quote, t_lex_inf *l, t_token *t, t_pieces_interna
 		new_piece(t, pi, l, SINGLE_Q);
 	else if (quote == '"')
 		new_piece(t, pi, l, DOUBLE_Q);
-	else if (t->value[pi->i] != quote)
-		pi->i++;
+	pi->i++;
 }
 
 void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_status q)
@@ -91,6 +95,7 @@ void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_statu
 	ft_memcpy(p->text, t->value + pi->cur_start, len);
 	p->text[len] = '\0';
 	p->quotes = q;
+	p->next = NULL;
 	decide_on_extra(p);
 	push_piece(t, p);
 }
