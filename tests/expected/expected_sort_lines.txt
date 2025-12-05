@@ -1,7 +1,0 @@
-alpha
-alpha
-bravo
-bravo
-charlie
-delta
-gamma

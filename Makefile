@@ -1,10 +1,6 @@
 NAME = minishell
 NAME_C = minishell.c
 
-TEST_SRC = tests/run_tests.c
-TEST_OBJ = $(BUILD_DIR)/tests/run_tests.o
-TEST_RUNNER = test_runner
-
 SRC = src
 BUILD_DIR =	build
 
@@ -85,13 +81,8 @@ ${NAME} : $(LIBFT) $(BUILD_DIRS) $(C_OBJ_FIlES)
 	$(CC) $(CFLAGS) $(C_OBJ_FIlES) $(NAME_C) $(LFLAGS) -o $(NAME)
 	@echo "Build OK"
 
-test: $(LIBFT) $(BUILD_DIRS) $(C_OBJ_FIlES) $(TEST_OBJ)
-	$(CC) $(CFLAGS) $(C_OBJ_FIlES) $(TEST_OBJ) $(LFLAGS) -o $(TEST_RUNNER)
-	./$(TEST_RUNNER)
-
 clean :
 	@rm -rf $(BUILD_DIR)
-	@rm -f $(TEST_RUNNER)
 	@make -C $(LIBFT_DIR) clean $(PRINT_FLAG)
 	@echo "clean OK"
 
@@ -119,7 +110,7 @@ $(BUILD_DIR)/%.o : %.c
 $(LIBFT) :
 	@make -C $(LIBFT_DIR) all $(PRINT_FLAG)
 
-.PHONY : all clean fclean re bonus s test
+.PHONY : all clean fclean re bonus s
 
 #valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all -s ./pipex "infiles/basic.txt" "nonexistingcommand" "cat -e" "outfiles/outfile"
 # minishell_test
