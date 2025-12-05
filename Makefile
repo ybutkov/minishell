@@ -54,7 +54,8 @@ C_SHELL_FILES += \
 	utils/heredoc_file_util.c \
 	test/token_fixtures.c \
 	test/get_cmd_path.c \
-	printer/print_shell.c
+	printer/print_shell.c \
+	printer/print_tokens.c
 
 C_SHELL_FILES += \
 	lexer/lexer.c \

@@ -6,14 +6,14 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 15:40:33 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/06 15:46:50 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "token_fixtures.h"
 #include "shell.h"
 #include "shell_utils.h"
-#include "print_shell.h"
+#include "printers.h"
 #include <errno.h>
 
 int	test_shell(t_token *tokens, char **envp, char *test_comm, int isprint)
@@ -86,33 +86,7 @@ void test_shells(char **envp, int isprint)
 	// test_shell(tokens_paren_pwd_cd_chain_pipe(), envp, "(pwd; cd ..; pwd) | (cd .. && pwd && cd .. && pwd)", isprint);
 
 }
-static void print_tokens_brief_once(t_token *toks)
-{
-    t_token *t;
-    t_piece *p;
-    int ti;
-    int pi;
 
-    if (!toks)
-    {
-        // printf("no tokens\n");
-        return;
-    }
-    ti = 0;
-    for (t = toks; t; t = t->next, ++ti)
-    {
-        printf("Token[%d]: type=%u '%s'\n", ti, t->type, t->value ? t->value : "(null)");
-        if (!t->pieces)
-            continue;
-		write(1, "GGG\n", 4);
-        pi = 0;
-        for (p = t->pieces; p; p = p->next, ++pi)
-            printf("  piece[%d] q=%d text='%s'\n",
-                pi,
-                (int)p->quotes,
-                p->text ? p->text : "(null)");
-    }
-}
 
 int	check_for_echo_$(t_token *tokens, int exit_status)
 {
@@ -139,27 +113,23 @@ int	main(int argc, char **argv, char **envp)
 	(void)argv;
 	(void)envp;
 
-	if (2 == 1)
-		print_tokens_brief_once(NULL); // tmp
+	// ( echo foo ; echo bar ) | ls -la
+	// test_shells(envp, 1); return (0);
 	shell = create_shell(envp);
 	exit_status = 0;
 	while (1)
 	{
 		t_token *tokens = read_and_lexicalize();
+		// write(1, "?", 1);
+		// print_tokens_brief_once(tokens); continue ;
 		if (!tokens)
 			break ;
-		// write(1, "?", 1);
-		// write(1, "?", 1);
-		// print_tokens_brief_once(tokens); getchar();
-		// write(1, "?", 1);
-		// continue ;
+		print_tokens_brief_once(tokens);
 		if (check_for_echo_$(tokens, exit_status) == 1)
 			continue ;
 		shell = create_shell(envp);
-		// write(1, "111\n", 4);
 		shell->build(shell, tokens);
-		// write(1, "222\n", 4);
-		// print_shell_tree(shell); getchar();
+		print_shell_tree(shell);  shell->clear(shell); continue ;
 
 		shell->collect_heredoc(shell);
 		shell->execute(shell);
@@ -168,7 +138,5 @@ int	main(int argc, char **argv, char **envp)
 		shell->clear(shell);
 	}
 	shell->free(shell);
-	// test_shells(envp, 1);
-	// print_tokens_brief_once(toks);
 	return (0);
 }
