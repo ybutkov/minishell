@@ -3,35 +3,49 @@
 /*                                                        :::      ::::::::   */
 /*   read_line.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 11:38:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/27 16:19:45 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/05 15:34:57 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
+#include "get_next_line.h"
 
 t_token	*read_and_lexicalize()
 {
-	char	*line;
-	size_t	line_len;
-	t_token	*tokens;
-	ssize_t	n;
+	char    *line;
+	t_token *tokens;
 
-	line = NULL;
-	line_len = 0;
-	tokens = NULL;
-
-	write(1, "$> ", 3);
-	n = getline(&line, &line_len, stdin);
-	if (n == -1)
+	while (1)
 	{
+		tokens = NULL;
+		if (isatty(fileno(stdin)))
+			line = readline("$> ");
+		else
+		{
+			char *tmp;
+			tmp = get_next_line(fileno(stdin));
+			if (!tmp)
+				return (NULL);
+			line = ft_strtrim(tmp, "\n");
+			free(tmp);
+		}
+		if (!line)
+			return (NULL);
+		if (*line == '\0')
+		{
+			free(line);
+			if (isatty(fileno(stdin)))
+				continue ;
+			else
+				continue ;
+		}
+		tokens = lexicalization(line);
+		if (tokens)
+			add_history(line);
 		free(line);
 		return (tokens);
 	}
-	if (n > 0 && line[n - 1] == '\n')
-        line[n - 1] = '\0';
-	tokens = lexicalization(line);
-	return (tokens);
 }
