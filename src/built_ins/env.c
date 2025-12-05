@@ -1,26 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   constants.h                                        :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/30 18:31:15 by ashadrin         ###   ########.fr       */
+/*   Created: 2025/11/29 16:35:25 by ashadrin          #+#    #+#             */
+/*   Updated: 2025/12/02 12:49:13 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CONSTANTS_H
-# define CONSTANTS_H
+#include "builtin_internal.h"
 
-# define WHICH_CMD "/usr/bin/which"
-# define OK 1
-# define ERROR 0
-# define HERE_DOC "here_doc"
-# define MINISHELL "minishell: "
-# define COLON ": "
-# define EXIT_CMD_NOT_FOUND 127
-# define CMD_NOT_FOUND_MSG "command not found"
-# define BUFFER_PATH 4096
-
-#endif
+int	bi_env(t_env *envp)
+{
+	t_env *current;
+	
+	if (!envp)
+		return (1);
+	current = envp;
+	while (current != NULL)
+	{
+		if (current->key)
+		{
+			printf("%s=", current->key);
+			printf("%s\n", current->value);
+		}
+		current = current->next;
+	}
+	return (0);
+}

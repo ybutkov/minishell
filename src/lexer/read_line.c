@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 11:38:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/27 16:19:45 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/02 18:34:19 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,24 +14,16 @@
 
 t_token	*read_and_lexicalize()
 {
-	char	*line;
-	size_t	line_len;
-	t_token	*tokens;
-	ssize_t	n;
+	char    *line;
+	t_token *tokens;
 
-	line = NULL;
-	line_len = 0;
 	tokens = NULL;
-
-	write(1, "$> ", 3);
-	n = getline(&line, &line_len, stdin);
-	if (n == -1)
-	{
-		free(line);
+	line = readline("$> ");
+	if (!line)
 		return (tokens);
-	}
-	if (n > 0 && line[n - 1] == '\n')
-        line[n - 1] = '\0';
+	else
+		add_history(line);
 	tokens = lexicalization(line);
+	free(line);
 	return (tokens);
 }

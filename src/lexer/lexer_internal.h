@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/27 15:41:48 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/04 15:43:22 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,9 @@
 # include "libft.h"
 # include <unistd.h>
 # include <stdlib.h>
+# include <stdio.h>
 # include <readline/history.h>
+# include <readline/readline.h>
 
 typedef struct	s_lex_inf
 {
@@ -58,6 +60,7 @@ void	is_space(t_lex_inf *lex);
 void	quotes_within(t_lex_inf *lex);
 void	is_single_quote(t_lex_inf *lex);
 void	is_double_quote(t_lex_inf *lex);
+void	is_operator(t_lex_inf *lex);
 
 //tokenizer
 void	new_token(t_lex_inf *lex, e_quotes_status status);
@@ -82,7 +85,7 @@ void	token_init(t_token *tok);
 //symbol identification
 int		is_whitespace(char c);
 int		is_whitespace_or_special(char c);
-int		is_special(char c);
+int		is_special(t_lex_inf *lex);
 int		is_space_or_quotes(char c);
 
 #endif
