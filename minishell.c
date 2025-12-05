@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/30 15:13:23 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/04 21:41:44 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,32 +63,32 @@ void test_shells(char **envp, int isprint)
 		isprint);
 
 }
-// static void print_tokens_brief_once(t_token *toks)
-// {
-//     t_token *t;
-//     t_piece *p;
-//     int ti;
-//     int pi;
+static void print_tokens_brief_once(t_token *toks)
+{
+    t_token *t;
+    t_piece *p;
+    int ti;
+    int pi;
 
-//     if (!toks)
-//     {
-//         printf("no tokens\n");
-//         return;
-//     }
-//     ti = 0;
-//     for (t = toks; t; t = t->next, ++ti)
-//     {
-//         printf("Token[%d]: '%s'\n", ti, t->value ? t->value : "(null)");
-//         if (!t->pieces)
-//             continue;
-//         pi = 0;
-//         for (p = t->pieces; p; p = p->next, ++pi)
-//             printf("  piece[%d] q=%d text='%s'\n",
-//                 pi,
-//                 (int)p->quotes,
-//                 p->text ? p->text : "(null)");
-//     }
-// }
+    if (!toks)
+    {
+        printf("no tokens\n");
+        return;
+    }
+    ti = 0;
+    for (t = toks; t; t = t->next, ++ti)
+    {
+        printf("Token[%d]: ~%s~\n", ti, t->value ? t->value : "(null)");
+        if (!t->pieces)
+            continue;
+        pi = 0;
+        for (p = t->pieces; p; p = p->next, ++pi)
+            printf("  piece[%d] q=%d text=~%s~\n",
+                pi,
+                (int)p->quotes,
+                p->text ? p->text : "(null)");
+    }
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -104,8 +104,10 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		t_token *tokens = read_and_lexicalize();
+		print_tokens_brief_once(tokens);
 		if (!tokens)
 			break ;
+		continue ;
 		shell->build(shell, tokens);
 		// print_shell_tree(shell);
 		// printf("---------------------------------------------------------------\n");
