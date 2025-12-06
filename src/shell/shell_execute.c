@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:51:39 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/23 19:12:28 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/06 13:12:38 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,11 +119,41 @@ int	execute_simicolon(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	return (status_code);
 }
 
+int	execute_subshell(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
+{
+	pid_t	pid;
+	int		status;
+
+	pid = fork();
+	if (pid < 0)
+	{
+		perror("fork");
+		return (EXIT_FAILURE);
+	}
+	else if (pid == 0)
+	{
+		if (in_fd != STDIN_FILENO)
+			dup2_and_close(in_fd, STDIN_FILENO);
+		if (out_fd != STDOUT_FILENO)
+			dup2_and_close(out_fd, STDOUT_FILENO);
+		else
+			dup2(STDOUT_FILENO, STDOUT_FILENO);
+		return (execute_shell_node(node->get_left(node), shell, STDIN_FILENO, STDOUT_FILENO));
+	}
+	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	return (status);
+}
+
 int	execute_shell_node(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 {
 	t_shell_node	*shell_node;
 
 	shell_node = (t_shell_node *)node->get_content(node);
+	// create array of wrapper funcs
+	if (shell_node->type == NODE_SUBSHELL)
+		return (execute_subshell(node, shell, in_fd, out_fd));
 	if (shell_node->type == NODE_PIPE)
 		return (execute_pipe(node, shell, in_fd, out_fd));
 	if (shell_node->type == NODE_SEMICOLON)
@@ -134,7 +164,5 @@ int	execute_shell_node(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 		return (execute_or(node, shell, in_fd, out_fd));
 	else if (shell_node->type == NODE_CMD)
 		return (execute_cmd(shell_node->data.cmd, shell, in_fd, out_fd));
-	else if (shell_node->type == NODE_REDIR_HEREDOC)
-		return (execute_redir_heredoc(node, shell, in_fd, out_fd));
 	return (1);
 }

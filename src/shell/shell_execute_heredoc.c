@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:27 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/09 19:23:29 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/04 13:59:21 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,16 @@
 #include "libft.h"
 #include "shell.h"
 #include "utils.h"
+#include "shell_utils.h"
+#include "constants.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include <stdlib.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+int	collect_heredoc_node(t_ast_node *node, t_shell *shell);
 
 static int	is_delimiter(char *line, char *delimeter)
 {
@@ -38,6 +45,21 @@ static int	is_delimiter(char *line, char *delimeter)
 	return (0);
 }
 
+static int	open_file(char *filename, int flags, t_shell *shell)
+{
+	int	fd;
+	int	mode;
+
+	if (flags & O_CREAT)
+		mode = 0644;
+	else
+		mode = 0;
+	fd = open(filename, flags, mode);
+	if (fd == -1)
+		output_error_and_exit(filename, NULL, shell, EXIT_FAILURE);
+	return (fd);
+}
+
 static void	collect_heredoc_input(char *target, int write_fd)
 {
 	char	*line;
@@ -45,7 +67,9 @@ static void	collect_heredoc_input(char *target, int write_fd)
 	while (1)
 	{
 		ft_putstr_fd("heredoc> ", STDOUT_FILENO);
+		// printf("%s", "heredoc>");
 		line = get_next_line(STDIN_FILENO);
+		// line = readline(">");
 		if (!line)
 			break ;
 		if (is_delimiter(line, target))
@@ -58,43 +82,119 @@ static void	collect_heredoc_input(char *target, int write_fd)
 	}
 }
 
-static int	collect_heredoc_input_child(t_shell_node	*node, t_shell *shell,
-	int heredoc_pipe[2])
+static int	collect_heredoc_child(t_shell *shell, char *target, char *file_name)
 {
-	close(heredoc_pipe[0]);
-	collect_heredoc_input(node->data.redir->target, heredoc_pipe[1]);
-	close(heredoc_pipe[1]);
+	int			fd;
+
+	fd = open_file(file_name,  O_WRONLY | O_CREAT | O_TRUNC, shell);
+	collect_heredoc_input(target, fd);
+	close(fd);
+
 	shell->free(shell);
 	exit(EXIT_SUCCESS);
 	return (0);
 }
 
-int	execute_redir_heredoc(t_ast_node *ast_node, t_shell *shell, int in_fd,
-		int old_fd_out)
+// char	*get_tmp_file_name(int file_n)
+// {
+// 	char	*file_name;
+// 	char	*number;
+
+// 	number = ft_itoa(file_n);
+// 	if (number ==NULL)
+// 		return (NULL);
+// 	file_name = ft_strjoin(HEREDOC_PREFIX_FILE, number);
+// 	free(number);
+// 	return (file_name);
+// }
+
+int	execute_redir_heredoc(t_shell *shell, t_redir *redirect)
 {
-	t_shell_node	*node;
-	int				heredoc_pipe[2];
 	pid_t			pid_writer;
 	int				status;
 	int				ret_code;
+	char			*file_name;
 
-	(void)in_fd;
-	ret_code = 1;
-	node = (t_shell_node *)ast_node->get_content(ast_node);
-	if (pipe(heredoc_pipe) == -1)
+	file_name = get_tmp_file_name(get_file_n(1));
+	if (file_name == NULL)
 		return (EXIT_FAILURE);
+	ret_code = 1;
 	pid_writer = fork();
 	if (pid_writer == -1)
-		return (close_fds(heredoc_pipe), ret_code);
+		return (ret_code);
 	if (pid_writer == 0)
-		return (collect_heredoc_input_child(node, shell, heredoc_pipe));
+		return (collect_heredoc_child(shell, redirect->target, file_name));
 	else
 	{
-		close(heredoc_pipe[1]);
 		waitpid(pid_writer, &status, 0);
-		ret_code = execute_shell_node(ast_node->get_left(ast_node), shell,
-				heredoc_pipe[0], old_fd_out);
-		close(heredoc_pipe[0]);
-		return (ret_code);
+		// check status ??
+		redirect->target = file_name;
+		return (status);
 	}
+}
+
+int collect_heredoc_subshell(t_ast_node *node, t_shell *shell)
+{
+	return (collect_heredoc_node(node->get_left(node), shell));
+}
+
+int	collect_heredoc_double(t_ast_node *node, t_shell *shell)
+{
+	int	status;
+
+	if (node->get_left(node))
+		status = collect_heredoc_node(node->get_left(node), shell);
+	if (node->get_left(node))
+		status = collect_heredoc_node(node->get_right(node), shell);
+	return (status);
+}
+
+static int	apply_heredoc(t_cmd *cmd, t_shell *shell)
+{
+	t_list	*redir;
+	t_redir	*redirect;
+	int		status;
+
+	status = 0;
+	if (!cmd)
+		return (EXIT_FAILURE);
+	redir = cmd->redirs;
+	while (redir)
+	{
+		redirect = (t_redir *)redir->content;
+		if (redirect->type == REDIR_HEREDOC)
+		{
+			status = execute_redir_heredoc(shell, redirect);
+		}
+		redir = redir->next;
+	}
+	return (status);
+}
+
+int	collect_heredoc_cmd(t_cmd *cmd, t_shell *shell)
+{
+	return (apply_heredoc(cmd, shell));
+}
+
+int	collect_heredoc_node(t_ast_node *node, t_shell *shell)
+{
+	t_shell_node	*shell_node;
+
+	shell_node = (t_shell_node *)node->get_content(node);
+	// create array of wrapper funcs
+	if (shell_node->type == NODE_SUBSHELL)
+		return (collect_heredoc_subshell(node, shell));
+	if (shell_node->type == NODE_PIPE)
+		return (collect_heredoc_double(node, shell));
+	if (shell_node->type == NODE_SEMICOLON)
+		return (collect_heredoc_double(node, shell));
+	if (shell_node->type == NODE_AND)
+		return (collect_heredoc_double(node, shell));
+	else if (shell_node->type == NODE_OR)
+		return (collect_heredoc_double(node, shell));
+	else if (shell_node->type == NODE_CMD)
+		return (collect_heredoc_cmd(shell_node->data.cmd, shell));
+	// else if (shell_node->type == NODE_REDIR_HEREDOC)
+	// 	return (execute_redir_heredoc(node, shell, in_fd, out_fd));
+	return (1);
 }

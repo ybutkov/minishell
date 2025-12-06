@@ -6,10 +6,11 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/23 18:49:37 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/03 23:41:08 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "shell_internal.h"
 #include "constants.h"
 #include "error.h"
 #include "get_next_line.h"
@@ -48,7 +49,7 @@ static void	apply_redirect(t_cmd *cmd, t_shell *shell)
 	while (redir)
 	{
 		redirect = (t_redir *)redir->content;
-		if (redirect->type == REDIR_IN)
+		if (redirect->type == REDIR_IN || redirect->type == REDIR_HEREDOC)
 			open_file_and_dup2(redirect->target, O_RDONLY, STDIN_FILENO, shell);
 		else if (redirect->type == REDIR_OUT)
 			open_file_and_dup2(redirect->target, O_WRONLY | O_CREAT | O_TRUNC,
@@ -58,6 +59,7 @@ static void	apply_redirect(t_cmd *cmd, t_shell *shell)
 				STDOUT_FILENO, shell);
 		else if (redirect->type == REDIR_HEREDOC)
 		{
+			// execute_redir_heredoc(shell, redirect, STDIN_FILENO);
 		}
 		redir = redir->next;
 	}
@@ -70,15 +72,48 @@ int	builtin(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 	(void)shell;
 	(void)in_fd;
 	(void)out_fd;
+	printf("builtin %s\n", cmd->argv[0]);
 	return (0);
+}
+
+char	**get_built_in_list(void)
+{
+	static char *builtins[8];
+
+	builtins[0] = "echo";
+	builtins[1] = "cd";
+	builtins[2] = "pwd";
+	builtins[3] = "export";
+	builtins[4] = "unset";
+	builtins[5] = "env";
+	builtins[6] = "exit";
+	builtins[7] = NULL;
+	return (builtins);
 }
 
 int	is_builtin(char *command)
 {
-	// spy
-	(void)command;
+	char	**built_in;
+
+	if (!command)
+		return (0);
+	//
+	return (0);
+	built_in = get_built_in_list();
+	while (*built_in)
+	{
+		if (ft_strcmp(command, *built_in) == 0)
+			return (1);
+		built_in++;
+	}
 	return (0);
 }
+
+// void	dup2_and_close(int oldfd, int newfd)
+// {
+// 	dup2(oldfd, newfd);
+// 	close(oldfd);
+// }
 
 // static int	execute_cmd_child(t_cmd *cmd, t_shell *shell, int input_fd,
 // 		int output_fd)
@@ -109,11 +144,11 @@ int	is_builtin(char *command)
 // 	return (execute_cmd_child(cmd, shell, input_fd, output_fd));
 // }
 
-void dup2_and_close(int oldfd, int newfd)
-{
-	dup2(oldfd, newfd);
-	close(oldfd);
-}
+// void	dup2_and_close(int oldfd, int newfd)
+// {
+// 	dup2(oldfd, newfd);
+// 	close(oldfd);
+// }
 
 int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 		int output_fd)
@@ -133,6 +168,8 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 			dup2_and_close(input_fd, STDIN_FILENO);
 		if (output_fd != STDOUT_FILENO)
 			dup2_and_close(output_fd, STDOUT_FILENO);
+		else
+			dup2(STDOUT_FILENO, STDOUT_FILENO);
 		apply_redirect(cmd, shell);
 		if (!cmd->path || access(cmd->path, X_OK) != 0)
 			output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
@@ -142,15 +179,38 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 		exit(EXIT_FAILURE);
 	}
 	waitpid(pid, &status, 0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
 	return (status);
 }
+
+// static void	apply_heredoc(t_cmd *cmd, t_shell *shell)
+// {
+// 	t_list	*redir;
+// 	t_redir	*redirect;
+
+// 	if (!cmd)
+// 		return ;
+// 	redir = cmd->redirs;
+// 	while (redir)
+// 	{
+// 		redirect = (t_redir *)redir->content;
+// 		if (redirect->type == REDIR_HEREDOC)
+// 		{
+// 			execute_redir_heredoc(shell, redirect, STDIN_FILENO);
+// 		}
+// 		redir = redir->next;
+// 	}
+// }
 
 int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 {
 	if (is_builtin(cmd->argv[0]))
 		return (builtin(cmd, shell, input_fd, output_fd));
+	// check for single command. execute in sep fork
 	if (input_fd == STDIN_FILENO && output_fd == STDOUT_FILENO)
 		return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
+	// apply_heredoc(cmd, shell);
 	if (input_fd != STDIN_FILENO)
 	{
 		dup2(input_fd, STDIN_FILENO);

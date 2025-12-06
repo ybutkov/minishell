@@ -1,21 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell_utils.h                                      :+:      :+:    :+:   */
+/*   shell_execute_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/09 18:18:35 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/04 14:29:10 by ybutkov          ###   ########.fr       */
+/*   Created: 2025/12/02 23:28:32 by ybutkov           #+#    #+#             */
+/*   Updated: 2025/12/02 23:29:13 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SHELL_UTILS_H
-# define SHELL_UTILS_H
+#include <unistd.h>
 
-void	free_str_array(char **arr);
-void	clear_tmp_folder(int file_n);
-char	*get_tmp_file_name(int file_n);
-int 	get_file_n(int delta);
+void	dup2_and_close(int oldfd, int newfd)
+{
+	dup2(oldfd, newfd);
+	close(oldfd);
+}
 
-#endif

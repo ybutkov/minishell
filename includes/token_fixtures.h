@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 15:24:25 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/23 18:51:53 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/03 00:27:11 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "parsing.h"
 
+// Existing fixtures
 t_token *create_token(t_token_type type, char *value);
 t_token	*tokens_echo_grep_redirect(void);
 t_token	*tokens_heredoc_sed_append(void);
@@ -41,6 +42,33 @@ t_token	*tokens_multi_pipe_multi_redirect(void);
 t_token	*tokens_dual_redirect_pipe(void);
 t_token	*tokens_complex_multi_redirect(void);
 t_token *tokens_complex_multi_redirect_2(void);
-t_token *tokens_single_command(void);
+
+// New Fixtures for expanded tests
+t_token *tokens_abs_ls(void);
+t_token *tokens_abs_pwd(void);
+t_token *tokens_abs_echo(void);
+t_token *tokens_rel_ls(void);
+t_token *tokens_rel_pwd(void);
+t_token *tokens_rel_echo(void);
+t_token *tokens_redir_in(void);
+t_token *tokens_redir_out(void);
+t_token *tokens_redir_append(void);
+t_token *tokens_redir_in_out(void);
+t_token *tokens_redir_heredoc(void);
+t_token *tokens_pipe_simple(void);
+t_token *tokens_pipe_double(void);
+t_token *tokens_pipe_grep(void);
+t_token *tokens_pipe_long(void);
+t_token *tokens_mixed_redir_pipe(void);
+t_token *tokens_mixed_pipe_redir(void);
+t_token *tokens_mixed_heredoc_grep(void);
+t_token *tokens_mixed_and(void);
+t_token *tokens_mixed_or(void);
+// Parentheses/subshell fixtures
+t_token *tokens_paren_echo_redirect(void);
+t_token *tokens_paren_ls(void);
+t_token *tokens_paren_group_semicolon_pipe(void);
+t_token *tokens_paren_pwd_cd_chain_pipe(void);
+t_token *tokens_paren_group_semicolon(void);
 
 #endif

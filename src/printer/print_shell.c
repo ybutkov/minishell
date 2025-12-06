@@ -6,11 +6,11 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/11 00:00:00 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/11 17:10:16 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/05 23:14:15 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "print_shell.h"
+#include "printers.h"
 #include "shell_node.h"
 #include "ast.h"
 #include "libft.h"
