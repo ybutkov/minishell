@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 15:48:04 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/06 20:33:13 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ static t_token	*create_token(void)
 	token_init(token);
 	// token->type = type;
 	// token->value = value;
+	token->has_wild = 0;
+	token->has_env_v = 0;
 	// token->next = NULL;
 	// token->prev = NULL;
 	token->free = free_token;
@@ -68,6 +70,7 @@ void	new_token(t_lex_inf *lex, e_quotes_status status)
 	}
 	else
 		simple_value(lex, tok);
+	decide_on_extra_in_token(tok);
 	type_of_token(tok);
 	push_token(lex, tok);
 }

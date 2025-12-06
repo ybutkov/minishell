@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/05 22:43:47 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 20:30:18 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,42 @@ void	decide_on_extra(t_piece *p)
 		if (p->text[i] == '$') //don't know if there are any other specific conditions yet
 			p->has_env_v = 1;
 		i++;
+	}
+}
+
+void	decide_on_extra_in_token(t_token *t)
+{
+	t_piece	*node;
+	int		i;
+	
+	if (t->pieces)
+	{
+		node = t->pieces;
+		while (node)
+		{
+			if (node->has_wild)
+				t->has_wild = 1;
+			if (node->has_env_v)
+				t->has_env_v = 1;
+			node = node->next;
+		}
+	}
+	else if (t->stat == NO_QUOTES || t->stat == DOUBLE_Q)
+		extras_token(t);
+}
+
+void	extras_token(t_token *t)
+{
+	int	i;
+	
+	i = 0;
+	while (t->value[i])
+	{
+		if (t->value[i] == '*' && t->stat == NO_QUOTES)
+			t->has_wild = 1;
+		if (t->value[i] == '$')
+			t->has_env_v = 1;
+		i++;		
 	}
 }
 

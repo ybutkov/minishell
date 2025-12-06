@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_internal.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 15:42:24 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/06 20:29:21 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,8 @@ void	mixed_value_assign(t_lex_inf *l, t_token *t);
 void	assign_quoted_pieces(char quote, t_lex_inf *l, t_token *t, t_pieces_internal *pi);
 void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_status q);
 void	decide_on_extra(t_piece *p);
+void	decide_on_extra_in_token(t_token *t);
+void	extras_token(t_token *t);
 void	push_piece(t_token *t, t_piece *p);
 
 //utils
