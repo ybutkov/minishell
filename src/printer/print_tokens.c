@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 20:36:33 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 18:16:53 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/06 23:57:55 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	print_tokens_brief_once(t_token *toks)
 			continue ;
 		pi = 0;
 		for (p = t->pieces; p; p = p->next, ++pi)
-			printf("  piece[%d] q=%d text='%s'\n", pi, (int)p->quotes,
-				p->text ? p->text : "(null)");
+			printf(" piece[%d] q=%d $=%d *=%d text='%s'\n", pi, (int)p->quotes,
+				p->has_env_v, p->has_wild, p->text ? p->text : "(null)");
 	}
 }
