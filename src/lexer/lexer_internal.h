@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/04 15:43:22 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 00:05:35 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ int		cust_strchr(char c, char *str);
 void	decide_on_quotes(t_lex_inf *l, e_mix *q, char *quotes);
 void	initialize_pieces(t_pieces_internal *pieces);
 void	token_init(t_token *tok);
+void	type_of_parenthesis(t_token *tok);
 
 //symbol identification
 int		is_whitespace(char c);

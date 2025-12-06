@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/02 22:50:10 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 00:08:08 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ void	type_of_token(t_token *tok)
 		tok->type = TOKEN_HEREDOC;
 	else if (ft_strcmp(tok->value, "\n") == 0)
 		tok->type = TOKEN_NEWLINE;
+	else if (tok->value[0] == '(' || tok->value[0] == ')')
+		type_of_parenthesis(tok);
 	else if (cust_strchr('*', tok->value))
 		tok->type = TOKEN_WILDCARD;
 	else
@@ -115,4 +117,3 @@ void	end_token(t_lex_inf *lex)
 	lex->tail = tok;
 	tok->next = NULL;
 }
-
