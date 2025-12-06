@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 15:48:04 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/06 22:43:15 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ static t_token	*create_token(void)
 	token_init(token);
 	// token->type = type;
 	// token->value = value;
+	token->has_wild = 0;
+	token->has_env_v = 0;
 	// token->next = NULL;
 	// token->prev = NULL;
 	token->free = free_token;
@@ -61,15 +63,29 @@ void	new_token(t_lex_inf *lex, e_quotes_status status)
 		return ;
 	}
 	tok->stat = status;
+	simple_value(lex, tok);
+	check_mixed(tok);
 	if (tok->stat == MIXED)
-	{
-		simple_value(lex, tok);
 		mixed_value_assign(lex, tok);
-	}
-	else
-		simple_value(lex, tok);
+	decide_on_extra_in_token(tok);
 	type_of_token(tok);
 	push_token(lex, tok);
+}
+
+void	check_mixed(t_token *tok)
+{
+	int	i;
+
+	i = 0;
+	if (tok->stat == NO_QUOTES || tok->stat == DOUBLE_Q)
+	{
+		while (tok->value[i])
+		{
+			if (tok->value[i] == '$' || (tok->value[i] == '*' && tok->stat == NO_QUOTES))
+				tok->stat = MIXED;
+			i++;
+		}
+	}
 }
 
 void	simple_value(t_lex_inf *lex, t_token *tok)
