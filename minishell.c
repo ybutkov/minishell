@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 15:46:50 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/06 15:47:27 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,9 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		shell = create_shell(envp);
 		shell->build(shell, tokens);
-		print_shell_tree(shell);  shell->clear(shell); continue ;
+
+		print_shell_tree(shell);
+		// shell->clear(shell); continue ;
 
 		shell->collect_heredoc(shell);
 		shell->execute(shell);

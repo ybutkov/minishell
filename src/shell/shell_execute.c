@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:51:39 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/03 18:06:08 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/06 13:12:38 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ int	execute_subshell(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 			dup2_and_close(out_fd, STDOUT_FILENO);
 		else
 			dup2(STDOUT_FILENO, STDOUT_FILENO);
-		return (execute_shell_node(node->get_left(node), shell, in_fd, out_fd));
+		return (execute_shell_node(node->get_left(node), shell, STDIN_FILENO, STDOUT_FILENO));
 	}
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))
@@ -164,7 +164,5 @@ int	execute_shell_node(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 		return (execute_or(node, shell, in_fd, out_fd));
 	else if (shell_node->type == NODE_CMD)
 		return (execute_cmd(shell_node->data.cmd, shell, in_fd, out_fd));
-	// else if (shell_node->type == NODE_REDIR_HEREDOC)
-	// 	return (execute_redir_heredoc(node, shell, in_fd, out_fd));
 	return (1);
 }
