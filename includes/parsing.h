@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/27 15:42:14 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 20:01:34 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ typedef struct s_token
 	char			*value;
 	t_piece			*pieces;
 	t_piece			*pieces_tail;
+	int				has_env_v;
+	int				has_wild;
 	struct s_token	*prev;
 	struct s_token	*next;
 	void 			(*free)(struct s_token *token);
