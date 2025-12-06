@@ -6,13 +6,13 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:30:17 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 00:30:45 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:17:48 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "envp_copy.h"
 
-char	**copying_back(t_env **envp)
+char	**copying_back(t_env *envp)
 {
 	int		len;
 	char	**array;
@@ -23,7 +23,7 @@ char	**copying_back(t_env **envp)
 	array = malloc(sizeof(char *) * (len + 1));
 	if (!array)
 		return (NULL);
-	node = *envp;
+	node = envp;
 	i = 0;
 	while (node)
 	{
@@ -63,13 +63,13 @@ char	*create_line(t_env *node)
 	return (line);
 }
 
-int		length_of_list(t_env **envp)
+int		length_of_list(t_env *envp)
 {
 	int		i;
 	t_env	*node;
 	
 	i = 0;
-	node = *envp;
+	node = envp;
 	while (node != NULL)
 	{
 		node = node->next;

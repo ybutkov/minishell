@@ -6,20 +6,18 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 16:26:06 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 00:30:13 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 18:16:08 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "envp_copy.h"
 
-t_env	**copying(char **envp)
+t_env	*copying(char **envp, t_env **head)
 {
 	int		i;
-	t_env	**head;
 	
-	if (!envp)
+	if (!envp || !head)
 		return (NULL);
-	head = NULL;
 	*head = NULL;
 	i = 0;
 	while(envp[i])
@@ -27,7 +25,7 @@ t_env	**copying(char **envp)
 		create_node(envp[i], head);
 		i++;
 	}
-	return (head);
+	return (*head);
 }
 
 void	create_node(char *line, t_env **envp)
@@ -44,7 +42,7 @@ void	create_node(char *line, t_env **envp)
 	var->next = NULL;
 	split_sign = ft_strchr(line, '=');
 	var->key = ft_substr(line, 0, split_sign - line);
-	var->value = strdup(split_sign + 1);
+	var->value = ft_strdup(split_sign + 1);
 	if (!*envp)
 		*envp = var;
 	else
@@ -56,14 +54,14 @@ void	create_node(char *line, t_env **envp)
 	}
 }
 
-void	free_env_list(t_env **envp)
+void	free_env_list(t_env *envp)
 {
 	t_env	*node;
 	t_env	*temp;
 	
-	if (!*envp)
+	if (!envp)
 		return ;
-	node = *envp;
+	node = envp;
 	while (node)
 	{
 		temp = node->next;
@@ -72,4 +70,5 @@ void	free_env_list(t_env **envp)
 		free(node);
 		node = temp;
 	}
+	envp = NULL;
 }

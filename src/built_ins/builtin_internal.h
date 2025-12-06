@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:47:16 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/04 16:27:53 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/06 17:31:04 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include <unistd.h>
 # include <stdio.h>
+# include <string.h>
 # include "libft.h"
 # include "constants.h"
 # include "shell.h"
