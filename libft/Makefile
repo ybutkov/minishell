@@ -41,6 +41,7 @@ LIBFT_CORE_FILES = ft_isalpha.c \
 		ft_strdup.c \
 		ft_substr.c \
 		ft_strjoin.c \
+		ft_strappend.c \
 		ft_strtrim.c \
 		ft_split.c \
 		ft_itoa.c \
@@ -101,6 +102,6 @@ $(BUILD_DIRS):
 $(BUILD_DIR)/%.o : %.c | $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-.PHONY : all clean fclean f re 
+.PHONY : all clean fclean f re
 
 # valgrind --leak-check=full --show-leak-kinds=all --trace-children=yes ./pipex infile "ls -la" "wc -l" outfile

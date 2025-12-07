@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 15:35:12 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/02 18:12:58 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/07 03:11:54 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,31 +20,7 @@
 
 #include "builtin_internal.h"
 
-int	bi_export(t_env *envp, char **args)
-{
-	int				i;
-	t_export_par	*var;
-
-	if (!args[1])
-	{
-		print_export_sorted();
-		return (0);
-	}
-	var = NULL;
-	i = 1;
-	while(args[i])
-	{
-		split_key(args[i], var);
-		if (is_valid_key(var->key))
-			set_env_par(envp, var->key, var->value);
-		else
-			printf("minishell: export: '%s': not a valid identifier\n", args[i]);
-		i++;
-	}
-	return (0);
-}
-
-void	split_key(char *line, t_export_par *var)
+static void	split_key(char *line, t_export_par *var)
 {
 	char	*split_sign;
 
@@ -60,15 +36,15 @@ void	split_key(char *line, t_export_par *var)
 		var->key = ft_substr(line, 0, split_sign - line);
 		var->value = strdup(split_sign + 1);
 	}
-	
+
 }
 // char	*ft_substr(char const *s, unsigned int start, size_t len)
 //mallocs
 
-int	is_valid_key(char *key)
+static int	is_valid_key(char *key)
 {
 	int	i;
-	
+
 	i = 0;
 	if (('a' <= key[i] && key[i] <= 'z')
 		|| ('A' <= key[i] && key[i] <= 'Z') || key[i] == '_')
@@ -87,7 +63,31 @@ int	is_valid_key(char *key)
 	return (1);
 }
 
-void	print_export_sorted()
+static void	print_export_sorted()
 {
 	printf("oops, still need to finish this sorting function\n");
+}
+
+int	bi_export(t_env *env, char **args)
+{
+	int				i;
+	t_export_par	*var;
+
+	if (!args[1])
+	{
+		print_export_sorted();
+		return (0);
+	}
+	var = NULL;
+	i = 1;
+	while(args[i])
+	{
+		split_key(args[i], var);
+		if (is_valid_key(var->key))
+			env->set_pair(env, var->key, var->value);
+		else
+			printf("minishell: export: '%s': not a valid identifier\n", args[i]);
+		i++;
+	}
+	return (0);
 }

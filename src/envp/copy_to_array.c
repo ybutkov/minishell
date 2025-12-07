@@ -3,27 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   copy_to_array.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:30:17 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 19:43:29 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/07 02:34:57 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "envp_copy.h"
 
-char	**copying_back(t_env *envp)
+char	**copying_back(t_env *env)
 {
-	int		len;
-	char	**array;
-	t_env	*node;
-	int		i;
+	int			len;
+	char		**array;
+	t_env_pair	*node;
+	int			i;
 
-	len = length_of_list(envp);
+	len = env->amount_vars(env);
 	array = malloc(sizeof(char *) * (len + 1));
 	if (!array)
 		return (NULL);
-	node = envp;
+	node = env->head;
 	i = 0;
 	while (node)
 	{
@@ -37,13 +37,13 @@ char	**copying_back(t_env *envp)
 	return (array);
 }
 
-char	*create_line(t_env *node)
+char	*create_line(t_env_pair *node)
 {
 	int		linelen;
 	char	*line;
 	int		len_key;
 	int		len_value;
-	
+
 	if (!node->key)
 		return (NULL);
 	if (!node->value)
@@ -63,13 +63,13 @@ char	*create_line(t_env *node)
 	return (line);
 }
 
-int		length_of_list(t_env *envp)
+int	length_of_list(t_env *env)
 {
-	int		i;
-	t_env	*node;
-	
+	int			i;
+	t_env_pair	*node;
+
 	i = 0;
-	node = envp;
+	node = env->head;
 	while (node != NULL)
 	{
 		node = node->next;

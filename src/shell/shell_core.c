@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:47:26 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/03 23:00:17 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 14:21:30 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ static void	clear_shell(t_shell *shell)
 		shell->ast->free(shell->ast, free_shell_node_bridge);
 		shell->ast = NULL;
 	}
+	shell->ast = create_ast_tree();
 }
 
 // static int	execute_shell(t_shell *shell)

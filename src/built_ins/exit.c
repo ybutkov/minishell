@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 19:33:37 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/02 17:37:12 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/07 03:12:56 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,23 @@
 
 #include "builtin_internal.h"
 
+static int	is_good_numeric(char *string)
+{
+	int	i;
+
+	i = 0;
+	if (string[i] == '+' || string[i] == '-')
+		i++;
+	if (string[i] == '\0')
+		return (0);
+	while(string[i])
+	{
+		if (!ft_isdigit(string[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int	bi_exit(t_shell *shell, char **args)
 {
@@ -44,22 +61,4 @@ int	bi_exit(t_shell *shell, char **args)
 	else
 	// check for atoi overflows?
 		exit(ft_atoi(args[1]));
-}
-
-int	is_good_numeric(char *string)
-{
-	int	i;
-
-	i = 0;
-	if (string[i] == '+' || string[i] == '-')
-		i++;
-	if (string[i] == '\0')
-		return (0);
-	while(string[i])
-	{
-		if (!ft_isdigit(string[i]))
-			return (0);
-		i++;
-	}
-	return (1);
 }

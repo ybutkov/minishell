@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:25:11 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/22 13:02:15 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 01:29:18 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define SHELL_NODE_H
 
 # include "libft.h"
+# include "envp_copy.h"
 
 typedef enum e_node_type
 {
@@ -40,6 +41,7 @@ typedef enum e_redir_type
 typedef struct s_ctx
 {
 	char			**envp;
+	t_env			*env;
 	int				last_exit_status;
 
 	void			(*free_ctx)(struct s_ctx *ctx);

@@ -6,12 +6,13 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 18:16:25 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/09 19:20:22 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 03:25:39 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
 #include "shell_utils.h"
+#include "envp_copy.h"
 
 static void	free_ctx_content(t_ctx *ctx)
 {
@@ -53,6 +54,8 @@ t_ctx	*create_ctx(char **envp)
 	if (!ctx)
 		return (NULL);
 	ctx->envp = apply_func_to_array(envp, ft_strdup);
+	ctx->env = create_env();
+	ctx->env->copying(ctx->env, envp);
 	ctx->last_exit_status = 0;
 	ctx->free_ctx = free_ctx_content;
 	return (ctx);
