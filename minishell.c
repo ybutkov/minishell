@@ -6,12 +6,13 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 14:14:02 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 14:35:42 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "token_fixtures.h"
 #include "shell.h"
+#include "shell_node.h"
 #include "shell_utils.h"
 #include "printers.h"
 #include <errno.h>
@@ -103,6 +104,21 @@ int	check_for_echo_$(t_token *tokens, int exit_status)
 	return (0);
 }
 
+void test_env(char **envp)
+{
+	t_ctx *ctx = create_ctx(envp);
+	t_env *env = ctx->env;
+	char *str = env->get_value(env, "LANG");
+	printf("LANG=%s\n", str);
+	env->set_pair(env, "HHH", "value");
+	str = env->get_value(env, "HHH");
+	printf("HHH=%s\n", str);
+	env->remove_pair(env, "HHH");
+	str = env->get_value(env, "HHH");
+	printf("HHH=%s\n", str);
+
+	exit (0);
+}
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -126,9 +142,11 @@ int	main(int argc, char **argv, char **envp)
 		is_print = 4;
 	else if (argc > 1 && argv[1][0] == '5')
 		is_print = 5;
+	else if (argc > 1 && argv[1][0] == '6')
+		is_print = 6;
 
-
-
+	if (is_print == 6)
+		test_env(envp);
 	// ( echo foo ; echo bar ) > out | ls -la
 	if (is_print == 5)
 		return (test_shells(envp, 1), 0);
@@ -154,7 +172,7 @@ int	main(int argc, char **argv, char **envp)
 			shell->clear(shell);
 			continue ;
 		}
-		
+
 		shell->collect_heredoc(shell);
 		shell->execute(shell);
 		clear_tmp_folder(get_file_n(0));

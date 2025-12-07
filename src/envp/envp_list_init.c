@@ -22,7 +22,7 @@ int	remove_pair(t_env *env, char *key)
 		return (0);
 	cur = env->head;
 	prev = NULL;
-	while (cur->next != NULL)
+	while (cur != NULL)
 	{
 		if (ft_strcmp(cur->key, key) == 0)
 		{
@@ -34,7 +34,7 @@ int	remove_pair(t_env *env, char *key)
 			if (cur->value)
 				free(cur->value);
 			free(cur);
-			return (1); //success
+			return (1);
 		}
 		prev = cur;
 		cur = cur->next;
