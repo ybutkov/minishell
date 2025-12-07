@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 03:14:56 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/07 15:01:46 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,7 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 
 // void	assign_quoted_pieces(char quote, t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 // {
-//     pi->i++;  // Skip opening quote
+//     pi->i++; 
     
 //     if (quote == '\'')
 //     {
@@ -129,17 +129,14 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 //             pi->i++;
 //         return;
 //     }
-    
-//     // Double quotes: loop until closing "
+
 //     while (t->value[pi->i] != '"' && t->value[pi->i] != '\0')
 //     {
 //         if (t->value[pi->i] == '$')
 //         {
-//             assign_env_wild_pieces(l, t, pi);  // Reuse existing function
+//             assign_env_wild_pieces(l, t, pi); 
 //             continue;
 //         }
-        
-//         // Regular content
 //         pi->cur_start = pi->i;
 //         while (t->value[pi->i] != '$' && t->value[pi->i] != '"' 
 //                 && t->value[pi->i] != '\0')
