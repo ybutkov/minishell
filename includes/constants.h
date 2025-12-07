@@ -6,13 +6,15 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 15:42:01 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 18:05:22 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CONSTANTS_H
 # define CONSTANTS_H
 
+# define HANDLE_ERROR_NULL NULL
+# define HANDLE_ERROR_MINUS_ONE -1
 # define OK 1
 # define ERROR 0
 # define EXIT_CMD_NOT_FOUND 127

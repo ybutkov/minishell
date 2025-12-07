@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 14:35:42 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 19:29:22 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,7 @@ int	main(int argc, char **argv, char **envp)
 	// 3 - Print both
 	// 4 - Print both without execution shell
 	// 5 - run test_shell
+	// 6 - test env
 	is_print = 0;
 	if (argc > 1 && argv[1][0] == '1')
 		is_print = 1;
@@ -156,7 +157,7 @@ int	main(int argc, char **argv, char **envp)
 	{
 		t_token *tokens = read_and_lexicalize();
 		if (is_print == 1 || is_print == 3 || is_print == 4)
-			print_tokens_brief_once(tokens);
+			print_tokens_brief_once(tokens, shell->ctx->env);
 
 		if (!tokens)
 			break ;

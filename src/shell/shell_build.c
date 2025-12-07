@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 23:44:01 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 19:10:59 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,63 +274,66 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 }
 
 
+//----------------------------------------------------------------------
+/*
+t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
+		t_token *end_tkn)
+{
+	t_cmd	*cmd;
+	char	**argv;
+	char	*path;
+	t_token	*curr_tkn;
+	int		total_args;
+	char	**expanded_args;
+	int		i;
+	t_list	*node;
+	t_list 	*arg_list;
 
-// t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
-// 		t_token *end_tkn)
-// {
-// 	t_cmd	*cmd;
-// 	char	**argv;
-// 	char	*path;
-// 	t_token	*curr_tkn;
-// 	int		total_args;
-// 	char	**expanded_args;
-// 	int		i;
-// 	t_list	*node;
-// 	t_list 	*arg_list;
-
-// 	arg_list = NULL;
-// 	total_args = 0;
-// 	cmd = create_cmd(NULL, NULL);
-// 	if (collect_redirs(cmd, &start_tkn, &end_tkn) == ERROR)
-// 		return (NULL);
-// 	curr_tkn = start_tkn;
-// 	while (curr_tkn != end_tkn && curr_tkn->type != TOKEN_END)
-// 	{
-// 		if (curr_tkn->pieces && has_expandable(curr_tkn))
-// 		{
-// 			expanded_args = expand_and_split_token(curr_tkn, shell->ctx->envp,
-// 					shell->ctx->last_exit_status);
-// 			i = 0;
-// 			while (expanded_args[i])
-// 			{
-// 				ft_lstadd_back(&arg_list, ft_lstnew(expanded_args[i]));
-// 				total_args++;
-// 				i++;
-// 			}
-// 			free(expanded_args);
-// 		}
-// 		else
-// 		{
-// 			ft_lstadd_back(&arg_list, ft_lstnew(ft_strdup(curr_tkn->value)));
-// 			total_args++;
-// 		}
-// 		curr_tkn = curr_tkn->next;
-// 	}
-// 	argv = malloc(sizeof(char *) * (total_args + 1));
-// 	node = arg_list;
-// 	i = 0;
-// 	while (node)
-// 	{
-// 		argv[i++] = (char *)node->content;
-// 		node = node->next;
-// 	}
-// 	argv[i] = NULL;
-// 	ft_lstclear(&arg_list, NULL);
-// 	path = get_cmd_path(argv[0], shell->ctx->envp);
-// 	cmd->argv = argv;
-// 	cmd->path = path;
-// 	return (cmd);
-// }
+	arg_list = NULL;
+	total_args = 0;
+	cmd = create_cmd(NULL, NULL);
+	if (collect_redirs(cmd, &start_tkn, &end_tkn) == ERROR)
+		return (NULL);
+	curr_tkn = start_tkn;
+	while (curr_tkn != end_tkn && curr_tkn->type != TOKEN_END)
+	{
+		if (curr_tkn->pieces && has_expandable(curr_tkn))
+		{
+			expanded_args = expand_and_split_token(curr_tkn, shell->ctx->envp,
+					shell->ctx->last_exit_status);
+			i = 0;
+			while (expanded_args[i])
+			{
+				ft_lstadd_back(&arg_list, ft_lstnew(expanded_args[i]));
+				total_args++;
+				i++;
+			}
+			free(expanded_args);
+		}
+		else
+		{
+			ft_lstadd_back(&arg_list, ft_lstnew(ft_strdup(curr_tkn->value)));
+			total_args++;
+		}
+		curr_tkn = curr_tkn->next;
+	}
+	argv = malloc(sizeof(char *) * (total_args + 1));
+	node = arg_list;
+	i = 0;
+	while (node)
+	{
+		argv[i++] = (char *)node->content;
+		node = node->next;
+	}
+	argv[i] = NULL;
+	ft_lstclear(&arg_list, NULL);
+	path = get_cmd_path(argv[0], shell->ctx->envp);
+	cmd->argv = argv;
+	cmd->path = path;
+	return (cmd);
+}
+*/
+//--------------------------------------------------------------
 
 t_cmd	*create_cmd_from_tokens(t_shell *shell, t_token *start_tkn,
 		t_token *end_tkn)
