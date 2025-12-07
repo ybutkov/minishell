@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 16:26:58 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 01:37:39 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 03:13:50 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,20 @@
 // with option -n
 
 #include "builtin_internal.h"
+
+static int	only_ns(char *string)
+{
+	int	i;
+
+	i = 1;
+	while (string[i])
+	{
+		if (string[i] != 'n')
+			return (0);
+		i++;
+	}
+	return (1);
+}
 
 int	bi_echo(char **args)
 {
@@ -39,20 +53,6 @@ int	bi_echo(char **args)
 	}
 	if (flag == 0)
 		write(1, "\n", 1);
-	return (1);
-}
-
-int	only_ns(char *string)
-{
-	int	i;
-
-	i = 1;
-	while (string[i])
-	{
-		if (string[i] != 'n')
-			return (0);
-		i++;
-	}
 	return (1);
 }
 

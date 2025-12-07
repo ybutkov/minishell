@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:47:16 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 01:09:10 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 03:19:39 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,28 +32,19 @@ typedef int	(*t_builtin_wrapper)(t_cmd *cmd, t_shell *shell, int in_fd,
 //wrappers
 t_builtin_wrapper	bi_function(int bi_func);
 
-//echo
-int		bi_echo(char **args);
-int		only_ns(char *string);
-//cd
-int		bi_cd(t_env *envp, char **args);
-void	set_env_par(t_env *envp, char *key, char *value);
-char	*set_target(t_env *envp, char **args);
-char	*env_value(t_env *envp, char *target);
-//pwd
-int		bi_pwd();
-//export
-int		bi_export(t_env *envp, char **args);
-void	split_key(char *line, t_export_par *var);
-int		is_valid_key(char *key);
-void	print_export_sorted();
-//unset
-int		bi_unset(t_env **envp, char **args);
-int		remove_var(t_env **envp, char *key);
-//env
-int		bi_env(t_env *envp);
-//exit
-int		bi_exit(t_shell *shell, char **args);
-int		is_good_numeric(char *string);
+// echo
+int			bi_echo(char **args);
+// cd
+int			bi_cd(t_env *envp, char **args);
+// pwd
+int			bi_pwd(void);
+// export
+int			bi_export(t_env *envp, char **args);
+// unset
+int			bi_unset(t_env *env, char **args);
+// env
+int			bi_env(t_env *envp);
+// exit
+int			bi_exit(t_shell *shell, char **args);
 
 #endif

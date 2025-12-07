@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 00:48:08 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 01:30:22 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 03:52:25 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int	wrapper_unset(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 {
 	(void)in_fd;
 	(void)out_fd;
-	return (bi_unset(&shell->ctx->env, cmd->argv));
+	return (bi_unset(shell->ctx->env, cmd->argv));
 }
 
 t_builtin_wrapper bi_function(int bi_func)
@@ -89,6 +89,19 @@ t_builtin_wrapper bi_function(int bi_func)
 int	builtin(int bi_func, t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 {
 	t_builtin_wrapper	wrapper;
+
+	if (in_fd != STDIN_FILENO)
+	{
+		dup2(in_fd, STDIN_FILENO);
+		close(in_fd);
+	}
+	if (out_fd != STDOUT_FILENO)
+	{
+		dup2(out_fd, STDOUT_FILENO);
+		close(out_fd);
+	}
+
+	// add collect_redir
 
 	wrapper = bi_function(bi_func);
 	if (wrapper)
