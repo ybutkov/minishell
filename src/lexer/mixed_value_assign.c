@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 15:01:46 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/07 20:14:13 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ void	assign_s_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 	pi->cur_end = pi->i - 1;
 	if (pi->cur_end > pi->cur_start)
 		new_piece(t, pi, l, SINGLE_Q);
+	pi->i++;
 }
 
 void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
@@ -180,7 +181,8 @@ void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_statu
 void	assign_env_wild_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 {
 	pi->cur_start = pi->i;
-	while (!is_space_or_quotes(t->value[pi->i]) && t->value[pi->i] != '\0')
+	pi->i++;
+	while (!is_space_or_quotes(t->value[pi->i]) && t->value[pi->i] != '\0' && t->value[pi->i] != '$')
 		pi->i++;
 	pi->cur_end = pi->i - 1;
 	if (pi->q_stat == STILL_DOUBLE)
