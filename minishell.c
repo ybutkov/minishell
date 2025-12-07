@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 03:48:41 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 14:14:02 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,20 +108,37 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_shell	*shell;
 	int		exit_status;
+	int		is_print;
 
-	(void)argc;
-	(void)argv;
-	(void)envp;
+	// 1 - Print tokens
+	// 2 - Print shell_tree
+	// 3 - Print both
+	// 4 - Print both without execution shell
+	// 5 - run test_shell
+	is_print = 0;
+	if (argc > 1 && argv[1][0] == '1')
+		is_print = 1;
+	else if (argc > 1 && argv[1][0] == '2')
+		is_print = 2;
+	else if (argc > 1 && argv[1][0] == '3')
+		is_print = 3;
+	else if (argc > 1 && argv[1][0] == '4')
+		is_print = 4;
+	else if (argc > 1 && argv[1][0] == '5')
+		is_print = 5;
 
-	// ( echo foo ; echo bar ) | ls -la
-	// test_shells(envp, 1); return (0);
+
+
+	// ( echo foo ; echo bar ) > out | ls -la
+	if (is_print == 5)
+		return (test_shells(envp, 1), 0);
 	shell = create_shell(envp);
 	exit_status = 0;
 	while (1)
 	{
 		t_token *tokens = read_and_lexicalize();
-		// write(1, "?", 1);
-		// print_tokens_brief_once(tokens);
+		if (is_print == 1 || is_print == 3 || is_print == 4)
+			print_tokens_brief_once(tokens);
 
 		if (!tokens)
 			break ;
@@ -130,9 +147,14 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		shell->build(shell, tokens);
 
-		// print_shell_tree(shell); getchar();
-		// shell->clear(shell); continue ;
-
+		if (is_print == 2 || is_print == 3 || is_print == 4)
+			print_shell_tree(shell);
+		if (is_print == 4)
+		{
+			shell->clear(shell);
+			continue ;
+		}
+		
 		shell->collect_heredoc(shell);
 		shell->execute(shell);
 		clear_tmp_folder(get_file_n(0));

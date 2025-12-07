@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 00:48:08 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 03:52:25 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 03:56:26 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int	builtin(int bi_func, t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 
 	wrapper = bi_function(bi_func);
 	if (wrapper)
-		return (wrapper(cmd, shell, in_fd, out_fd));
+		return (wrapper(cmd, shell, in_fd, out_fd)); // STDIN_FILENO, STDOUT_FILENO ??
 	return (1);
 }
 
