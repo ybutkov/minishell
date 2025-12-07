@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 19:10:59 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 22:10:05 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,6 +231,7 @@ int	collect_redirs(t_cmd *cmd, t_token **start_tkn, t_token **end_tkn)
 	return (OK);
 }
 
+/*
 t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 		t_token *end_tkn)
 {
@@ -272,10 +273,10 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 	cmd->path = path;
 	return (cmd);
 }
-
+*/
 
 //----------------------------------------------------------------------
-/*
+
 t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 		t_token *end_tkn)
 {
@@ -295,12 +296,17 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 	if (collect_redirs(cmd, &start_tkn, &end_tkn) == ERROR)
 		return (NULL);
 	curr_tkn = start_tkn;
-	while (curr_tkn != end_tkn && curr_tkn->type != TOKEN_END)
+	while (curr_tkn && curr_tkn->type != TOKEN_END)
 	{
-		if (curr_tkn->pieces && has_expandable(curr_tkn))
+		if (curr_tkn->pieces)
 		{
-			expanded_args = expand_and_split_token(curr_tkn, shell->ctx->envp,
+			expanded_args = expand_and_split_token(curr_tkn, shell->ctx->env,
 					shell->ctx->last_exit_status);
+			if (!expanded_args)
+			{
+				ft_lstclear(&arg_list, free);
+				return (NULL);
+			}
 			i = 0;
 			while (expanded_args[i])
 			{
@@ -315,9 +321,16 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 			ft_lstadd_back(&arg_list, ft_lstnew(ft_strdup(curr_tkn->value)));
 			total_args++;
 		}
+		if (curr_tkn == end_tkn)
+			break ;
 		curr_tkn = curr_tkn->next;
 	}
 	argv = malloc(sizeof(char *) * (total_args + 1));
+	if (!argv)
+	{
+		ft_lstclear(&arg_list, free);
+		return (NULL);
+	}
 	node = arg_list;
 	i = 0;
 	while (node)
@@ -332,7 +345,7 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 	cmd->path = path;
 	return (cmd);
 }
-*/
+
 //--------------------------------------------------------------
 
 t_cmd	*create_cmd_from_tokens(t_shell *shell, t_token *start_tkn,

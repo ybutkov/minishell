@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 19:36:34 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 21:23:21 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,24 @@ char	*expand_piece(t_piece *piece, t_env *env, int last_exit_status)
 	char	*result;
 	char	*key;
 	char	*value;
+	int		need_free;
 
 	result = ft_strdup("");
 	if (piece->text[0] == '$')
 	{
 		key = piece->text + 1;
-		// Handle $?
-		// $$ and others ???
+		need_free = 0;
 		if (ft_strcmp(key, "?") == 0)
+		{
 			value = ft_itoa(last_exit_status);
+			need_free = 1;
+		}
 		else
 			value = env->get_value(env, key);
 		if (ft_strappend(&result, value) != 1)
 			return (HANDLE_ERROR_NULL);
+		if (need_free)
+			free(value);
 	}
 	else
 	{
@@ -41,7 +46,7 @@ char	*expand_piece(t_piece *piece, t_env *env, int last_exit_status)
 	return (result);
 }
 
-int	add_list_array(t_list *res_list, char **elems)
+int	add_list_array(t_list **res_list, char **elems)
 {
 	t_list	*new;
 	int		n;
@@ -52,7 +57,7 @@ int	add_list_array(t_list *res_list, char **elems)
 		new = ft_lstnew(elems[n]);
 		if (new == NULL)
 			return (HANDLE_ERROR_MINUS_ONE);
-		ft_lstadd_back(&res_list, new);
+		ft_lstadd_back(res_list, new);
 		n++;
 	}
 	return (n);
@@ -77,13 +82,14 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 			if (piece->quotes == NO_QUOTES)
 			{
 				words = ft_split(expanded, ' ');
-				amount = add_list_array(res_list, words);
+				amount = add_list_array(&res_list, words);
+				free(words);
 				if (amount == -1)
 					return (HANDLE_ERROR_NULL);
 			}
 			else
 			{
-				ft_lstadd_back(&res_list, ft_lstnew(expanded));
+				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
 			}
 			free(expanded);
 		}
