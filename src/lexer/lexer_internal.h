@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 22:40:14 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/07 03:11:56 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,8 @@ void	check_mixed(t_token *tok);
 
 //mixed token values
 void	mixed_value_assign(t_lex_inf *l, t_token *t);
-void	assign_quoted_pieces(char quote, t_lex_inf *l, t_token *t, t_pieces_internal *pi);
+void	assign_s_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi);
+void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi);
 void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_status q);
 void	decide_on_extra(t_piece *p);
 void	decide_on_extra_in_token(t_token *t);
@@ -94,4 +95,3 @@ int		is_special(t_lex_inf *lex);
 int		is_space_or_quotes(char c);
 
 #endif
-
