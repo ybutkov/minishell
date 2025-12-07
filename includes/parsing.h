@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 20:01:34 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/07 02:59:06 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 # define PARCING_H
 
 # define SINGLE_QUOTE '\''
-# define DOUNLE_QUOTE '\"'
+# define DOUBLE_QUOTE '\"'
 # define QUOTES "\'\""
 # define SPACES " \t\n\r\v\f"
 # define SPECIAL_CHARS "<>|&"
