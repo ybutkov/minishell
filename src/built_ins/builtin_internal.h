@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_internal.h                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:47:16 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/04 16:27:53 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/07 01:09:10 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,12 @@ typedef struct s_export_par
 	char	*key;
 	char	*value;
 }	t_export_par;
+
+typedef int	(*t_builtin_wrapper)(t_cmd *cmd, t_shell *shell, int in_fd,
+	int out_fd);
+
+//wrappers
+t_builtin_wrapper	bi_function(int bi_func);
 
 //echo
 int		bi_echo(char **args);

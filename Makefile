@@ -65,6 +65,8 @@ C_SHELL_FILES += \
 	lexer/tokenizer.c \
 	lexer/utils.c \
 	lexer/read_line.c \
+
+C_SHELL_FILES += \
 	built_ins/cd.c \
 	built_ins/echo.c \
 	built_ins/env.c \
@@ -72,6 +74,9 @@ C_SHELL_FILES += \
 	built_ins/export.c \
 	built_ins/pwd.c \
 	built_ins/unset.c \
+	built_ins/bi_wrapper.c
+
+C_SHELL_FILES += \
 	envp/envp_copy.c \
 	envp/copy_to_array.c \
 	envp/envp_list_init.c

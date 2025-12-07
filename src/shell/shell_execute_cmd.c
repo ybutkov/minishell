@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/03 23:41:08 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 02:00:04 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 #include "libft.h"
 #include "shell.h"
 #include "utils.h"
+#include "builtin.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
@@ -65,48 +66,41 @@ static void	apply_redirect(t_cmd *cmd, t_shell *shell)
 	}
 }
 
-int	builtin(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
-{
-	// spy
-	(void)cmd;
-	(void)shell;
-	(void)in_fd;
-	(void)out_fd;
-	printf("builtin %s\n", cmd->argv[0]);
-	return (0);
-}
-
 char	**get_built_in_list(void)
 {
-	static char *builtins[8];
+	static char	*builtins[8];
+	static int	initialized;
 
-	builtins[0] = "echo";
-	builtins[1] = "cd";
-	builtins[2] = "pwd";
-	builtins[3] = "export";
-	builtins[4] = "unset";
-	builtins[5] = "env";
-	builtins[6] = "exit";
-	builtins[7] = NULL;
+	if (!initialized)
+	{
+		builtins[0] = "echo";
+		builtins[1] = "cd";
+		builtins[2] = "pwd";
+		builtins[3] = "export";
+		builtins[4] = "unset";
+		builtins[5] = "env";
+		builtins[6] = "exit";
+		builtins[7] = NULL;
+	}
 	return (builtins);
 }
 
-int	is_builtin(char *command)
+int	builtin_func(char *command)
 {
-	char	**built_in;
+	char	**built_ins;
+	int		i;
 
 	if (!command)
-		return (0);
-	//
-	return (0);
-	built_in = get_built_in_list();
-	while (*built_in)
+		return (-1);
+	built_ins = get_built_in_list();
+	i = 0;
+	while (built_ins[i])
 	{
-		if (ft_strcmp(command, *built_in) == 0)
-			return (1);
-		built_in++;
+		if (ft_strcmp(command, built_ins[i]) == 0)
+			return (i);
+		i++;
 	}
-	return (0);
+	return (-1);
 }
 
 // void	dup2_and_close(int oldfd, int newfd)
@@ -193,7 +187,7 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 // 		return ;
 // 	redir = cmd->redirs;
 // 	while (redir)
-// 	{
+// 	{wrapper
 // 		redirect = (t_redir *)redir->content;
 // 		if (redirect->type == REDIR_HEREDOC)
 // 		{
@@ -205,8 +199,11 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 
 int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 {
-	if (is_builtin(cmd->argv[0]))
-		return (builtin(cmd, shell, input_fd, output_fd));
+	int	bi_func;
+
+	bi_func = builtin_func(cmd->argv[0]);
+	if (bi_func != -1)
+		return (builtin(bi_func, cmd, shell, input_fd, output_fd));
 	// check for single command. execute in sep fork
 	if (input_fd == STDIN_FILENO && output_fd == STDOUT_FILENO)
 		return (execute_single_in_fork(cmd, shell, input_fd, output_fd));

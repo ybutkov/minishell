@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 16:35:25 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/02 12:49:13 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/07 01:34:16 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int	bi_env(t_env *envp)
 {
 	t_env *current;
-	
+
 	if (!envp)
 		return (1);
 	current = envp;

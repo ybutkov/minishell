@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 16:26:58 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/01 22:18:43 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/07 01:37:39 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,15 +19,14 @@
 int	bi_echo(char **args)
 {
 	int	i;
-	int flag;
+	int	flag;
 	int	len;
-	
+
 	flag = 0;
-	i = 1; //skipping echo
+	i = 1; // skipping echo
 	while (args[i] != NULL)
 	{
-		if (ft_strncmp(args[i], "-n", 2) == 0
-			&& only_ns(args[i]))
+		if (ft_strncmp(args[i], "-n", 2) == 0 && only_ns(args[i]))
 			flag = 1;
 		else
 		{
@@ -45,14 +44,14 @@ int	bi_echo(char **args)
 
 int	only_ns(char *string)
 {
-	int i;
-	
+	int	i;
+
 	i = 1;
-	while(string[i])
+	while (string[i])
 	{
 		if (string[i] != 'n')
 			return (0);
-		i++; 
+		i++;
 	}
 	return (1);
 }
