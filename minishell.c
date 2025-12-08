@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 14:35:42 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/08 13:14:57 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "shell_utils.h"
 #include "printers.h"
 #include <errno.h>
+#include "signals.h"
 
 int	test_shell(t_token *tokens, char **envp, char *test_comm, int isprint)
 {
@@ -154,6 +155,7 @@ int	main(int argc, char **argv, char **envp)
 	exit_status = 0;
 	while (1)
 	{
+		set_signals_parent_interactive();
 		t_token *tokens = read_and_lexicalize();
 		if (is_print == 1 || is_print == 3 || is_print == 4)
 			print_tokens_brief_once(tokens);
