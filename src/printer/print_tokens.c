@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/05 20:36:33 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 23:57:55 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 21:36:00 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,14 @@ static const char	*get_token_type_name(t_token_type type)
 	return ("UNKNOWN");
 }
 
-void	print_tokens_brief_once(t_token *toks)
+void	print_tokens_brief_once(t_token *toks, t_env *env)
 {
 	t_token	*t;
 	t_piece	*p;
 	int		ti;
 	int		pi;
 
+	(void)env;
 	get_token_type_name(5);
 	if (!toks)
 	{
@@ -58,6 +59,16 @@ void	print_tokens_brief_once(t_token *toks)
 			t->value ? t->value : "(null)");
 		if (!t->pieces)
 			continue ;
+		char **words = expand_and_split_token(t, env, 0);
+		printf("%s", "-->");
+		for (int i = 0; words[i]; i++)
+		{
+			if (i != 0)
+				printf(",");
+			printf("%s", words[i]);
+		}
+		printf("%s", "<--\n");
+
 		pi = 0;
 		for (p = t->pieces; p; p = p->next, ++pi)
 			printf(" piece[%d] q=%d $=%d *=%d text='%s'\n", pi, (int)p->quotes,

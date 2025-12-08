@@ -52,6 +52,7 @@ C_SHELL_FILES += \
 	error/output_error.c \
 	utils/free_str_array.c \
 	utils/heredoc_file_util.c \
+	utils/list_to_array.c \
 	test/token_fixtures.c \
 	test/get_cmd_path.c \
 	printer/print_shell.c \
@@ -80,11 +81,9 @@ C_SHELL_FILES += \
 	envp/envp_copy.c \
 	envp/copy_to_array.c \
 	envp/envp_list_init.c
-# 	parcer/parcer.c \
-# 	parcer/get_cmd_path.c \
 
-
-
+C_SHELL_FILES += \
+	expansion/expansion.c
 
 C_FIlES = $(addprefix $(SRC)/, $(C_SHELL_FILES))
 C_OBJ_FIlES =	$(C_FIlES:%.c=$(BUILD_DIR)/%.o)

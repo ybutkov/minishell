@@ -6,71 +6,100 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 22:46:29 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/07 21:23:21 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "envp_copy.h"
 #include "parsing.h"
+#include "constants.h"
 
-char	*expand_piece(t_piece *piece, t_env *envp, int last_exit_status)
+char	*expand_piece(t_piece *piece, t_env *env, int last_exit_status)
 {
 	char	*result;
-	int		i;
-	char	*var_value;
+	char	*key;
+	char	*value;
+	int		need_free;
 
 	result = ft_strdup("");
-	i = 0;
-	while (piece->text[i])
+	if (piece->text[0] == '$')
 	{
-		if (piece->text[i] == '$')
+		key = piece->text + 1;
+		need_free = 0;
+		if (ft_strcmp(key, "?") == 0)
 		{
-			var_value = expand_variable(piece->text, &i, envp,
-					last_exit_status);
-			// append var_value to result
+			value = ft_itoa(last_exit_status);
+			need_free = 1;
 		}
 		else
-		{
-			// append regular character to result
-			i++;
-		}
+			value = env->get_value(env, key);
+		if (ft_strappend(&result, value) != 1)
+			return (HANDLE_ERROR_NULL);
+		if (need_free)
+			free(value);
+	}
+	else
+	{
+		if (ft_strappend(&result, piece->text) != 1)
+			return (HANDLE_ERROR_NULL);
 	}
 	return (result);
 }
 
-char **expand_and_split_token(t_token *token, t_env *envp, int last_exit_status)
+int	add_list_array(t_list **res_list, char **elems)
+{
+	t_list	*new;
+	int		n;
+
+	n = 0;
+	while (elems[n])
+	{
+		new = ft_lstnew(elems[n]);
+		if (new == NULL)
+			return (HANDLE_ERROR_MINUS_ONE);
+		ft_lstadd_back(res_list, new);
+		n++;
+	}
+	return (n);
+}
+
+char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 {
 	t_piece	*piece;
-	char	**result_args;
-	int		arg_count;
+	t_list	*res_list;
+	int		amount;
+	char	**result;
 	char	*expanded;
 	char	**words;
 
-	result_args = NULL;
-	arg_count = 0;
+	res_list = NULL;
 	piece = token->pieces;
 	while (piece)
 	{
 		if (piece->has_env_v && piece->quotes != SINGLE_Q)
 		{
-			expanded = expand_piece(piece, envp, last_exit_status);
+			expanded = expand_piece(piece, env, last_exit_status);
 			if (piece->quotes == NO_QUOTES)
 			{
 				words = ft_split(expanded, ' ');
-			    result_args = append_words(result_args, words, &arg_count);
+				amount = add_list_array(&res_list, words);
+				free(words);
+				if (amount == -1)
+					return (HANDLE_ERROR_NULL);
 			}
 			else
 			{
-				result_args = append_single(result_args, expanded, &arg_count);
+				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
 			}
 			free(expanded);
 		}
 		else
 		{
-		    result_args = append_single(result_args, piece->text, &arg_count);
+			ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(piece->text)));
 		}
 		piece = piece->next;
 	}
-
-    return (result_args);
+	result = list_to_array(res_list);
+	// ft_lstclear(&res_list, free);
+	return (result);
 }
