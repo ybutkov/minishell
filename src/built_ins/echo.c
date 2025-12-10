@@ -53,7 +53,7 @@ int	bi_echo(char **args)
 	}
 	if (flag == 0)
 		write(1, "\n", 1);
-	return (1);
+	return (0);
 }
 
 // int main()

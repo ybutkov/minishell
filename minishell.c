@@ -183,5 +183,5 @@ int	main(int argc, char **argv, char **envp)
 		shell->clear(shell);
 	}
 	shell->free(shell);
-	return (0);
+	return (exit_status);
 }

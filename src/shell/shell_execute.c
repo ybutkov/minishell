@@ -30,22 +30,28 @@ void	close_fds(int fds[2])
 static int	execute_left(t_ast_node *node, t_shell *shell, int in_fd,
 		int pipe_fds[2])
 {
+	int	exit_status;
+
 	close(pipe_fds[0]);
+	exit_status = 0;
 	if (node)
-		execute_shell_node(node, shell, in_fd, pipe_fds[1]);
+		exit_status = execute_shell_node(node, shell, in_fd, pipe_fds[1]);
 	close(pipe_fds[1]);
 	shell->free(shell);
-	exit(EXIT_SUCCESS);
+	exit(exit_status);
 }
 
 static int	execute_right(t_ast_node *node, t_shell *shell, int pipe_fds[2], int out_fd)
 {
+	int	exit_status;
+
 	close(pipe_fds[1]);
+	exit_status = 0;
 	if (node)
-		execute_shell_node(node, shell, pipe_fds[0], out_fd);
+		exit_status = execute_shell_node(node, shell, pipe_fds[0], out_fd);
 	close(pipe_fds[0]);
 	shell->free(shell);
-	exit(EXIT_SUCCESS);
+	exit(exit_status);
 }
 
 int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
@@ -81,6 +87,8 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	close(pipe_fds[0]);
 	waitpid(pids[0], &status, 0);
 	waitpid(pids[1], &status, 0);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
 	return (status);
 }
 
