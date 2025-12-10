@@ -45,7 +45,6 @@ void	print_tokens_brief_once(t_token *toks, t_env *env)
 	int		ti;
 	int		pi;
 
-	(void)env;
 	get_token_type_name(5);
 	if (!toks)
 	{
@@ -57,9 +56,11 @@ void	print_tokens_brief_once(t_token *toks, t_env *env)
 	{
 		printf("Token[%2d]: %-20s '%s'\n", ti, get_token_type_name(t->type),
 			t->value ? t->value : "(null)");
-		if (!t->pieces)
+		if (!t->pieces || !env)
 			continue ;
 		char **words = expand_and_split_token(t, env, 0);
+		if (!words)
+			continue ;
 		printf("%s", "-->");
 		for (int i = 0; words[i]; i++)
 		{
@@ -68,6 +69,7 @@ void	print_tokens_brief_once(t_token *toks, t_env *env)
 			printf("%s", words[i]);
 		}
 		printf("%s", "<--\n");
+		free_str_array(words);
 
 		pi = 0;
 		for (p = t->pieces; p; p = p->next, ++pi)

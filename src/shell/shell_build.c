@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "constants.h"
+#include "libft.h"
 #include "parsing.h"
 #include "shell_internal.h"
 
@@ -316,13 +317,16 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 				return (NULL);
 			}
 			i = 0;
+			char *new_arg = ft_strdup("");
 			while (expanded_args[i])
 			{
-				ft_lstadd_back(&arg_list, ft_lstnew(expanded_args[i]));
-				total_args++;
+				ft_strappend(&new_arg, expanded_args[i]);
+				free(expanded_args[i]);
 				i++;
 			}
 			free(expanded_args);
+			total_args++;
+			ft_lstadd_back(&arg_list, ft_lstnew(new_arg));
 		}
 		else
 		{

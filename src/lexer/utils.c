@@ -65,6 +65,17 @@ void	token_init(t_token *tok)
 	tok->next = NULL;
 }
 
+void	init_token(t_token *tok, t_token_type type)
+{
+	tok->type = type;
+	tok->stat = NO_QUOTES;
+	tok->value = NULL;
+	tok->pieces = NULL;
+	tok->pieces_tail = NULL;
+	tok->prev = NULL;
+	tok->next = NULL;
+}
+
 void	type_of_parenthesis(t_token *tok)
 {
 	if (ft_strcmp(tok->value, "(") == 0)

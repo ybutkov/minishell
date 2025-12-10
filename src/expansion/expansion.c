@@ -81,11 +81,14 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 			expanded = expand_piece(piece, env, last_exit_status);
 			if (piece->quotes == NO_QUOTES)
 			{
-				words = ft_split(expanded, ' ');
-				amount = add_list_array(&res_list, words);
-				free(words);
-				if (amount == -1)
-					return (HANDLE_ERROR_NULL);
+				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
+				(void)words;
+				(void)amount;
+				// words = ft_split(expanded, ' ');
+				// amount = add_list_array(&res_list, words);
+				// free(words);
+				// if (amount == -1)
+				// 	return (HANDLE_ERROR_NULL);
 			}
 			else
 			{

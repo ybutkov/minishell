@@ -156,11 +156,13 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		t_token *tokens = read_and_lexicalize();
-		if (is_print == 1 || is_print == 3 || is_print == 4)
-			print_tokens_brief_once(tokens, shell->ctx->env);
-
+		
 		if (!tokens)
 			break ;
+		
+		if (is_print == 1 || is_print == 3 || is_print == 4)
+			print_tokens_brief_once(tokens, shell->ctx->env);
+		
 		// print_tokens_brief_once(tokens);
 		if (check_for_echo_$(tokens, exit_status) == 1)
 			continue ;

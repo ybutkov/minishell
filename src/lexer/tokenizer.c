@@ -159,11 +159,13 @@ void	end_token(t_lex_inf *lex)
 		lex->error_code = 2;
 		return ;
 	}
-	tok->type = TOKEN_END;
-	tok->value = NULL;
+	init_token(tok, TOKEN_END);
+	// tok->type = TOKEN_END;
+	// tok->value = NULL;
+	
 	if(lex->tail)
 		lex->tail->next = tok;
 	tok->prev = lex->tail;
 	lex->tail = tok;
-	tok->next = NULL;
+	// tok->next = NULL;
 }
