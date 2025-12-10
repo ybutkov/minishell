@@ -85,7 +85,9 @@ void	assign_env_wild_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi);
 int		cust_strchr(char c, char *str);
 void	decide_on_quotes(t_lex_inf *l, e_mix *q, char *quotes);
 void	initialize_pieces(t_pieces_internal *pieces);
+// change token_init with init_token or create_token
 void	token_init(t_token *tok);
+void	init_token(t_token *tok, t_token_type type);
 void	type_of_parenthesis(t_token *tok);
 
 //symbol identification

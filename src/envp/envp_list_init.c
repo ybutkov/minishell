@@ -46,9 +46,11 @@ void	set_env_pair(t_env *env, char *key, char *value)
 {
 	t_env_pair	*cur;
 	t_env_pair	*new;
+	t_env_pair	*last;
 
 	cur = env->head;
-	while (cur->next != NULL)
+	last = NULL;
+	while (cur != NULL)
 	{
 		if (ft_strcmp(cur->key, key) == 0)
 		{
@@ -56,6 +58,7 @@ void	set_env_pair(t_env *env, char *key, char *value)
 			cur->value = ft_strdup(value);
 			return ;
 		}
+		last = cur;
 		cur = cur->next;
 	}
 	//if doesn't exist yet
@@ -65,7 +68,10 @@ void	set_env_pair(t_env *env, char *key, char *value)
 	new->key = strdup(key);
 	new->value = strdup(value);
 	new->next = NULL;
-	cur->next = new;
+	if (last)
+		last->next = new;
+	else
+		env->head = new;
 }
 
 char	*get_value(t_env *env, char *key)
