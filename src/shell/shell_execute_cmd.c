@@ -212,24 +212,26 @@ int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 	if (bi_func != -1)
 		return (builtin(bi_func, cmd, shell, input_fd, output_fd));
 	// check for single command. execute in sep fork
-	if (input_fd == STDIN_FILENO && output_fd == STDOUT_FILENO)
-		return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
-	// apply_heredoc(cmd, shell);
-	if (input_fd != STDIN_FILENO)
-	{
-		dup2(input_fd, STDIN_FILENO);
-		close(input_fd);
-	}
-	if (output_fd != STDOUT_FILENO)
-	{
-		dup2(output_fd, STDOUT_FILENO);
-		close(output_fd);
-	}
-	apply_redirect(cmd, shell);
-	if (!cmd->path || access(cmd->path, X_OK) != 0)
-		output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
-			EXIT_CMD_NOT_FOUND);
-	execve(cmd->path, cmd->argv, shell->ctx->envp);
-	shell->free(shell);
-	exit(EXIT_FAILURE);
+	// if (input_fd == STDIN_FILENO && output_fd == STDOUT_FILENO)
+	// 	return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
+	// // apply_heredoc(cmd, shell);
+	// if (input_fd != STDIN_FILENO)
+	// {
+	// 	dup2(input_fd, STDIN_FILENO);
+	// 	close(input_fd);
+	// }
+	// if (output_fd != STDOUT_FILENO)
+	// {
+	// 	dup2(output_fd, STDOUT_FILENO);
+	// 	close(output_fd);
+	// }
+	// apply_redirect(cmd, shell);
+	// if (!cmd->path || access(cmd->path, X_OK) != 0)
+	// 	output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
+	// 		EXIT_CMD_NOT_FOUND);
+	// execve(cmd->path, cmd->argv, shell->ctx->envp);
+	// shell->free(shell);
+	// exit(EXIT_FAILURE);		
+	// Always execute external commands in a fork to avoid replacing the shell process
+	return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
 }

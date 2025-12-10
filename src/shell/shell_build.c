@@ -81,6 +81,7 @@ t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
 		int lvl)
 {
 	t_token			*curr_token;
+	t_token			*found_token;
 	t_token_type	lvl_start;
 	t_token_type	lvl_end;
 	char			is_subshell_opened;
@@ -103,31 +104,42 @@ t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
 	else
 		return (NULL);
 	curr_token = start_token;
+	found_token = NULL;
 	is_subshell_opened = 0;
 	while (curr_token != end_token)
 	{
 		if (curr_token && curr_token->type == TOKEN_LEFT_PAREN)
 		{
-			is_subshell_opened = 1;
+			is_subshell_opened += 1;
 			curr_token = curr_token->next;
 			continue ;
 		}
 		else if (is_subshell_opened && curr_token
 			&& curr_token->type == TOKEN_RIGHT_PAREN)
 		{
-			is_subshell_opened = 0;
+			is_subshell_opened -= 1;
 			curr_token = curr_token->next;
 			continue ;
 		}
 		if (!is_subshell_opened && curr_token && curr_token->type >= lvl_start
 			&& curr_token->type <= lvl_end)
-			return (curr_token);
+		{
+			if (lvl == 1)
+				found_token = curr_token;
+			else
+				return (curr_token);
+		}
 		curr_token = curr_token->next;
 	}
 	if (curr_token && curr_token == end_token && curr_token->type >= lvl_start
-		&& curr_token->type <= lvl_end)
-		return (curr_token);
-	return (NULL);
+		&& curr_token->type <= lvl_end && !is_subshell_opened)
+	{
+		if (lvl == 1)
+			found_token = curr_token;
+		else
+			return (curr_token);
+	}
+	return (found_token);
 }
 
 char	**parse_tokens_to_argv(t_token *start_tkn, t_token *end_tkn)
@@ -416,7 +428,7 @@ int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
 				end_tkn);
 		return (1);
 	}
-	if (start_tkn->type == TOKEN_LEFT_PAREN
+	if (lvl >= 3 && start_tkn->type == TOKEN_LEFT_PAREN
 		&& (end_tkn->type == TOKEN_RIGHT_PAREN))
 		return (create_node_for_subshell(shell, node, start_tkn, end_tkn));
 	return (0);

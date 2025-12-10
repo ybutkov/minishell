@@ -94,6 +94,7 @@ void	type_of_parenthesis(t_token *tok);
 
 //symbol identification
 int		is_whitespace(char c);
+int		is_all_whitespace(char *str);
 int		is_whitespace_or_special(char c);
 int		is_special(t_lex_inf *lex);
 int		is_space_or_quotes(char c);
