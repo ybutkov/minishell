@@ -364,9 +364,12 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 	}
 	argv[i] = NULL;
 	ft_lstclear(&arg_list, NULL);
-	path = get_cmd_path(argv[0], shell->ctx->envp);
-	cmd->argv = argv;
-	cmd->path = path;
+	if (i > 0)
+	{
+		path = get_cmd_path(argv[0], shell->ctx->envp);
+		cmd->argv = argv;
+		cmd->path = path;
+	}
 	return (cmd);
 }
 
