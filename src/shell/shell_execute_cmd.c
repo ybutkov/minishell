@@ -165,6 +165,11 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 		else
 			dup2(STDOUT_FILENO, STDOUT_FILENO);
 		apply_redirect(cmd, shell);
+		if (cmd->argv == NULL)
+		{
+			shell->free(shell);
+			exit(EXIT_SUCCESS);
+		}
 		if (!cmd->path || access(cmd->path, X_OK) != 0)
 			output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
 				EXIT_CMD_NOT_FOUND);
@@ -201,9 +206,12 @@ int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 {
 	int	bi_func;
 
-	bi_func = builtin_func(cmd->argv[0]);
-	if (bi_func != -1)
-		return (builtin(bi_func, cmd, shell, input_fd, output_fd));
+	if (cmd->argv)
+	{
+		bi_func = builtin_func(cmd->argv[0]);
+		if (bi_func != -1)
+			return (builtin(bi_func, cmd, shell, input_fd, output_fd));
+	}
 	// check for single command. execute in sep fork
 	// if (input_fd == STDIN_FILENO && output_fd == STDOUT_FILENO)
 	// 	return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
