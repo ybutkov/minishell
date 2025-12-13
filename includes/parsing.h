@@ -93,4 +93,6 @@ t_token				*read_and_lexicalize();
 char				**wildcard_expand(t_piece *piece);
 char 				**expand_and_split_token(t_token *token, t_env *env, int last_exit_status);
 
+int					validate_tokens(t_token *start);
+
 #endif

@@ -15,28 +15,83 @@
 #include "parsing.h"
 #include "shell_internal.h"
 
-/* Forward declaration */
 t_ast_node	*build_ast(t_shell *shell, t_ast_node **node, t_token *start_tkn,
 				t_token *end_tkn);
 
-// static void	handle_heredoc(t_shell *shell, char **commands, int *i,
-// 		t_ast_node *curr_node)
-// {
-// 	t_redir			*redirect;
-// 	t_shell_node	*node;
-// 	t_ast_node		*ast_node;
-// 	t_cmd			*cmd;
+static t_token	*find_paren(t_token *start_tkn)
+{
+	t_token	*curr;
+	int		depth;
 
-// 	redirect = create_redir(REDIR_HEREDOC, commands[*i]);
-// 	node = create_shell_node(NODE_REDIR_HEREDOC, redirect);
-// 	ast_node = create_ast_node(node);
-// 	curr_node->set_left(curr_node, ast_node);
-// 	(*i)++;
-// 	cmd = create_cmd_from_raw_str(commands[*i], shell);
-// 	node = create_shell_node(NODE_CMD, cmd);
-// 	ast_node->set_left(ast_node, create_ast_node(node));
-// 	(*i)++;
-// }
+	if (!start_tkn || start_tkn->type != TOKEN_LEFT_PAREN)
+		return (NULL);
+	curr = start_tkn->next;
+	depth = 1;
+	while (curr && depth > 0)
+	{
+		if (curr->type == TOKEN_LEFT_PAREN)
+			depth++;
+		else if (curr->type == TOKEN_RIGHT_PAREN)
+			depth--;
+		if (depth > 0)
+			curr = curr->next;
+	}
+	return (curr);
+}
+
+static void	add_subshell_redir(t_shell_node *node, t_redir *redirect)
+{
+	t_list	*redir;
+
+	redir = ft_lstnew(redirect);
+	if (node->redirs)
+		ft_lstadd_back(&node->redirs, redir);
+	else
+		node->redirs = redir;
+}
+
+static void	collect_subshell_redirs(t_shell_node *node, t_token *start,
+		t_token *end)
+{
+	t_token			*curr;
+	t_redir			*redirect;
+	t_redir_type	type;
+
+	curr = start;
+	while (curr && curr != end && curr->type != TOKEN_END)
+	{
+		type = -1;
+		if (curr->type == TOKEN_REDIR_OUT && curr->next
+			&& curr->next->type == TOKEN_WORD)
+			type = REDIR_OUT;
+		else if (curr->type == TOKEN_REDIR_APPEND && curr->next
+			&& curr->next->type == TOKEN_WORD)
+			type = REDIR_APPEND;
+		else if (curr->type == TOKEN_REDIR_IN && curr->next
+			&& curr->next->type == TOKEN_WORD)
+			type = REDIR_IN;
+		else if (curr->type == TOKEN_HEREDOC && curr->next
+			&& curr->next->type == TOKEN_WORD)
+			type = REDIR_HEREDOC;
+		if (type != (t_redir_type)-1)
+		{
+			redirect = create_redir(type, curr->next->value);
+			add_subshell_redir(node, redirect);
+			curr = curr->next;
+		}
+		curr = curr->next;
+	}
+}
+
+static int	is_subshell_start(t_token *start_tkn)
+{
+	t_token	*closed_paren;
+
+	if (!start_tkn || start_tkn->type != TOKEN_LEFT_PAREN)
+		return (0);
+	closed_paren = find_paren(start_tkn);
+	return (closed_paren != NULL);
+}
 
 void	put_shell_node_to_ast(t_ast_node **curr_node, t_shell_node *node, int i,
 		int argc)
@@ -60,22 +115,6 @@ void	put_shell_node_to_ast(t_ast_node **curr_node, t_shell_node *node, int i,
 	}
 }
 
-// static void	add_output_redirect(t_shell_node *node, char **commands,
-//		int argc)
-// {
-// 	t_redir	*redirect;
-// 	t_list	*redir;
-
-// 	if (!ft_strcmp(HERE_DOC, commands[0]))
-// 		redirect = create_redir(REDIR_APPEND, commands[argc - 1]);
-// 	else
-// 		redirect = create_redir(REDIR_OUT, commands[argc - 1]);
-// 	redir = ft_lstnew(redirect);
-// 	if (node->data.cmd->redirs)
-// 		ft_lstadd_back(&node->data.cmd->redirs, redir);
-// 	else
-// 		node->data.cmd->redirs = redir;
-// }
 
 t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
 		int lvl)
@@ -389,12 +428,16 @@ int	create_node_for_subshell(t_shell *shell, t_ast_node **node,
 {
 	t_shell_node	*shell_node;
 	t_ast_node		*left_node;
+	t_token			*matching_paren;
 
 	shell_node = create_shell_node(NODE_SUBSHELL, NULL);
 	(*node)->set_content(*node, shell_node);
 	left_node = create_ast_node(NULL);
 	(*node)->set_left(*node, left_node);
-	build_ast(shell, &left_node, start_tkn->next, end_tkn->prev);
+	matching_paren = find_paren(start_tkn);
+	if (matching_paren && matching_paren->next && matching_paren != end_tkn)
+		collect_subshell_redirs(shell_node, matching_paren->next, end_tkn->next);
+	build_ast(shell, &left_node, start_tkn->next, matching_paren->prev);
 	return (1);
 }
 
@@ -422,8 +465,7 @@ int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
 			build_ast(shell, &right_node, curr_tkn->next, end_tkn);
 			return (1);
 		}
-		if (start_tkn->type == TOKEN_LEFT_PAREN
-			&& end_tkn->type == TOKEN_RIGHT_PAREN)
+		if (is_subshell_start(start_tkn))
 			return (create_node_for_subshell(shell, node, start_tkn, end_tkn));
 		shell_node = create_shell_node(NODE_CMD, NULL);
 		(*node)->set_content(*node, shell_node);
@@ -431,8 +473,7 @@ int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
 				end_tkn);
 		return (1);
 	}
-	if (lvl >= 3 && start_tkn->type == TOKEN_LEFT_PAREN
-		&& (end_tkn->type == TOKEN_RIGHT_PAREN))
+	if (lvl >= 3 && is_subshell_start(start_tkn))
 		return (create_node_for_subshell(shell, node, start_tkn, end_tkn));
 	return (0);
 }
@@ -461,6 +502,8 @@ void	build_shell(t_shell *shell, t_token *token)
 	while (end_token->next)
 		end_token = end_token->next;
 	end_token = end_token->prev;
+    if (!validate_tokens(token))
+		return ;
 	root_node = build_ast(shell, &root_node, token, end_token);
 	shell->ast->set_root(shell->ast, root_node);
 }

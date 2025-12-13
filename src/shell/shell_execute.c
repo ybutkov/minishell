@@ -127,10 +127,52 @@ int	execute_simicolon(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	return (status_code);
 }
 
+static void	apply_subshell_redirs(t_shell_node *shell_node)
+{
+	t_list	*redir_list;
+	t_redir	*redirect;
+	int		fd;
+
+	redir_list = shell_node->redirs;
+	while (redir_list)
+	{
+		redirect = (t_redir *)redir_list->content;
+		if (redirect->type == REDIR_IN || redirect->type == REDIR_HEREDOC)
+		{
+			fd = open(redirect->target, O_RDONLY);
+			if (fd != -1)
+			{
+				dup2(fd, STDIN_FILENO);
+				close(fd);
+			}
+		}
+		else if (redirect->type == REDIR_OUT)
+		{
+			fd = open(redirect->target, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+			if (fd != -1)
+			{
+				dup2(fd, STDOUT_FILENO);
+				close(fd);
+			}
+		}
+		else if (redirect->type == REDIR_APPEND)
+		{
+			fd = open(redirect->target, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			if (fd != -1)
+			{
+				dup2(fd, STDOUT_FILENO);
+				close(fd);
+			}
+		}
+		redir_list = redir_list->next;
+	}
+}
+
 int	execute_subshell(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 {
-	pid_t	pid;
-	int		status;
+	pid_t			pid;
+	int				status;
+	t_shell_node	*shell_node;
 
 	pid = fork();
 	if (pid < 0)
@@ -146,7 +188,13 @@ int	execute_subshell(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 			dup2_and_close(out_fd, STDOUT_FILENO);
 		else
 			dup2(STDOUT_FILENO, STDOUT_FILENO);
-		return (execute_shell_node(node->get_left(node), shell, STDIN_FILENO, STDOUT_FILENO));
+		shell_node = (t_shell_node *)node->get_content(node);
+		if (shell_node && shell_node->redirs)
+			apply_subshell_redirs(shell_node);
+		status = execute_shell_node(node->get_left(node), shell,
+				STDIN_FILENO, STDOUT_FILENO);
+		shell->free(shell);
+		exit(status);
 	}
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status))

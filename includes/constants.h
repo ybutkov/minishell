@@ -25,6 +25,9 @@
 # define BUFFER_PATH 4096
 # define HEREDOC_PREFIX_FILE "/tmp/heredoc_tmp_"
 # define SHELL_ERROR_PREFIX "minishell: "
+# define SYNTAX_ERROR "syntax error"
+# define SYNTAX_ERROR_UNEXPECTED_TOKEN "syntax error near unexpected token `"
+# define SYNTAX_ERROR_UNEXPECTED_EOF "unexpected end of file"
 # define COLON_SPACE ": "
 # define NEW_LINE "\n"
 # define BUFFER_PATH 4096

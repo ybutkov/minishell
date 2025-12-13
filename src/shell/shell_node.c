@@ -12,6 +12,15 @@
 
 #include "shell.h"
 
+static void	free_redir_content(void *content)
+{
+	t_redir	*redir;
+
+	redir = (t_redir *)content;
+	if (redir)
+		redir->free_redir(redir);
+}
+
 static void	free_shell_node(t_shell_node *node)
 {
 	if (!node)
@@ -22,6 +31,8 @@ static void	free_shell_node(t_shell_node *node)
 	}
 	else if (node->type == NODE_SUBSHELL)
 	{
+		if (node->redirs)
+			ft_lstclear(&node->redirs, free_redir_content);
 	}
 	else if ((node->type == NODE_REDIR_IN || node->type == NODE_REDIR_OUT
 			|| node->type == NODE_REDIR_APPEND
@@ -41,6 +52,7 @@ t_shell_node	*create_shell_node(t_node_type type, void *data)
 	if (!node)
 		return (NULL);
 	node->type = type;
+	node->redirs = NULL;
 	if (type == NODE_CMD)
 		node->data.cmd = (t_cmd *)data;
 	else if (type == NODE_REDIR_IN || type == NODE_REDIR_OUT

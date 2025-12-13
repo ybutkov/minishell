@@ -72,6 +72,7 @@ typedef struct s_shell_node
 		t_cmd		*cmd;
 		t_redir		*redir;
 	} data;
+	t_list			*redirs;
 	void			(*free)(struct s_shell_node *node);
 }					t_shell_node;
 
