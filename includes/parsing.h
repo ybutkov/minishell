@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
 /*   Updated: 2025/12/13 23:58:20 by ashadrin         ###   ########.fr       */
@@ -12,6 +12,8 @@
 
 #ifndef PARCING_H
 # define PARCING_H
+# include "envp_copy.h"
+
 # include "envp_copy.h"
 
 # define SINGLE_QUOTE '\''
@@ -90,5 +92,7 @@ char				*get_cmd_path(char *cmd, char **envp);
 t_token				*lexicalization(char *line);
 t_token				*read_and_lexicalize();
 char				**wildcard_expand(t_piece *piece, t_env *env);
+char 				**expand_and_split_token(t_token *token, t_env *env,
+	int last_exit_status);
 
 #endif

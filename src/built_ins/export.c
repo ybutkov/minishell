@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 15:35:12 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 03:11:54 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/08 12:56:37 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,22 +71,25 @@ static void	print_export_sorted()
 int	bi_export(t_env *env, char **args)
 {
 	int				i;
-	t_export_par	*var;
+	t_export_par	var;
 
 	if (!args[1])
 	{
 		print_export_sorted();
 		return (0);
 	}
-	var = NULL;
 	i = 1;
 	while(args[i])
 	{
-		split_key(args[i], var);
-		if (is_valid_key(var->key))
-			env->set_pair(env, var->key, var->value);
+		split_key(args[i], &var);
+		if (is_valid_key(var.key))
+			env->set_pair(env, var.key, var.value);
 		else
 			printf("minishell: export: '%s': not a valid identifier\n", args[i]);
+		if (var.key)
+			free(var.key);
+		if (var.value)
+			free(var.value);
 		i++;
 	}
 	return (0);

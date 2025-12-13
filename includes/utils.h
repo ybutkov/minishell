@@ -14,7 +14,10 @@
 # define UTILS_H
 
 # include <stdlib.h>
+# include "../libft/includes/libft.h"
 
 void	free_str_array(char **arr);
+void	**list_to_array_generic(t_list *lst, void *(*convert)(void *));
+char	**list_to_array(t_list *lst);
 
 #endif
