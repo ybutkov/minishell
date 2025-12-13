@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_execute_cmd.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 02:00:04 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/13 23:53:10 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,14 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 {
 	int	bi_func;
-
+////////////////////////////////////////////////////
+	if (!cmd || !cmd->argv || !cmd->argv[0])
+	{
+		write(STDERR_FILENO, ": command not found\n", 20);
+		shell->ctx->last_exit_status = 127;
+		return (127);
+	}
+//////////////////////////////////////////////////////////
 	bi_func = builtin_func(cmd->argv[0]);
 	if (bi_func != -1)
 		return (builtin(bi_func, cmd, shell, input_fd, output_fd));

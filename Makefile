@@ -79,7 +79,8 @@ C_SHELL_FILES += \
 C_SHELL_FILES += \
 	envp/envp_copy.c \
 	envp/copy_to_array.c \
-	envp/envp_list_init.c
+	envp/envp_list_init.c \
+	expansion/wildcards.c
 # 	parcer/parcer.c \
 # 	parcer/get_cmd_path.c \
 

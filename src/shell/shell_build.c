@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_build.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 23:44:01 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/13 23:52:47 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,6 +267,14 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 		i++;
 	}
 	argv[i] = NULL;
+	/////////////////////////////////////
+	if (!argv[0])
+	{
+		cmd->argv = argv;
+		cmd->path = NULL;
+		return (cmd);
+	}
+	///////////////////////////////////////
 	path = get_cmd_path(argv[0], shell->ctx->envp);
 	cmd->argv = argv;
 	cmd->path = path;
