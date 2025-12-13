@@ -81,19 +81,6 @@ static void	collect_heredoc_input(char *target, int write_fd)
 	}
 }
 
-// char	*get_tmp_file_name(int file_n)
-// {
-// 	char	*file_name;
-// 	char	*number;
-
-// 	number = ft_itoa(file_n);
-// 	if (number ==NULL)
-// 		return (NULL);
-// 	file_name = ft_strjoin(HEREDOC_PREFIX_FILE, number);
-// 	free(number);
-// 	return (file_name);
-// }
-
 int	execute_redir_heredoc(t_shell *shell, t_redir *redirect)
 {
 	int		fd;
@@ -170,7 +157,5 @@ int	collect_heredoc_node(t_ast_node *node, t_shell *shell)
 		return (collect_heredoc_double(node, shell));
 	else if (shell_node->type == NODE_CMD)
 		return (collect_heredoc_cmd(shell_node->data.cmd, shell));
-	// else if (shell_node->type == NODE_REDIR_HEREDOC)
-	// 	return (execute_redir_heredoc(node, shell, in_fd, out_fd));
 	return (1);
 }

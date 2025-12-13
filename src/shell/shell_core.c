@@ -94,9 +94,14 @@ static void	clear_shell(t_shell *shell)
 static int	execute_shell(t_shell *shell)
 {
 	t_ast_node	*root;
-	int 		status;
+	int			status;
 
 	root = shell->ast->get_root(shell->ast);
+	if (!root || !root->get_content(root))
+	{
+		shell->ctx->last_exit_status = 2;
+		return (2);
+	}
 	status = execute_shell_node(root, shell, STDIN_FILENO, STDOUT_FILENO);
 	shell->ctx->last_exit_status = status;
 	return (shell->ctx->last_exit_status);
@@ -105,9 +110,11 @@ static int	execute_shell(t_shell *shell)
 static int	collect_heredocs(t_shell *shell)
 {
 	t_ast_node	*root;
-	int 		status;
+	int			status;
 
 	root = shell->ast->get_root(shell->ast);
+	if (!root || !root->get_content(root))
+		return (1);
 	status = collect_heredoc_node(root, shell);
 	return (status);
 }

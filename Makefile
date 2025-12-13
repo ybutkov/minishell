@@ -46,7 +46,8 @@ C_SHELL_FILES += \
 	shell/commands.c \
 	shell/contex.c \
 	shell/enams.c \
-	shell/shell_execute_utils.c
+	shell/shell_execute_utils.c \
+	shell/validator.c
 
 C_SHELL_FILES += \
 	error/output_error.c \
