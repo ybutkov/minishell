@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   list_to_array.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 00:00:00 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 19:02:19 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/10 15:26:21 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,15 @@ void	**list_to_array_generic(t_list *lst, void *(*convert)(void *))
 	int		i;
 
 	if (!lst)
-		return (NULL);
+///////////////////////////////////////////////
+{
+    arr = (void **)malloc(sizeof(void *) * 1);
+    if (!arr)
+        return (NULL);
+    arr[0] = NULL;
+    return (arr); 
+}
+//////////////////////////////////////////////
 	size = ft_lstsize(lst);
 	arr = (void **)malloc(sizeof(void *) * (size + 1));
 	if (!arr)
