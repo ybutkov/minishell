@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/20 13:28:04 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/09/30 17:00:35 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/14 22:42:54 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ void	*ft_realloc(void *ptr, size_t old_size, size_t new_size)
 		return (NULL);
 	if (ptr == NULL)
 		return (new_ptr);
+	ft_memset(new_ptr, 0, new_size);
 	if (old_size < new_size)
 		min_size = old_size;
 	else

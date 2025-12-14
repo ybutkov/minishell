@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_internal.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 01:53:59 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/14 22:33:16 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,8 @@ typedef struct	s_pieces_internal
 	char	quotes;
 }	t_pieces_internal;
 
-
+// preprocessor
+char	*preprocessing(char *str);
 //lexer
 t_token	*read_and_lexicalize();
 t_token	*lexicalization(char *line);
