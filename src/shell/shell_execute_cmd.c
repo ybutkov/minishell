@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/14 15:17:39 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/14 16:06:15 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ char	**get_built_in_list(void)
 		builtins[5] = "env";
 		builtins[6] = "exit";
 		builtins[7] = NULL;
+		initialized = 1;
 	}
 	return (builtins);
 }
@@ -183,36 +184,10 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 	return (status);
 }
 
-// static void	apply_heredoc(t_cmd *cmd, t_shell *shell)
-// {
-// 	t_list	*redir;
-// 	t_redir	*redirect;
-
-// 	if (!cmd)
-// 		return ;
-// 	redir = cmd->redirs;
-// 	while (redir)
-// 	{wrapper
-// 		redirect = (t_redir *)redir->content;
-// 		if (redirect->type == REDIR_HEREDOC)
-// 		{
-// 			execute_redir_heredoc(shell, redirect, STDIN_FILENO);
-// 		}
-// 		redir = redir->next;
-// 	}
-// }
-
 int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 {
 	int	bi_func;
-////////////////////////////////////////////////////
-	if (!cmd || !cmd->argv || !cmd->argv[0])
-	{
-		write(STDERR_FILENO, ": command not found\n", 20);
-		shell->ctx->last_exit_status = 127;
-		return (127);
-	}
-//////////////////////////////////////////////////////////
+
 	if (cmd->argv)
 	{
 		bi_func = builtin_func(cmd->argv[0]);
@@ -240,6 +215,6 @@ int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 	// execve(cmd->path, cmd->argv, shell->ctx->envp);
 	// shell->free(shell);
 	// exit(EXIT_FAILURE);
-	// Always execute external commands in a fork to avoid replacing the shell process
+	// Always execute external commands in a fork to avoid replacing the shell process ??
 	return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
 }
