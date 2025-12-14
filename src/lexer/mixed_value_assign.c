@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 02:20:16 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/14 02:51:47 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,7 +256,7 @@ void	small_env_var_check (t_piece *p)
 	i = 2;
 	while (p->text[i])
 	{
-		if (!ft_isalnum(p->text[i] && p->text[i] != '_'))
+		if (!ft_isalnum(p->text[i]) && p->text[i] != '_')
 			return ;
 		i++;
 	}
