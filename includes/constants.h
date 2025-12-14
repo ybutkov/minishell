@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 18:05:22 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/13 23:59:41 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,11 @@
 # define BUFFER_PATH 4096
 # define HEREDOC_PREFIX_FILE "/tmp/heredoc_tmp_"
 # define SHELL_ERROR_PREFIX "minishell: "
+# define SYNTAX_ERROR "syntax error"
+# define MALLOC_ERROR "malloc error"
+# define SYNTAX_ERROR_UNEXPECTED_TOKEN "syntax error near unexpected token `"
+# define SYNTAX_ERROR_UNEXPECTED_EOF "unexpected end of file"
+# define NOT_VALID_IDENTIFIER "not a valid identifier"
 # define COLON_SPACE ": "
 # define NEW_LINE "\n"
 # define BUFFER_PATH 4096

@@ -44,21 +44,31 @@ static int	is_good_numeric(char *string)
 
 int	bi_exit(t_shell *shell, char **args)
 {
-	printf("exit\n"); // for some reason it appears in every case
+	int		exit_status;
+
+	if (isatty(STDIN_FILENO))
+		printf("exit\n");
 	if (args[2] != NULL)
 	{
 		printf("minishell: exit: too many arguments\n");
 		return (1);
 	}
-	shell->free(shell);
 	if (!args[1])
+	{
+		shell->free(shell);
 		exit(0);
+	}
 	if (!is_good_numeric(args[1]))
 	{
 		printf("minishell: exit: %s: numeric argument required\n", args[1]);
+		shell->free(shell);
 		exit(1);
 	}
 	else
 	// check for atoi overflows?
-		exit(ft_atoi(args[1]));
+	{
+		exit_status = ft_atoi(args[1]);
+		shell->free(shell);
+		exit(exit_status % 256);
+	}
 }

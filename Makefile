@@ -46,7 +46,8 @@ C_SHELL_FILES += \
 	shell/commands.c \
 	shell/contex.c \
 	shell/enams.c \
-	shell/shell_execute_utils.c
+	shell/shell_execute_utils.c \
+	shell/validator.c
 
 C_SHELL_FILES += \
 	error/output_error.c \
@@ -65,7 +66,7 @@ C_SHELL_FILES += \
 	lexer/symbol_identifier.c \
 	lexer/tokenizer.c \
 	lexer/utils.c \
-	lexer/read_line.c \
+	lexer/read_line.c
 
 C_SHELL_FILES += \
 	built_ins/cd.c \
@@ -81,11 +82,9 @@ C_SHELL_FILES += \
 	envp/envp_copy.c \
 	envp/copy_to_array.c \
 	envp/envp_list_init.c \
-	expansion/wildcards.c \
+	expansion/wildcards.c
 # 	parcer/parcer.c \
 # 	parcer/get_cmd_path.c \
-
-
 
 C_SHELL_FILES += \
 	expansion/expansion.c
@@ -115,6 +114,8 @@ fclean f: clean
 
 re	: fclean all
 s : all
+c : re
+	cp ./minishell /home/ybutkov/Documents/tmp_folder/minishell_for_test
 
 # adds AddressSanitizer and UndefinedBehaviorSanitizer flags
 asan: CFLAGS += $(SAN_ASAN)

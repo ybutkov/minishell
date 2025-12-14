@@ -17,6 +17,20 @@ int	is_whitespace(char c)
 	return ((c >= 9 && c<= 12) || (c == 32));
 }
 
+int	is_all_whitespace(char *str)
+{
+	int	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (!is_whitespace(str[i]))
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
 int	is_whitespace_or_special(char c)
 {
 	return (c == '<' || c == '>' || c == '|' || c == '&'

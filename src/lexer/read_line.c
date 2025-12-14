@@ -29,8 +29,9 @@ t_token	*read_and_lexicalize()
 			tmp = get_next_line(fileno(stdin));
 			if (!tmp)
 				return (NULL);
-			line = ft_strtrim(tmp, "\n");
-			free(tmp);
+			// line = ft_strtrim(tmp, "\n");
+			// free(tmp);
+			line = tmp;
 		}
 		if (!line)
 			return (NULL);

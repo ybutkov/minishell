@@ -66,10 +66,9 @@ static void	collect_heredoc_input(char *target, int write_fd)
 
 	while (1)
 	{
-		ft_putstr_fd("heredoc> ", STDOUT_FILENO);
-		// printf("%s", "heredoc>");
+		if (isatty(STDIN_FILENO))
+			ft_putstr_fd("heredoc> ", STDOUT_FILENO);
 		line = get_next_line(STDIN_FILENO);
-		// line = readline(">");
 		if (!line)
 			break ;
 		if (is_delimiter(line, target))
@@ -82,55 +81,19 @@ static void	collect_heredoc_input(char *target, int write_fd)
 	}
 }
 
-static int	collect_heredoc_child(t_shell *shell, char *target, char *file_name)
-{
-	int			fd;
-
-	fd = open_file(file_name,  O_WRONLY | O_CREAT | O_TRUNC, shell);
-	collect_heredoc_input(target, fd);
-	close(fd);
-
-	shell->free(shell);
-	exit(EXIT_SUCCESS);
-	return (0);
-}
-
-// char	*get_tmp_file_name(int file_n)
-// {
-// 	char	*file_name;
-// 	char	*number;
-
-// 	number = ft_itoa(file_n);
-// 	if (number ==NULL)
-// 		return (NULL);
-// 	file_name = ft_strjoin(HEREDOC_PREFIX_FILE, number);
-// 	free(number);
-// 	return (file_name);
-// }
-
 int	execute_redir_heredoc(t_shell *shell, t_redir *redirect)
 {
-	pid_t			pid_writer;
-	int				status;
-	int				ret_code;
-	char			*file_name;
+	int		fd;
+	char	*file_name;
 
 	file_name = get_tmp_file_name(get_file_n(1));
 	if (file_name == NULL)
 		return (EXIT_FAILURE);
-	ret_code = 1;
-	pid_writer = fork();
-	if (pid_writer == -1)
-		return (ret_code);
-	if (pid_writer == 0)
-		return (collect_heredoc_child(shell, redirect->target, file_name));
-	else
-	{
-		waitpid(pid_writer, &status, 0);
-		// check status ??
-		redirect->target = file_name;
-		return (status);
-	}
+	fd = open_file(file_name, O_WRONLY | O_CREAT | O_TRUNC, shell);
+	collect_heredoc_input(redirect->target, fd);
+	close(fd);
+	redirect->target = file_name;
+	return (EXIT_SUCCESS);
 }
 
 int collect_heredoc_subshell(t_ast_node *node, t_shell *shell)
@@ -194,7 +157,5 @@ int	collect_heredoc_node(t_ast_node *node, t_shell *shell)
 		return (collect_heredoc_double(node, shell));
 	else if (shell_node->type == NODE_CMD)
 		return (collect_heredoc_cmd(shell_node->data.cmd, shell));
-	// else if (shell_node->type == NODE_REDIR_HEREDOC)
-	// 	return (execute_redir_heredoc(node, shell, in_fd, out_fd));
 	return (1);
 }
