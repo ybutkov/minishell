@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/13 23:59:41 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/14 17:50:51 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 
 # define BUFFER_PATH 4096
 # define HEREDOC_PREFIX_FILE "/tmp/heredoc_tmp_"
+# define HOME "HOME"
 # define SHELL_ERROR_PREFIX "minishell: "
 # define SYNTAX_ERROR "syntax error"
 # define MALLOC_ERROR "malloc error"
