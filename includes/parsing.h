@@ -6,14 +6,12 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 02:18:34 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/14 14:25:07 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PARCING_H
-# define PARCING_H
-# include "envp_copy.h"
-
+#ifndef PARSING_H
+# define PARSING_H
 # include "envp_copy.h"
 
 # define SINGLE_QUOTE '\''
@@ -92,6 +90,7 @@ typedef struct s_token
 char				*get_cmd_path(char *cmd, char **envp);
 t_token				*lexicalization(char *line);
 t_token				*read_and_lexicalize();
-char				**wildcard_expand(t_piece *piece, t_env *env);
+char				**wildcard_expand(t_piece *piece);
+char 				**expand_and_split_token(t_token *token, t_env *env, int last_exit_status);
 
 #endif
