@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mixed_value_assign.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 02:51:47 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/15 00:15:45 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ void	assign_s_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 	while (t->value[pi->i] != '\'' && t->value[pi->i] != '\0')
 		pi->i++;
 	pi->cur_end = pi->i - 1;
-	if (pi->cur_end > pi->cur_start)
+	if (pi->cur_end >= pi->cur_start)
 		new_piece(t, pi, l, SINGLE_Q);
 	pi->i++;
 }
@@ -63,7 +63,7 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 {
     pi->i++;
     pi->q_stat = STILL_DOUBLE;
-    
+
     while (t->value[pi->i] != '"' && t->value[pi->i] != '\0')
     {
         if (t->value[pi->i] == '$')
@@ -71,16 +71,16 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
             assign_env_wild_pieces(l, t, pi);
             continue;
         }
-        
+
         pi->cur_start = pi->i;
-        while (t->value[pi->i] != '$' && t->value[pi->i] != '"' 
+        while (t->value[pi->i] != '$' && t->value[pi->i] != '"'
                 && t->value[pi->i] != '\0')
             pi->i++;
         pi->cur_end = pi->i - 1;
         if (pi->cur_end >= pi->cur_start)
             new_piece(t, pi, l, DOUBLE_Q);
     }
-    
+
     if (t->value[pi->i] == '"')
         pi->i++;
     pi->q_stat = ALL_CLOSED;
@@ -108,15 +108,15 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 // 				pi->i++;
 // 			pi->cur_end = pi->i - 1;
 // 			new_piece(t, pi, l, DOUBLE_QUOTE);
-		
+
 // 		}
 // 	}
 // }
 
 // void	assign_quoted_pieces(char quote, t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 // {
-//     pi->i++; 
-    
+//     pi->i++;
+
 //     if (quote == '\'')
 //     {
 //         // Single quotes: one piece, everything literal
@@ -135,18 +135,18 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 //     {
 //         if (t->value[pi->i] == '$')
 //         {
-//             assign_env_wild_pieces(l, t, pi); 
+//             assign_env_wild_pieces(l, t, pi);
 //             continue;
 //         }
 //         pi->cur_start = pi->i;
-//         while (t->value[pi->i] != '$' && t->value[pi->i] != '"' 
+//         while (t->value[pi->i] != '$' && t->value[pi->i] != '"'
 //                 && t->value[pi->i] != '\0')
 //             pi->i++;
 //         pi->cur_end = pi->i - 1;
 //         if (pi->cur_end >= pi->cur_start)
 //             new_piece(t, pi, l, DOUBLE_Q);
 //     }
-    
+
 //     if (t->value[pi->i] == '"')
 //         pi->i++;
 // }
@@ -197,7 +197,7 @@ void	assign_env_wild_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 void	decide_on_extra(t_piece *p)
 {
 	int	i;
-	
+
 	if (!p || !p->text)
 		return ;
 	i = 0;
@@ -236,7 +236,7 @@ void	small_tilde_check(t_piece *p)
 				return ;
 			}
 		}
-		i++;	
+		i++;
 	}
 }
 
@@ -266,7 +266,7 @@ void	small_env_var_check (t_piece *p)
 void	decide_on_extra_in_token(t_token *t)
 {
 	t_piece	*node;
-	
+
 	if (t->pieces)
 	{
 		node = t->pieces;
@@ -286,7 +286,7 @@ void	decide_on_extra_in_token(t_token *t)
 void	extras_token(t_token *t)
 {
 	int	i;
-	
+
 	i = 0;
 	while (t->value[i])
 	{
@@ -294,7 +294,7 @@ void	extras_token(t_token *t)
 			t->has_wild = 1;
 		if (t->value[i] == '$')
 			t->has_env_v = 1;
-		i++;		
+		i++;
 	}
 }
 
@@ -327,7 +327,7 @@ void	push_piece(t_token *t, t_piece *p)
 // 	{
 // 		if (pi->q_stat = STILL_DOUBLE)
 // 		{
-			
+
 // 		}
 // 		pi->q_stat = STILL_DOUBLE;
 // 		while (t->value[pi->i] != quote && t->value[pi->i] != '$'
