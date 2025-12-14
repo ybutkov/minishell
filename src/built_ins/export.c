@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 15:35:12 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 01:07:44 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/14 15:26:08 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static int	is_valid_key(char *key)
 		i++;
 	else
 		return (0);
-	while(key[i])
+	while (key[i])
 	{
 		if (('a' <= key[i] && key[i] <= 'z')
 			|| ('A' <= key[i] && key[i] <= 'Z') || key[i] == '_'
@@ -68,7 +68,7 @@ static int	is_valid_key(char *key)
 	return (1);
 }
 
-static void	print_export_sorted()
+static void	print_export_sorted(void)
 {
 	printf("oops, still need to finish this sorting function\n");
 }
@@ -78,7 +78,7 @@ int	bi_export(t_env *env, char **args)
 	int				i;
 	int				status;
 	t_export_par	var;
-	char 			*obj;
+	char			*obj;
 	char			*str;
 	int				is_valid;
 
@@ -91,7 +91,7 @@ int	bi_export(t_env *env, char **args)
 	status = 0;
 	var.key = NULL;
 	var.value = NULL;
-	while(args[i])
+	while (args[i])
 	{
 		split_key(args[i], &var, "=");
 		is_valid = is_valid_key(var.key);

@@ -66,7 +66,7 @@ C_SHELL_FILES += \
 	lexer/symbol_identifier.c \
 	lexer/tokenizer.c \
 	lexer/utils.c \
-	lexer/read_line.c \
+	lexer/read_line.c
 
 C_SHELL_FILES += \
 	built_ins/cd.c \
@@ -82,11 +82,9 @@ C_SHELL_FILES += \
 	envp/envp_copy.c \
 	envp/copy_to_array.c \
 	envp/envp_list_init.c \
-	expansion/wildcards.c \
+	expansion/wildcards.c
 # 	parcer/parcer.c \
 # 	parcer/get_cmd_path.c \
-
-
 
 C_SHELL_FILES += \
 	expansion/expansion.c

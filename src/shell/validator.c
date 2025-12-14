@@ -1,58 +1,64 @@
-#include "parsing.h"
-#include "libft.h"
-#include "error.h"
-#include "constants.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   validator.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/12/14 15:33:42 by ybutkov           #+#    #+#             */
+/*   Updated: 2025/12/14 15:46:51 by ybutkov          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static int	is_operator(t_token *token)
+#include "constants.h"
+#include "error.h"
+#include "libft.h"
+#include "parsing.h"
+
+static int	is_token_type(t_token *token, t_token_type *types)
 {
 	if (!token)
 		return (0);
-	return (token->type == TOKEN_PIPE
-		|| token->type == TOKEN_OR
-		|| token->type == TOKEN_AND
-		|| token->type == TOKEN_SEMICOLON);
+	return (token->type == types[0]
+		|| token->type == types[1]
+		|| token->type == types[2]
+		|| token->type == types[3]);
+}
+
+static int	is_operator(t_token *token)
+{
+	return (is_token_type(token, (t_token_type[]){TOKEN_PIPE, TOKEN_OR,
+			TOKEN_AND, TOKEN_SEMICOLON}));
 }
 
 static int	is_redir(t_token *token)
 {
-	if (!token)
-		return (0);
-	return (token->type == TOKEN_REDIR_IN
-		|| token->type == TOKEN_REDIR_OUT
-		|| token->type == TOKEN_REDIR_APPEND
-		|| token->type == TOKEN_HEREDOC);
+	return (is_token_type(token, (t_token_type[]){TOKEN_REDIR_IN,
+			TOKEN_REDIR_OUT, TOKEN_REDIR_APPEND, TOKEN_HEREDOC}));
 }
 
 static const char	*get_token_str(t_token *token)
 {
 	if (!token)
 		return ("newline");
-	if (token->type == TOKEN_PIPE)
-		return ("|");
-	if (token->type == TOKEN_OR)
-		return ("||");
-	if (token->type == TOKEN_AND)
-		return ("&&");
-	if (token->type == TOKEN_SEMICOLON)
-		return (";");
-	if (token->type == TOKEN_LEFT_PAREN)
-		return ("(");
-	if (token->type == TOKEN_RIGHT_PAREN)
-		return (")");
-	if (token->type == TOKEN_REDIR_IN)
-		return ("<");
-	if (token->type == TOKEN_REDIR_OUT)
-		return (">");
-	if (token->type == TOKEN_REDIR_APPEND)
-		return (">>");
-	if (token->type == TOKEN_HEREDOC)
-		return ("<<");
+	if (token->type == TOKEN_PIPE
+		|| token->type == TOKEN_OR
+		|| token->type == TOKEN_AND
+		|| token->type == TOKEN_SEMICOLON
+		|| token->type == TOKEN_LEFT_PAREN
+		|| token->type == TOKEN_RIGHT_PAREN
+		|| token->type == TOKEN_REDIR_IN
+		|| token->type == TOKEN_REDIR_OUT
+		|| token->type == TOKEN_REDIR_APPEND
+		|| token->type == TOKEN_HEREDOC)
+		return (token->value);
 	return ("newline");
 }
 
 static int	syntax_error_token(t_token *token)
 {
-	char *msg;
+	char	*msg;
+
 	msg = ft_strdup(SYNTAX_ERROR_UNEXPECTED_TOKEN);
 	ft_strappend(&msg, (char *)get_token_str(token));
 	ft_strappend(&msg, "'");
@@ -114,23 +120,16 @@ static int	check_redir_target(t_token *curr)
 static int	check_operators(t_token *curr, t_token *prev)
 {
 	if (!prev && is_operator(curr))
-	{
 		return (syntax_error_token(curr));
-	}
 	if (prev && is_operator(prev) && is_operator(curr))
-	{
 		return (syntax_error_token(curr));
-	}
 	return (1);
 }
 
 static int	check_paren_placement(t_token *curr, t_token *prev)
 {
-	if (curr->type == TOKEN_LEFT_PAREN && prev
-		&& prev->type == TOKEN_WORD)
-	{
+	if (curr->type == TOKEN_LEFT_PAREN && prev && prev->type == TOKEN_WORD)
 		return (syntax_error_token(curr));
-	}
 	return (1);
 }
 
