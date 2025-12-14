@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 22:22:09 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 21:02:12 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/14 23:49:43 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,19 +64,29 @@ void	is_single_quote(t_lex_inf *lex)
 		lex->i++;
 	if (lex->line[lex->i] == '\'')
 	{
-		if (is_whitespace(lex->line[lex->i + 1]) || is_special(lex))
+		lex->error_code = 0;
+		if (!is_whitespace_or_special(lex->line[lex->i + 1]))
 		{
-			lex->error_code = 0;
-			lex->end = lex->i - 1;
-			new_token(lex, SINGLE_Q);
-			lex->i++;
-		}
-		else 
-		{
-			lex->start--;
-			lex->i = lex->start;
+			lex->i = lex->start - 1;
 			quotes_within(lex);
+			return ;
 		}
+        lex->end = lex->i - 1;
+        new_token(lex, SINGLE_Q);
+        lex->i++;    
+		// if (is_whitespace(lex->line[lex->i + 1]) || is_special(lex))
+		// {
+		// 	lex->error_code = 0;
+		// 	lex->end = lex->i - 1;
+		// 	new_token(lex, SINGLE_Q);
+		// 	lex->i++;
+		// }
+		// else 
+		// {
+		// 	lex->start--;
+		// 	lex->i = lex->start;
+		// 	quotes_within(lex);
+		// }
 	}
 }
 
@@ -89,19 +99,23 @@ void	is_double_quote(t_lex_inf *lex)
 		lex->i++;
 	if (lex->line[lex->i] == '"')
 	{
-		if (is_whitespace(lex->line[lex->i + 1]) || is_special(lex))
-		{
-			lex->error_code = 0;
-			lex->end = lex->i - 1;
-			new_token(lex, DOUBLE_Q);
-			lex->i++;
-		}
-		else 
-		{
-			lex->start--;
-			lex->i = lex->start;
-			quotes_within(lex);
-		}
+		lex->error_code = 0;
+        lex->end = lex->i - 1;
+        new_token(lex, DOUBLE_Q);
+        lex->i++;    
+		// if (is_whitespace(lex->line[lex->i + 1]) || is_special(lex))
+		// {
+		// 	lex->error_code = 0;
+		// 	lex->end = lex->i - 1;
+		// 	new_token(lex, DOUBLE_Q);
+		// 	lex->i++;
+		// }
+		// else 
+		// {
+		// 	lex->start--;
+		// 	lex->i = lex->start;
+		// 	quotes_within(lex);
+		// }
 	}
 }
 // && || : \ < > >> << ( ) 

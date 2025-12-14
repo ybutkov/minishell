@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 02:51:47 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/14 23:56:57 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,15 +32,17 @@ void	mixed_value_assign(t_lex_inf *l, t_token *t)
 			while (is_whitespace(t->value[pi.i]))
 				pi.i++;
 			while (!is_space_or_quotes(t->value[pi.i]) && t->value[pi.i] != '\0'
-					&& t->value[pi.i] != '*' && t->value[pi.i] != '$')
+					&& t->value[pi.i] != '*' && t->value[pi.i] != '$'
+					&& t->value[pi.i] != '\'')
 				pi.i++;
 			pi.cur_end = pi.i - 1;
-			if (pi.cur_end < pi.i - 1)
+			if (pi.cur_end >= pi.cur_start)
+				new_piece(t, &pi, l, NO_QUOTES);
+			if (t->value[pi.i] == '\'')
 			{
-				if (t->value[pi.i] != '\0')
-					pi.i++;
+				pi.q_stat = ALL_CLOSED;
+				assign_s_quo_pieces(l, t, &pi);
 			}
-			new_piece(t, &pi, l, NO_QUOTES);
 		}
 		// else
 		// 	pi.i++;
@@ -54,14 +56,17 @@ void	assign_s_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 	while (t->value[pi->i] != '\'' && t->value[pi->i] != '\0')
 		pi->i++;
 	pi->cur_end = pi->i - 1;
-	if (pi->cur_end > pi->cur_start)
-		new_piece(t, pi, l, SINGLE_Q);
-	pi->i++;
+	new_piece(t, pi, l, SINGLE_Q);
+	if (t->value[pi->i] == '\'')
+		pi->i++;
 }
 
 void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 {
+	int	starting_i;
+	
     pi->i++;
+	starting_i = pi->i;
     pi->q_stat = STILL_DOUBLE;
     
     while (t->value[pi->i] != '"' && t->value[pi->i] != '\0')
@@ -71,7 +76,6 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
             assign_env_wild_pieces(l, t, pi);
             continue;
         }
-        
         pi->cur_start = pi->i;
         while (t->value[pi->i] != '$' && t->value[pi->i] != '"' 
                 && t->value[pi->i] != '\0')
@@ -80,7 +84,12 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
         if (pi->cur_end >= pi->cur_start)
             new_piece(t, pi, l, DOUBLE_Q);
     }
-    
+    if (pi->i == starting_i)
+	{
+		pi->cur_start = pi->i;
+		pi->cur_end = pi->i - 1;
+		new_piece(t, pi, l, DOUBLE_Q);
+	}
     if (t->value[pi->i] == '"')
         pi->i++;
     pi->q_stat = ALL_CLOSED;
