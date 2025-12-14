@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 03:11:56 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/14 01:53:59 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,8 @@ void	decide_on_extra_in_token(t_token *t);
 void	extras_token(t_token *t);
 void	push_piece(t_token *t, t_piece *p);
 void	assign_env_wild_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi);
+void	small_env_var_check (t_piece *p);
+void	small_tilde_check(t_piece *p);
 
 //utils
 int		cust_strchr(char c, char *str);
