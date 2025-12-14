@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 19:29:22 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/13 22:59:10 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,16 +156,17 @@ int	main(int argc, char **argv, char **envp)
 	while (1)
 	{
 		t_token *tokens = read_and_lexicalize();
-		
+
 		if (!tokens)
 			break ;
-		
+
 		if (is_print == 1 || is_print == 3 || is_print == 4)
 			print_tokens_brief_once(tokens, shell->ctx->env);
-		
+
 		// print_tokens_brief_once(tokens);
-		if (check_for_echo_$(tokens, exit_status) == 1)
-			continue ;
+		//*************************************** */
+		// if (check_for_echo_$(tokens, exit_status) == 1)
+		// 	continue ;
 		shell->build(shell, tokens);
 
 		if (is_print == 2 || is_print == 3 || is_print == 4)

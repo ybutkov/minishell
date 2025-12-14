@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 15:35:12 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/08 12:56:37 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/14 01:07:44 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,17 @@
 //valid keys: letters, digits, underscores, but can't start with a digit
 
 #include "builtin_internal.h"
+#include "error.h"
 
-static void	split_key(char *line, t_export_par *var)
+static void	split_key(char *line, t_export_par *var, char *separator)
 {
 	char	*split_sign;
 
-	split_sign = ft_strchr(line, '=');
+	if (var->key)
+		free(var->key);
+	if (var->value)
+		free(var->value);
+	split_sign = ft_strnstr(line, separator, ft_strlen(line));
 	if (!split_sign)
 	{
 		var->key = ft_strdup(line);
@@ -34,7 +39,7 @@ static void	split_key(char *line, t_export_par *var)
 	else
 	{
 		var->key = ft_substr(line, 0, split_sign - line);
-		var->value = strdup(split_sign + 1);
+		var->value = strdup(split_sign + ft_strlen(separator));
 	}
 
 }
@@ -71,7 +76,11 @@ static void	print_export_sorted()
 int	bi_export(t_env *env, char **args)
 {
 	int				i;
+	int				status;
 	t_export_par	var;
+	char 			*obj;
+	char			*str;
+	int				is_valid;
 
 	if (!args[1])
 	{
@@ -79,18 +88,44 @@ int	bi_export(t_env *env, char **args)
 		return (0);
 	}
 	i = 1;
+	status = 0;
+	var.key = NULL;
+	var.value = NULL;
 	while(args[i])
 	{
-		split_key(args[i], &var);
-		if (is_valid_key(var.key))
+		split_key(args[i], &var, "=");
+		is_valid = is_valid_key(var.key);
+		if (is_valid == 1)
 			env->set_pair(env, var.key, var.value);
 		else
-			printf("minishell: export: '%s': not a valid identifier\n", args[i]);
+		{
+			split_key(args[i], &var, "+=");
+			is_valid = is_valid_key(var.key);
+			if (is_valid == 1)
+			{
+				str = env->get_value(env, var.key);
+				if (str)
+					str = ft_strdup(env->get_value(env, var.key));
+				ft_strappend(&str, var.value);
+				env->set_pair(env, var.key, str);
+			}
+		}
+		if (is_valid == 0)
+		{
+			status = 1;
+			obj = ft_strdup("export: ");
+			if (!obj || ft_strappend(&obj, args[i]) != 1)
+				output_error(MALLOC_ERROR, NULL);
+			else
+				output_error(obj, NOT_VALID_IDENTIFIER);
+			if (obj)
+				free(obj);
+		}
 		if (var.key)
 			free(var.key);
 		if (var.value)
 			free(var.value);
 		i++;
 	}
-	return (0);
+	return (status);
 }

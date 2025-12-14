@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 21:23:21 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/13 22:09:05 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,14 @@ char	*expand_piece(t_piece *piece, t_env *env, int last_exit_status)
 		else
 			value = env->get_value(env, key);
 		if (ft_strappend(&result, value) != 1)
-			return (HANDLE_ERROR_NULL);
+			return (free(result), HANDLE_ERROR_NULL);
 		if (need_free)
 			free(value);
 	}
 	else
 	{
 		if (ft_strappend(&result, piece->text) != 1)
-			return (HANDLE_ERROR_NULL);
+			return (free(result), HANDLE_ERROR_NULL);
 	}
 	return (result);
 }
