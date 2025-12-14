@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:36:45 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/12 15:47:17 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/14 02:00:35 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,13 +21,13 @@
 
 #include "expansion_internal.h"
 
-char	**wildcard_expand(t_piece *piece, t_env *env)
+char	**wildcard_expand(t_piece *piece)
 {
 	char			**result;
 	DIR				*dir;
 	int				size;
 
-	size = count_entries(piece, env);
+	size = count_entries(piece);
 	if (size == 0)
 	{
 		result = malloc(sizeof(char *) * 2);
@@ -71,7 +71,7 @@ void	fill_matches(t_piece *piece, char **result, DIR *dir)
 	result[i] = NULL;
 }
 
-int	count_entries(t_piece *piece, t_env *env)
+int	count_entries(t_piece *piece)
 {
 	int				count;
 	DIR				*dir;

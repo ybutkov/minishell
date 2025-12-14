@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 22:43:15 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/14 02:05:19 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,9 @@ void	check_mixed(t_token *tok)
 	{
 		while (tok->value[i])
 		{
-			if (tok->value[i] == '$' || (tok->value[i] == '*' && tok->stat == NO_QUOTES))
+			if (tok->value[i] == '$' 
+					|| (tok->value[i] == '*' && tok->stat == NO_QUOTES)
+					|| (tok->value[i] == '~' && tok->stat == NO_QUOTES))
 				tok->stat = MIXED;
 			i++;
 		}
