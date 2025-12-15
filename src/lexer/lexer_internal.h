@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 23:11:13 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/15 14:17:45 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,6 @@ int		is_whitespace(char c);
 int		is_whitespace_or_special(char c);
 int		is_special(t_lex_inf *lex);
 int		is_space_or_quotes(char c);
+int		will_end_env_var(char c);
 
 #endif

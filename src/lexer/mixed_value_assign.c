@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 23:56:57 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/15 14:16:50 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,8 +194,16 @@ void	assign_env_wild_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 {
 	pi->cur_start = pi->i;
 	pi->i++;
-	while (!is_space_or_quotes(t->value[pi->i]) && t->value[pi->i] != '\0' && t->value[pi->i] != '$')
-		pi->i++;
+	if (t->value[pi->cur_start] == '$')
+	{
+		while (!will_end_env_var(t->value[pi->i]))
+			pi->i++;
+	}
+	else
+	{
+		while (!is_space_or_quotes(t->value[pi->i]) && t->value[pi->i] != '\0' && t->value[pi->i] != '$')
+			pi->i++;
+	}
 	pi->cur_end = pi->i - 1;
 	if (pi->q_stat == STILL_DOUBLE)
 		new_piece(t, pi, l, DOUBLE_Q);
