@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/15 02:50:36 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/15 14:01:08 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,6 +336,98 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 */
 
 //----------------------------------------------------------------------
+int	split_arg_list(t_list *arg_list, int *total_args)
+{
+	char	**argv;
+	t_list	*node;
+	t_list	*prev_node;
+	t_list	*tmp_node;
+	int		i;
+	int		j;
+	char	*arg;
+
+	(void)total_args;
+	node = arg_list;
+	i = 0;
+	prev_node = NULL;
+	while (node)
+	{
+		arg = (char *)node->content;
+		if (ft_strchr(arg, ' ') != NULL)
+		{
+			argv = ft_split(arg, ' ');
+			j = 0;
+			while (argv[j])
+			{
+				tmp_node = ft_lstnew(argv[j++]);
+				prev_node->next = tmp_node;
+				prev_node = tmp_node;
+			}
+			prev_node->next = node->next;
+			ft_lstdelone(node, free);
+			free(argv);
+			node = prev_node->next;
+			continue ;
+		}
+		prev_node = node;
+		node = node->next;
+	}
+	return (OK);
+}
+
+int	split_arg_list2(t_list *arg_list, int *total_args)
+{
+	char    **argv;
+	t_list  *node;
+	t_list  *tmp_node;
+	t_list  *last_new;
+	int     count;
+	int     k;
+	char    *arg;
+
+	node = arg_list;
+	while (node)
+	{
+		arg = (char *)node->content;
+		if (arg && ft_strchr(arg, ' ') != NULL)
+		{
+			argv = ft_split(arg, ' ');
+			if (!argv)
+				return (0);
+			count = 0;
+			while (argv[count])
+				count++;
+			if (count == 0)
+			{
+				free(argv);
+				node = node->next;
+				continue ;
+			}
+			free(node->content);
+			node->content = argv[0];
+			last_new = node;
+			k = 1;
+			while (k < count)
+			{
+				tmp_node = ft_lstnew(argv[k]);
+				last_new->next = tmp_node;
+				last_new = tmp_node;
+				k++;
+			}
+			t_list *remainder = node->next;
+			if (remainder == node)
+				remainder = NULL;
+			last_new->next = remainder;
+			if (total_args)
+				*total_args += (count - 1);
+			free(argv);
+			node = last_new->next;
+			continue ;
+		}
+		node = node->next;
+	}
+	return (OK);
+}
 
 t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 		t_token *end_tkn)
@@ -388,6 +480,10 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 			break ;
 		curr_tkn = curr_tkn->next;
 	}
+	// if (split_arg_list2(arg_list, &total_args) != OK)
+	// {
+	// 	// Handle error
+	// }
 	argv = malloc(sizeof(char *) * (total_args + 1));
 	if (!argv)
 	{
@@ -403,6 +499,7 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 	}
 	argv[i] = NULL;
 	ft_lstclear(&arg_list, NULL);
+	// We can have empty argv. Rebuild argv ???
 	if (i > 0 && argv[0][0] != '\0')
 	{
 		path = get_cmd_path(argv[0], shell->ctx->envp);
