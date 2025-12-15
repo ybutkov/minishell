@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 23:18:22 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 03:08:59 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/15 18:22:11 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,9 @@ int	bi_unset(t_env *env, char **args)
 	any_invalid = 0;
 	while (args[i])
 	{
-		if (!env->remove_pair(env, args[i]))
-			any_invalid = 1;
+		env->remove_pair(env, args[i]);
+		// if (!env->remove_pair(env, args[i]))
+		// 	any_invalid = 1;
 		i++;
 	}
 	return (any_invalid);

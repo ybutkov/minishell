@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:31:15 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 03:07:14 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/15 18:09:21 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,11 @@ void	set_env_pair(t_env *env, char *key, char *value)
 	{
 		if (ft_strcmp(cur->key, key) == 0)
 		{
-			free(cur->value);
-			cur->value = ft_strdup(value);
+			if (value)
+			{
+				free(cur->value);
+				cur->value = ft_strdup(value);
+			}
 			return ;
 		}
 		last = cur;
@@ -66,7 +69,10 @@ void	set_env_pair(t_env *env, char *key, char *value)
 	if (!new)
 		return ;
 	new->key = strdup(key);
-	new->value = strdup(value);
+	if (value)
+		new->value = strdup(value);
+	else
+		new->value = value;
 	new->next = NULL;
 	if (last)
 		last->next = new;
