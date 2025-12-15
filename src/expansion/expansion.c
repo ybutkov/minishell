@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/13 22:09:05 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/15 13:57:37 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,14 @@ char	*expand_piece(t_piece *piece, t_env *env, int last_exit_status)
 			return (free(result), HANDLE_ERROR_NULL);
 		if (need_free)
 			free(value);
+	}
+	else if (piece->text[0] == '~')
+	{
+		value = env->get_value(env, HOME);
+		if (ft_strappend(&result, value) != 1)
+			return (free(result), HANDLE_ERROR_NULL);
+		if ((piece->text + 1) && ft_strappend(&result, piece->text + 1) != 1)
+			return (free(result), HANDLE_ERROR_NULL);
 	}
 	else
 	{
@@ -71,24 +79,31 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 	char	**result;
 	char	*expanded;
 	char	**words;
+	char	*all_pieces;
 
+	(void)amount;
+	(void)words;
 	res_list = NULL;
 	piece = token->pieces;
+	all_pieces = NULL;
 	while (piece)
 	{
-		if (piece->has_env_v && piece->quotes != SINGLE_Q)
+		if ((piece->has_env_v || piece->has_tilde ) && piece->quotes != SINGLE_Q)
 		{
 			expanded = expand_piece(piece, env, last_exit_status);
 			if (piece->quotes == NO_QUOTES)
 			{
 				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
-				(void)words;
-				(void)amount;
+
 				// words = ft_split(expanded, ' ');
 				// amount = add_list_array(&res_list, words);
 				// free(words);
 				// if (amount == -1)
 				// 	return (HANDLE_ERROR_NULL);
+
+				// ft_strappend(&all_pieces, expanded);
+				// Handle ERROR
+
 			}
 			else
 			{

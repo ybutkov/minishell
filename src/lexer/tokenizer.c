@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 02:05:19 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/15 02:09:47 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	check_mixed(t_token *tok)
 	{
 		while (tok->value[i])
 		{
-			if (tok->value[i] == '$' 
+			if (tok->value[i] == '$'
 					|| (tok->value[i] == '*' && tok->stat == NO_QUOTES)
 					|| (tok->value[i] == '~' && tok->stat == NO_QUOTES))
 				tok->stat = MIXED;
@@ -123,6 +123,11 @@ void	push_token(t_lex_inf *lex, t_token *tok)
 
 void	type_of_token(t_token *tok)
 {
+	if (tok->stat != NO_QUOTES)
+	{
+		tok->type = TOKEN_WORD;
+		return ;
+	}
 	if (ft_strcmp(tok->value, "&&") == 0)
 		tok->type = TOKEN_AND;
 	else if (ft_strcmp(tok->value, "||") == 0)
@@ -162,7 +167,7 @@ void	end_token(t_lex_inf *lex)
 	init_token(tok, TOKEN_END);
 	// tok->type = TOKEN_END;
 	// tok->value = NULL;
-	
+
 	if(lex->tail)
 		lex->tail->next = tok;
 	tok->prev = lex->tail;

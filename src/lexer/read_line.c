@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 11:38:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 15:43:09 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/15 21:53:39 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 t_token	*read_and_lexicalize()
 {
 	char    *line;
+	char 	*tmp;
 	t_token *tokens;
 
 	while (1)
@@ -25,13 +26,18 @@ t_token	*read_and_lexicalize()
 			line = readline("$> ");
 		else
 		{
-			char *tmp;
 			tmp = get_next_line(fileno(stdin));
 			if (!tmp)
 				return (NULL);
 			// line = ft_strtrim(tmp, "\n");
 			// free(tmp);
 			line = tmp;
+			// if (line)
+			// {
+			// 	len = ft_strlen(line);
+			// 	if (len > 0 && line[len - 1] == '\n')
+			// 	line[len - 1] = '\0';
+			// }
 		}
 		if (!line)
 			return (NULL);
@@ -43,9 +49,11 @@ t_token	*read_and_lexicalize()
 			else
 				continue ;
 		}
-		tokens = lexicalization(line);
-		if (tokens)
+		if (line)
 			add_history(line);
+		line = preprocessing(line);
+		tokens = lexicalization(line);
+		// printf("%s\n", line);
 		free(line);
 		return (tokens);
 	}

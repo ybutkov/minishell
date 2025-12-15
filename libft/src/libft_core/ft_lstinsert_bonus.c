@@ -1,33 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   ft_lstinsert_bonus.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/30 18:27:18 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/15 21:51:22 by ybutkov          ###   ########.fr       */
+/*   Created: 2025/12/15 03:32:30 by ybutkov           #+#    #+#             */
+/*   Updated: 2025/12/15 03:32:32 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// getcwd(buffer, size) - a function, returning the current
-//working directory of the process
-#include "builtin_internal.h"
-#include <unistd.h>
+#include "libft.h"
 
-int	bi_pwd()
+void	ft_lstinsert(t_list *after, t_list *new)
 {
-	char	buffer[BUFFER_PATH];
-	int		len;
-
-	if (getcwd(buffer, BUFFER_PATH) == NULL)
-		return (1);
-	else
-	{
-		// printf("%s\n", buffer);
-		len = ft_strlen(buffer);
-		write(STDOUT_FILENO, buffer, len);
-		write(STDOUT_FILENO, "\n", 1);
-		return (0);
-	}
+    if (!after || !new)
+        return ;
+    new->next = after->next;
+    after->next = new;
 }

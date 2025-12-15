@@ -66,7 +66,8 @@ C_SHELL_FILES += \
 	lexer/symbol_identifier.c \
 	lexer/tokenizer.c \
 	lexer/utils.c \
-	lexer/read_line.c
+	lexer/read_line.c \
+	lexer/preprocessor.c
 
 C_SHELL_FILES += \
 	built_ins/cd.c \
@@ -115,7 +116,7 @@ fclean f: clean
 re	: fclean all
 s : all
 c : re
-	cp ./minishell /home/ybutkov/Documents/tmp_folder/minishell_for_test
+	cp ./minishell ${HOME}/Documents/tmp_folder/minishell_for_test
 
 # adds AddressSanitizer and UndefinedBehaviorSanitizer flags
 asan: CFLAGS += $(SAN_ASAN)

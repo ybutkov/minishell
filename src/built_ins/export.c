@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 15:35:12 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 15:26:08 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/15 02:23:07 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,6 @@ static void	split_key(char *line, t_export_par *var, char *separator)
 {
 	char	*split_sign;
 
-	if (var->key)
-		free(var->key);
-	if (var->value)
-		free(var->value);
 	split_sign = ft_strnstr(line, separator, ft_strlen(line));
 	if (!split_sign)
 	{
