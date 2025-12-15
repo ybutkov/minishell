@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 22:22:09 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 23:49:43 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/15 15:06:11 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,6 +99,13 @@ void	is_double_quote(t_lex_inf *lex)
 		lex->i++;
 	if (lex->line[lex->i] == '"')
 	{
+		if (!is_whitespace_or_special(lex->line[lex->i + 1]))
+		{
+			lex->i = lex->start - 1;
+			lex->start--;
+			quotes_within(lex);
+			return ;
+		}
 		lex->error_code = 0;
         lex->end = lex->i - 1;
         new_token(lex, DOUBLE_Q);
