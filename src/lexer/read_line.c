@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 11:38:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 23:52:04 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/15 21:53:39 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,12 @@ t_token	*read_and_lexicalize()
 			// line = ft_strtrim(tmp, "\n");
 			// free(tmp);
 			line = tmp;
+			// if (line)
+			// {
+			// 	len = ft_strlen(line);
+			// 	if (len > 0 && line[len - 1] == '\n')
+			// 	line[len - 1] = '\0';
+			// }
 		}
 		if (!line)
 			return (NULL);
@@ -43,10 +49,10 @@ t_token	*read_and_lexicalize()
 			else
 				continue ;
 		}
+		if (line)
+			add_history(line);
 		line = preprocessing(line);
 		tokens = lexicalization(line);
-		if (tokens)
-			add_history(line);
 		// printf("%s\n", line);
 		free(line);
 		return (tokens);
