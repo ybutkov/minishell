@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_internal.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 22:33:16 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/16 00:32:16 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,5 +99,5 @@ int		is_all_whitespace(char *str);
 int		is_whitespace_or_special(char c);
 int		is_special(t_lex_inf *lex);
 int		is_space_or_quotes(char c);
-
+int		will_end_env_var(char c);
 #endif
