@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 19:33:37 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 03:12:56 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/15 19:31:04 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 // 255 (convention): Invalid numeric argument to exit (many shells use 255 for "numeric argument required"). If the exit builtin is given a non-numeric argument you should print an error and choose a code (255 is common).
 
 #include "builtin_internal.h"
+#include "error.h"
 
 static int	is_good_numeric(char *string)
 {
@@ -33,7 +34,7 @@ static int	is_good_numeric(char *string)
 		i++;
 	if (string[i] == '\0')
 		return (0);
-	while(string[i])
+	while (string[i])
 	{
 		if (!ft_isdigit(string[i]))
 			return (0);
@@ -45,30 +46,30 @@ static int	is_good_numeric(char *string)
 int	bi_exit(t_shell *shell, char **args)
 {
 	int		exit_status;
+	char	*err_msg;
 
 	if (isatty(STDIN_FILENO))
-		printf("exit\n");
-	if (args[2] != NULL)
-	{
-		printf("minishell: exit: too many arguments\n");
-		return (1);
-	}
+		write(1, EXIT_MSG_NL, ft_strlen(EXIT_MSG_NL));
 	if (!args[1])
 	{
 		shell->free(shell);
-		exit(0);
+		exit(EXIT_SUCCESS);
+	}
+	if (args[1] && is_good_numeric(args[1]) && args[2])
+	{
+		output_error(EXIT_MSG, EXIT_MSG_MANY_ARG);
+		return (EXIT_FAILURE);
 	}
 	if (!is_good_numeric(args[1]))
 	{
-		printf("minishell: exit: %s: numeric argument required\n", args[1]);
+		err_msg = ft_strjoin(EXIT_MSG_2_COLON, args[1]);
+		output_error(err_msg, EXIT_MSG_NUMBER_REQUIRED);
 		shell->free(shell);
-		exit(1);
+		free(err_msg);
+		exit(EXIT_MISUSE);
 	}
-	else
 	// check for atoi overflows?
-	{
-		exit_status = ft_atoi(args[1]);
-		shell->free(shell);
-		exit(exit_status % 256);
-	}
+	exit_status = ft_atoi(args[1]);
+	shell->free(shell);
+	exit(exit_status % 256);
 }
