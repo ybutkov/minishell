@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 15:35:12 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/15 02:23:07 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/16 03:26:34 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,60 @@ static int	is_valid_key(char *key)
 
 static void	print_export_sorted(void)
 {
+	// ADD sort
 	printf("oops, still need to finish this sorting function\n");
+}
+
+void output_declare(t_env *env)
+{
+	t_env_pair	*current;
+	int			len;
+
+	current = env->head;
+	while (current != NULL)
+	{
+		if (current->key)
+		{
+			write(STDOUT_FILENO, MSG_DECLARE_X, ft_strlen(MSG_DECLARE_X));
+			len = ft_strlen(current->key);
+			write(STDOUT_FILENO, current->key, len);
+			if (current->value)
+			{
+				write(STDOUT_FILENO, "=", 1);
+				len = ft_strlen(current->value);
+				write(STDOUT_FILENO, current->value, len);
+			}
+			write(STDOUT_FILENO, "\n", 1);
+		}
+		current = current->next;
+	}
+}
+
+
+int	check_flags(t_env *env, char **args, int *i)
+{
+	char	*err_msg;
+
+	*i = 1;
+	if (args[1] && (args[1][0] == '-'))
+	{
+		if (ft_strcmp(args[1], "-p") == 0)
+		{
+			if (args[2] == NULL)
+				output_declare(env);
+			*i = 2;
+			return (OK);
+		}
+		err_msg = ft_strdup(MSG_EXPORT_2_COLON);
+		if (args[1][1] == 'p')
+			err_msg[ft_strlen(MSG_EXPORT_2_COLON) - 1] = args[1][2];
+		else
+			err_msg[ft_strlen(MSG_EXPORT_2_COLON) - 1] = args[1][1];
+		output_error(err_msg, MSG_INVALID_OPTION);
+		free(err_msg);
+		return (ERROR);
+	}
+	return (OK);
 }
 
 int	bi_export(t_env *env, char **args)
@@ -83,10 +136,11 @@ int	bi_export(t_env *env, char **args)
 		print_export_sorted();
 		return (0);
 	}
-	i = 1;
 	status = 0;
 	var.key = NULL;
 	var.value = NULL;
+	if (check_flags(env, args, &i) == ERROR)
+		return (EXIT_MISUSE);
 	while (args[i])
 	{
 		split_key(args[i], &var, "=");

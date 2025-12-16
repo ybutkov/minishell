@@ -120,7 +120,6 @@ c : re
 	cp ./minishell ${HOME}/Documents/tmp_folder/minishell_for_test
 	cp ./minishell ${HOME}/42_minishell_tester
 
-
 # adds AddressSanitizer and UndefinedBehaviorSanitizer flags
 asan: CFLAGS += $(SAN_ASAN)
 asan: re
