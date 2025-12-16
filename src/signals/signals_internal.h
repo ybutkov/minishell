@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 13:06:52 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/16 13:18:08 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/16 19:56:58 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,9 @@
 void	set_signals_parent_interactive(void);
 void	set_signals_waiting_parent(void);
 void	set_signals_child(void);
+void	set_signals_heredoc(void);
 void	handle_sigint_parent(int sig);
+void	handle_sigint_heredoc(int sig);
 void	disable_ctrl_echo(void);
 
 #endif

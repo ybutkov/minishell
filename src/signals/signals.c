@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 16:31:47 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/16 13:17:49 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/16 20:28:17 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,22 @@ void	set_signals_child(void)
 	sigaction(SIGINT, &sa_int, NULL);
 	sigaction(SIGQUIT, &sa_quit, NULL);
 }
+
+void	set_signals_heredoc(void)
+{
+	struct sigaction	sa_int;
+	struct sigaction	sa_quit;
+
+	sa_int.sa_handler = handle_sigint_heredoc;
+	sigemptyset(&sa_int.sa_mask);
+	sa_int.sa_flags = 0;
+	sa_quit.sa_handler = SIG_IGN;
+	sigemptyset(&sa_quit.sa_mask);
+	sa_quit.sa_flags = 0;
+	sigaction(SIGINT, &sa_int, NULL);
+	sigaction(SIGQUIT, &sa_quit, NULL);
+}
+
 //ctrl+c in interactive: print a newline, clear the current line, show a fresh prompt
 void	handle_sigint_parent(int sig)
 // sig - signal number that triggered the handler (2 in this case)
@@ -88,6 +104,13 @@ void	handle_sigint_parent(int sig)
 // {
 // 	(void)sig;
 // }
+
+void	handle_sigint_heredoc(int sig)
+{
+	(void)sig;
+	write(STDOUT_FILENO, "\n", 1);
+	close(STDIN_FILENO);
+}
 
 void	disable_ctrl_echo(void)
 {

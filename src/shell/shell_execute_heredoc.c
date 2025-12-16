@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_execute_heredoc.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:27 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/04 13:59:21 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/16 20:22:26 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include "signals.h"
 
 int	collect_heredoc_node(t_ast_node *node, t_shell *shell);
 
@@ -60,17 +61,30 @@ static int	open_file(char *filename, int flags, t_shell *shell)
 	return (fd);
 }
 
-static void	collect_heredoc_input(char *target, int write_fd)
+static int	collect_heredoc_input(char *target, int write_fd, t_shell *shell)
 {
 	char	*line;
+	int		the_stdin;
 
+	the_stdin = dup(STDIN_FILENO);
+	set_signals_heredoc();
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))
 			ft_putstr_fd("heredoc> ", STDOUT_FILENO);
 		line = get_next_line(STDIN_FILENO);
 		if (!line)
+		{
+	        if (fcntl(STDIN_FILENO, F_GETFD) == -1)  // stdin was closed (Ctrl+C)
+            {
+                dup2(the_stdin, STDIN_FILENO);
+                close(the_stdin);
+                set_signals_parent_interactive();
+                shell->ctx->last_exit_status = 130;
+                return (130);
+            }
 			break ;
+		}
 		if (is_delimiter(line, target))
 		{
 			free(line);
@@ -79,19 +93,29 @@ static void	collect_heredoc_input(char *target, int write_fd)
 		write(write_fd, line, ft_strlen(line));
 		free(line);
 	}
+	close(the_stdin);
+	set_signals_parent_interactive();
+	return (0);
 }
 
 int	execute_redir_heredoc(t_shell *shell, t_redir *redirect)
 {
 	int		fd;
+	int		status;
 	char	*file_name;
 
 	file_name = get_tmp_file_name(get_file_n(1));
 	if (file_name == NULL)
 		return (EXIT_FAILURE);
 	fd = open_file(file_name, O_WRONLY | O_CREAT | O_TRUNC, shell);
-	collect_heredoc_input(redirect->target, fd);
+	status = collect_heredoc_input(redirect->target, fd, shell);
 	close(fd);
+	if (status == 130)
+	{
+		unlink(file_name);
+		free(file_name);
+		return (130);
+	}
 	redirect->target = file_name;
 	return (EXIT_SUCCESS);
 }
@@ -128,6 +152,8 @@ static int	apply_heredoc(t_cmd *cmd, t_shell *shell)
 		if (redirect->type == REDIR_HEREDOC)
 		{
 			status = execute_redir_heredoc(shell, redirect);
+			if (status == 130)
+				return (status);
 		}
 		redir = redir->next;
 	}
