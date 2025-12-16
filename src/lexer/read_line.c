@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 11:38:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/16 13:19:38 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/16 22:41:00 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ t_token	*read_and_lexicalize()
 	char    *line;
 	char 	*tmp;
 	t_token *tokens;
+	int		len;
 
 	disable_ctrl_echo();
 	set_signals_parent_interactive();
@@ -35,12 +36,12 @@ t_token	*read_and_lexicalize()
 			// line = ft_strtrim(tmp, "\n");
 			// free(tmp);
 			line = tmp;
-			// if (line)
-			// {
-			// 	len = ft_strlen(line);
-			// 	if (len > 0 && line[len - 1] == '\n')
-			// 	line[len - 1] = '\0';
-			// }
+			if (line)
+			{
+				len = ft_strlen(line);
+				if (len > 0 && line[len - 1] == '\n')
+				line[len - 1] = '\0';
+			}
 		}
 		if (!line)
 			return (NULL);
