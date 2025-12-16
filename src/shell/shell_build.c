@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/15 14:01:08 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/16 22:29:04 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -233,7 +233,49 @@ int	check_redir_token_type(t_token *token, t_token_type redir_token_type)
 	return (0);
 }
 
-int	collect_redirs(t_cmd *cmd, t_token **start_tkn, t_token **end_tkn)
+char	*collect_pieces_to_string(t_shell *shell, t_token *curr_tkn)
+{
+	char	**expanded_args;
+	char	*new_arg;
+	int		i;
+
+	i = 0;
+	new_arg = NULL;
+	if (curr_tkn->pieces)
+	{
+		expanded_args = expand_and_split_token(curr_tkn, shell->ctx->env,
+				shell->ctx->last_exit_status);
+		new_arg = ft_strdup("");
+		if (!expanded_args || new_arg == NULL)
+			return (NULL);
+		while (expanded_args[i])
+		{
+			if (ft_strappend(&new_arg, expanded_args[i]) == 0)
+			{
+				free_str_array(expanded_args);
+				return (free(new_arg), NULL);
+			}
+			free(expanded_args[i++]);
+		}
+		// free_str_array(expanded_args); ???
+		free(expanded_args);
+	}
+	else
+		new_arg = ft_strdup(curr_tkn->value);
+	return (new_arg);
+}
+
+t_redir	*create_redirect(t_shell *shell, t_redir_type type, t_token *curr_tkn)
+{
+	char	*target;
+
+	target = collect_pieces_to_string(shell, curr_tkn);
+	if (target == NULL)
+		return (NULL);
+	return (create_redir(type, target));
+}
+
+int	collect_redirs(t_shell *shell, t_cmd *cmd, t_token **start_tkn, t_token **end_tkn)
 {
 	t_redir			*redirect;
 	t_redir_type	type;
@@ -262,7 +304,8 @@ int	collect_redirs(t_cmd *cmd, t_token **start_tkn, t_token **end_tkn)
 		}
 		if (curr_tkn->next == NULL || curr_tkn->next->type != TOKEN_WORD)
 			return (ERROR);
-		redirect = create_redir(type, curr_tkn->next->value);
+		// redirect = create_redir(type, curr_tkn->next->value);
+		redirect = create_redirect(shell, type, curr_tkn->next);
 		add_redirect(cmd, redirect);
 		tmp_tkn = curr_tkn->next->next;
 		if (curr_tkn->prev)
@@ -283,59 +326,6 @@ int	collect_redirs(t_cmd *cmd, t_token **start_tkn, t_token **end_tkn)
 	return (OK);
 }
 
-/*
-t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
-		t_token *end_tkn)
-{
-	t_cmd	*cmd;
-	char	**argv;
-	char	*path;
-	t_token	*curr_tkn;
-	int		i;
-
-	cmd = create_cmd(NULL, NULL);
-	if (collect_redirs(cmd, &start_tkn, &end_tkn) == ERROR)
-		return (NULL); // handle error
-	curr_tkn = start_tkn;
-	i = 1;
-	while (curr_tkn != end_tkn && curr_tkn->type != TOKEN_END)
-	{
-		i++;
-		curr_tkn = curr_tkn->next;
-	}
-	argv = malloc(sizeof(char *) * (i + 1));
-	if (!argv)
-		return (NULL);
-	curr_tkn = start_tkn;
-	i = 0;
-	while (curr_tkn != end_tkn && curr_tkn->type != TOKEN_END)
-	{
-		argv[i] = ft_strdup(curr_tkn->value);
-		curr_tkn = curr_tkn->next;
-		i++;
-	}
-	if (curr_tkn->type != TOKEN_END)
-	{
-		argv[i] = ft_strdup(curr_tkn->value);
-		i++;
-	}
-	argv[i] = NULL;
-	/////////////////////////////////////
-	if (!argv[0])
-	{
-		cmd->argv = argv;
-		cmd->path = NULL;
-		return (cmd);
-	}
-	///////////////////////////////////////
-	path = get_cmd_path(argv[0], shell->ctx->envp);
-	cmd->argv = argv;
-	cmd->path = path;
-	return (cmd);
-}
-*/
-
-//----------------------------------------------------------------------
 int	split_arg_list(t_list *arg_list, int *total_args)
 {
 	char	**argv;
@@ -445,7 +435,7 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 	arg_list = NULL;
 	total_args = 0;
 	cmd = create_cmd(NULL, NULL);
-	if (collect_redirs(cmd, &start_tkn, &end_tkn) == ERROR)
+	if (collect_redirs(shell, cmd, &start_tkn, &end_tkn) == ERROR)
 		return (NULL);
 	curr_tkn = start_tkn;
 	while (curr_tkn && curr_tkn->type != TOKEN_END)

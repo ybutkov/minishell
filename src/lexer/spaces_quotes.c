@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   spaces_quotes.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 22:22:09 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 21:02:12 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/16 21:52:08 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	is_space(t_lex_inf *lex)
 			return ;
 		}
 		lex->i++;
-	}	
+	}
 	lex->end = lex->i - 1;
 	if (lex->end >= lex->start)
 		new_token(lex, NO_QUOTES);
@@ -51,7 +51,7 @@ void	quotes_within(t_lex_inf *l)
 			return ;
 		}
 		l->i++;
-	} 
+	}
 }
 // ckkshd"nclmc klxld"mcldl'cockelpps x x cdcf 'jofijo4f
 
@@ -64,14 +64,14 @@ void	is_single_quote(t_lex_inf *lex)
 		lex->i++;
 	if (lex->line[lex->i] == '\'')
 	{
-		if (is_whitespace(lex->line[lex->i + 1]) || is_special(lex))
+		if (is_whitespace_or_special(lex->line[lex->i + 1]) || is_special(lex))
 		{
 			lex->error_code = 0;
 			lex->end = lex->i - 1;
 			new_token(lex, SINGLE_Q);
 			lex->i++;
 		}
-		else 
+		else
 		{
 			lex->start--;
 			lex->i = lex->start;
@@ -89,14 +89,14 @@ void	is_double_quote(t_lex_inf *lex)
 		lex->i++;
 	if (lex->line[lex->i] == '"')
 	{
-		if (is_whitespace(lex->line[lex->i + 1]) || is_special(lex))
+		if (is_whitespace_or_special(lex->line[lex->i + 1]) || is_special(lex))
 		{
 			lex->error_code = 0;
 			lex->end = lex->i - 1;
 			new_token(lex, DOUBLE_Q);
 			lex->i++;
 		}
-		else 
+		else
 		{
 			lex->start--;
 			lex->i = lex->start;
@@ -104,11 +104,11 @@ void	is_double_quote(t_lex_inf *lex)
 		}
 	}
 }
-// && || : \ < > >> << ( ) 
+// && || : \ < > >> << ( )
 void	is_operator(t_lex_inf *lex)
 {
 	char sym;
-	
+
 	lex->start = lex->i;
 	sym = lex->line[lex->i];
 	if ((sym == '/' || sym == '&' || sym == '|' || sym == '>'
@@ -143,7 +143,7 @@ void	is_operator(t_lex_inf *lex)
 // 			return ;
 // 		}
 // 		l->i++;
-// 	} 
+// 	}
 // }
 // // ckkshd"nclmc klxld"mcldl'cockelpps x x cdcf 'jofijo4f
 
