@@ -88,7 +88,8 @@ C_SHELL_FILES += \
 # 	parcer/get_cmd_path.c \
 
 C_SHELL_FILES += \
-	expansion/expansion.c
+	expansion/expansion.c \
+	signals/signals.c
 
 C_FIlES = $(addprefix $(SRC)/, $(C_SHELL_FILES))
 C_OBJ_FIlES =	$(C_FIlES:%.c=$(BUILD_DIR)/%.o)

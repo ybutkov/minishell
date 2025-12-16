@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_execute_cmd.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/14 16:06:15 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/16 02:06:24 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
+#include "signals.h"
 
 static void	open_file_and_dup2(char *filename, int flags, int dup_fd,
 		t_shell *shell)
@@ -151,6 +152,7 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 	pid_t	pid;
 	int		status;
 
+	set_signals_waiting_parent();
 	pid = fork();
 	if (pid < 0)
 	{
@@ -159,6 +161,7 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 	}
 	else if (pid == 0)
 	{
+		set_signals_child();
 		if (input_fd != STDIN_FILENO)
 			dup2_and_close(input_fd, STDIN_FILENO);
 		if (output_fd != STDOUT_FILENO)
