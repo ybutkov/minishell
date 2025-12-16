@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/15 13:57:37 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 00:34:21 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,35 +54,31 @@ char	*expand_piece(t_piece *piece, t_env *env, int last_exit_status)
 	return (result);
 }
 
-int	add_list_array(t_list **res_list, char **elems)
-{
-	t_list	*new;
-	int		n;
+// static int	add_list_array(t_list **res_list, char **elems)
+// {
+// 	t_list	*new;
+// 	int		n;
 
-	n = 0;
-	while (elems[n])
-	{
-		new = ft_lstnew(elems[n]);
-		if (new == NULL)
-			return (HANDLE_ERROR_MINUS_ONE);
-		ft_lstadd_back(res_list, new);
-		n++;
-	}
-	return (n);
-}
+// 	n = 0;
+// 	while (elems[n])
+// 	{
+// 		new = ft_lstnew(elems[n]);
+// 		if (new == NULL)
+// 			return (HANDLE_ERROR_MINUS_ONE);
+// 		ft_lstadd_back(res_list, new);
+// 		n++;
+// 	}
+// 	return (n);
+// }
 
 char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 {
 	t_piece	*piece;
 	t_list	*res_list;
-	int		amount;
 	char	**result;
 	char	*expanded;
-	char	**words;
 	char	*all_pieces;
 
-	(void)amount;
-	(void)words;
 	res_list = NULL;
 	piece = token->pieces;
 	all_pieces = NULL;

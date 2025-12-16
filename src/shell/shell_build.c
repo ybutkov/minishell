@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/16 22:29:04 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/16 23:22:22 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "libft.h"
 #include "parsing.h"
 #include "shell_internal.h"
+#include "utils.h"
 
 t_ast_node	*build_ast(t_shell *shell, t_ast_node **node, t_token *start_tkn,
 				t_token *end_tkn);
@@ -240,25 +241,22 @@ char	*collect_pieces_to_string(t_shell *shell, t_token *curr_tkn)
 	int		i;
 
 	i = 0;
-	new_arg = NULL;
 	if (curr_tkn->pieces)
 	{
 		expanded_args = expand_and_split_token(curr_tkn, shell->ctx->env,
 				shell->ctx->last_exit_status);
 		new_arg = ft_strdup("");
 		if (!expanded_args || new_arg == NULL)
-			return (NULL);
+			return (free(expanded_args), free(new_arg), NULL);
 		while (expanded_args[i])
 		{
-			if (ft_strappend(&new_arg, expanded_args[i]) == 0)
+			if (ft_strappend(&new_arg, expanded_args[i++]) == 0)
 			{
 				free_str_array(expanded_args);
 				return (free(new_arg), NULL);
 			}
-			free(expanded_args[i++]);
 		}
-		// free_str_array(expanded_args); ???
-		free(expanded_args);
+		free_str_array(expanded_args);
 	}
 	else
 		new_arg = ft_strdup(curr_tkn->value);
@@ -426,46 +424,23 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 	char	**argv;
 	char	*path;
 	t_token	*curr_tkn;
-	int		total_args;
-	char	**expanded_args;
-	int		i;
-	t_list	*node;
 	t_list 	*arg_list;
+	char	*new_arg;
 
 	arg_list = NULL;
-	total_args = 0;
 	cmd = create_cmd(NULL, NULL);
 	if (collect_redirs(shell, cmd, &start_tkn, &end_tkn) == ERROR)
-		return (NULL);
+		return (cmd->free_cmd(cmd), NULL);
 	curr_tkn = start_tkn;
 	while (curr_tkn && curr_tkn->type != TOKEN_END)
 	{
-		if (curr_tkn->pieces)
+		new_arg = collect_pieces_to_string(shell, curr_tkn);
+		if (new_arg == NULL)
 		{
-			expanded_args = expand_and_split_token(curr_tkn, shell->ctx->env,
-					shell->ctx->last_exit_status);
-			if (!expanded_args)
-			{
-				ft_lstclear(&arg_list, free);
-				return (NULL);
-			}
-			i = 0;
-			char *new_arg = ft_strdup("");
-			while (expanded_args[i])
-			{
-				ft_strappend(&new_arg, expanded_args[i]);
-				free(expanded_args[i]);
-				i++;
-			}
-			free(expanded_args);
-			total_args++;
-			ft_lstadd_back(&arg_list, ft_lstnew(new_arg));
+			ft_lstclear(&arg_list, free);
+			return (free(arg_list), cmd->free_cmd(cmd), NULL);
 		}
-		else
-		{
-			ft_lstadd_back(&arg_list, ft_lstnew(ft_strdup(curr_tkn->value)));
-			total_args++;
-		}
+		ft_lstadd_back(&arg_list, ft_lstnew(new_arg));
 		if (curr_tkn == end_tkn)
 			break ;
 		curr_tkn = curr_tkn->next;
@@ -474,23 +449,15 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 	// {
 	// 	// Handle error
 	// }
-	argv = malloc(sizeof(char *) * (total_args + 1));
+
+	argv = list_to_array(arg_list);
 	if (!argv)
 	{
 		ft_lstclear(&arg_list, free);
 		return (NULL);
 	}
-	node = arg_list;
-	i = 0;
-	while (node)
-	{
-		argv[i++] = (char *)node->content;
-		node = node->next;
-	}
-	argv[i] = NULL;
-	ft_lstclear(&arg_list, NULL);
-	// We can have empty argv. Rebuild argv ???
-	if (i > 0 && argv[0][0] != '\0')
+	ft_lstclear(&arg_list, empty_func);
+	if (argv[0] && argv[0][0] != '\0')
 	{
 		path = get_cmd_path(argv[0], shell->ctx->envp);
 		cmd->argv = argv;
