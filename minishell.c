@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/13 22:59:10 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/16 20:26:47 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,8 +177,16 @@ int	main(int argc, char **argv, char **envp)
 			continue ;
 		}
 
-		shell->collect_heredoc(shell);
-		shell->execute(shell);
+		int heredoc_status = shell->collect_heredoc(shell);
+		if (heredoc_status == 130)
+		{
+    // Heredoc was interrupted, don't execute
+    	shell->ctx->last_exit_status = 130;
+		}
+		else
+		{
+    		shell->execute(shell);
+		}
 		clear_tmp_folder(get_file_n(0));
 		exit_status = shell->ctx->last_exit_status;
 		shell->clear(shell);

@@ -88,7 +88,8 @@ C_SHELL_FILES += \
 # 	parcer/get_cmd_path.c \
 
 C_SHELL_FILES += \
-	expansion/expansion.c
+	expansion/expansion.c \
+	signals/signals.c
 
 C_FIlES = $(addprefix $(SRC)/, $(C_SHELL_FILES))
 C_OBJ_FIlES =	$(C_FIlES:%.c=$(BUILD_DIR)/%.o)
@@ -117,6 +118,8 @@ re	: fclean all
 s : all
 c : re
 	cp ./minishell ${HOME}/Documents/tmp_folder/minishell_for_test
+	cp ./minishell ${HOME}/42_minishell_tester
+
 
 # adds AddressSanitizer and UndefinedBehaviorSanitizer flags
 asan: CFLAGS += $(SAN_ASAN)

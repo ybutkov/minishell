@@ -3,15 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   read_line.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 11:38:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/15 21:53:39 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/16 13:19:38 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
 #include "get_next_line.h"
+#include "signals.h"
 
 t_token	*read_and_lexicalize()
 {
@@ -19,6 +20,8 @@ t_token	*read_and_lexicalize()
 	char 	*tmp;
 	t_token *tokens;
 
+	disable_ctrl_echo();
+	set_signals_parent_interactive();
 	while (1)
 	{
 		tokens = NULL;

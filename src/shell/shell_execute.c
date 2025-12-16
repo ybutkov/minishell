@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_execute.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:51:39 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/06 13:12:38 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/16 02:06:40 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include "signals.h"
 
 void	close_fds(int fds[2])
 {
@@ -64,6 +65,7 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	// status_code = 0;
 	if (pipe(pipe_fds) == -1)
 		return (EXIT_FAILURE);
+	set_signals_waiting_parent();
 	pids[0] = fork();
 	if (pids[0] == -1)
 	{
@@ -72,7 +74,10 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 		return (EXIT_FAILURE);
 	}
 	if (pids[0] == 0)
+	{
+		set_signals_child();
 		return (execute_left(node->get_left(node), shell, in_fd, pipe_fds));
+	}
 	close(pipe_fds[1]);
 
 	pids[1] = fork();
@@ -83,7 +88,10 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 		return (EXIT_FAILURE);
 	}
 	if (pids[1] == 0)
+	{
+		set_signals_child();
 		return (execute_right(node->get_right(node), shell, pipe_fds, out_fd));
+	}
 	close(pipe_fds[0]);
 	waitpid(pids[0], &status, 0);
 	waitpid(pids[1], &status, 0);
@@ -174,6 +182,7 @@ int	execute_subshell(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	int				status;
 	t_shell_node	*shell_node;
 
+	set_signals_waiting_parent();
 	pid = fork();
 	if (pid < 0)
 	{
@@ -182,6 +191,7 @@ int	execute_subshell(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	}
 	else if (pid == 0)
 	{
+		set_signals_child();
 		if (in_fd != STDIN_FILENO)
 			dup2_and_close(in_fd, STDIN_FILENO);
 		if (out_fd != STDOUT_FILENO)
