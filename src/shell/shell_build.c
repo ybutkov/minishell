@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 02:56:42 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 03:13:49 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -418,20 +418,15 @@ int	split_arg_list2(t_list *arg_list, int *total_args)
 	return (OK);
 }
 
-t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
-		t_token *end_tkn)
+char	**collect_tokens_to_argv(t_shell *shell, t_token *start_tkn,
+	t_token *end_tkn)
 {
-	t_cmd	*cmd;
-	char	**argv;
-	char	*path;
 	t_token	*curr_tkn;
-	t_list	*arg_list;
 	char	*new_arg;
+	t_list	*arg_list;
+	char	**argv;
 
 	arg_list = NULL;
-	cmd = create_cmd(NULL, NULL);
-	if (collect_redirs(shell, cmd, &start_tkn, &end_tkn) == ERROR)
-		return (cmd->free_cmd(cmd), NULL);
 	curr_tkn = start_tkn;
 	while (curr_tkn && curr_tkn->type != TOKEN_END)
 	{
@@ -439,7 +434,7 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 		if (new_arg == NULL)
 		{
 			ft_lstclear(&arg_list, free);
-			return (free(arg_list), cmd->free_cmd(cmd), NULL);
+			return (free(arg_list), HANDLE_ERROR_NULL);
 		}
 		ft_lstadd_back(&arg_list, ft_lstnew(new_arg));
 		if (curr_tkn == end_tkn)
@@ -451,27 +446,29 @@ t_cmd	*parse_tokens_to_cmd(t_shell *shell, t_token *start_tkn,
 	// 	// Handle error
 	// }
 	argv = list_to_array(arg_list);
-	if (!argv)
-	{
-		ft_lstclear(&arg_list, free);
-		return (NULL);
-	}
 	ft_lstclear(&arg_list, empty_func);
-	if (argv[0] && argv[0][0] != '\0')
-	{
-		path = get_cmd_path(argv[0], shell->ctx->envp);
-		cmd->argv = argv;
-		cmd->path = path;
-	}
-	return (cmd);
+	return (argv);
 }
 
 t_cmd	*create_cmd_from_tokens(t_shell *shell, t_token *start_tkn,
 		t_token *end_tkn)
 {
 	t_cmd	*cmd;
+	char	**argv;
+	char	*path;
 
-	cmd = parse_tokens_to_cmd(shell, start_tkn, end_tkn);
+	cmd = create_cmd(NULL, NULL);
+	if (collect_redirs(shell, cmd, &start_tkn, &end_tkn) == ERROR)
+		return (cmd->free_cmd(cmd), HANDLE_ERROR_NULL);
+	argv = collect_tokens_to_argv(shell, start_tkn, end_tkn);
+	if (!argv)
+		return (cmd->free_cmd(cmd), HANDLE_ERROR_NULL);
+	if (argv[0] && argv[0][0] != '\0')
+	{
+		path = get_cmd_path(argv[0], shell->ctx->envp);
+		cmd->argv = argv;
+		cmd->path = path;
+	}
 	return (cmd);
 }
 
