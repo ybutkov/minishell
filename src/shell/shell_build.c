@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 02:20:54 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 02:34:47 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,11 +274,33 @@ static void	add_redirect(t_cmd *cmd, t_redir *redirect)
 		cmd->redirs = redir;
 }
 
-int	collect_redirs(t_shell *shell, t_cmd *cmd, t_token **start_tkn, t_token **end_tkn)
+static void	cut_redir_tokens(t_token **curr_tkn, t_token **start_tkn,
+	t_token **end_tkn, int *running)
+{
+	t_token			*tmp_tkn;
+
+	tmp_tkn = (*curr_tkn)->next->next;
+	if ((*curr_tkn)->prev)
+		(*curr_tkn)->prev->next = tmp_tkn;
+	if (tmp_tkn)
+		tmp_tkn->prev = (*curr_tkn)->prev;
+	if ((*curr_tkn)->next == (*end_tkn))
+	{
+		*running = 0;
+		(*end_tkn) = (*curr_tkn)->prev;
+	}
+	if (*curr_tkn == *start_tkn)
+		*start_tkn = tmp_tkn;
+	(*curr_tkn)->next->free((*curr_tkn)->next);
+	(*curr_tkn)->free(*curr_tkn);
+	(*curr_tkn) = tmp_tkn;
+}
+
+int	collect_redirs(t_shell *shell, t_cmd *cmd, t_token **start_tkn,
+	t_token **end_tkn)
 {
 	t_redir			*redirect;
 	t_redir_type	type;
-	t_token			*tmp_tkn;
 	int				running;
 	t_token			*curr_tkn;
 
@@ -287,41 +309,17 @@ int	collect_redirs(t_shell *shell, t_cmd *cmd, t_token **start_tkn, t_token **en
 	while (running && curr_tkn && curr_tkn != *end_tkn
 		&& curr_tkn->type != TOKEN_END)
 	{
-		
-		if (is_redirect_type(curr_tkn, TOKEN_REDIR_OUT))
-			type = REDIR_OUT;
-		else if (is_redirect_type(curr_tkn, TOKEN_REDIR_APPEND))
-			type = REDIR_APPEND;
-		else if (is_redirect_type(curr_tkn, TOKEN_REDIR_IN))
-			type = REDIR_IN;
-		else if (is_redirect_type(curr_tkn, TOKEN_HEREDOC))
-			type = REDIR_HEREDOC;
-		else
+		type = get_only_redir_types(curr_tkn);
+		if (type == (t_redir_type)(-1))
 		{
-			// Error  ???
-			curr_tkn = curr_tkn->next;
-			continue ;
+		curr_tkn = curr_tkn->next;
+		continue ;
 		}
 		if (curr_tkn->next == NULL || curr_tkn->next->type != TOKEN_WORD)
 			return (ERROR);
-		// redirect = create_redir(type, curr_tkn->next->value);
 		redirect = create_redirect(shell, type, curr_tkn->next);
 		add_redirect(cmd, redirect);
-		tmp_tkn = curr_tkn->next->next;
-		if (curr_tkn->prev)
-			curr_tkn->prev->next = tmp_tkn;
-		if (tmp_tkn)
-			tmp_tkn->prev = curr_tkn->prev;
-		if (curr_tkn->next == (*end_tkn))
-		{
-			running = 0;
-			(*end_tkn) = curr_tkn->prev;
-		}
-		if (curr_tkn == *start_tkn)
-			*start_tkn = tmp_tkn;
-		curr_tkn->next->free(curr_tkn->next);
-		curr_tkn->free(curr_tkn);
-		curr_tkn = tmp_tkn;
+		cut_redir_tokens(&curr_tkn, start_tkn, end_tkn, &running);
 	}
 	return (OK);
 }
