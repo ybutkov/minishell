@@ -137,5 +137,17 @@ $(LIBFT) :
 
 .PHONY : all clean fclean re bonus s
 
-#valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all -s ./pipex "infiles/basic.txt" "nonexistingcommand" "cat -e" "outfiles/outfile"
-# minishell_test
+.PHONY: v gen_supp vv
+
+v: re
+	@bash -lc "valgrind --leak-check=full --show-leak-kinds=definite,indirect \
+		--track-origins=yes --trace-children=yes \
+		--suppressions=valgrind_readline.supp ./$(NAME) 2> >(tee valgrind.log >&2)"
+
+vv: re
+	@bash -lc "valgrind --leak-check=full --show-leak-kinds=all \
+		--track-origins=yes --trace-children=yes ./$(NAME) 2> >(tee valgrind_all.log >&2)"
+
+# convenience: run minishell under valgrind
+#valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all -s ./minishell
+

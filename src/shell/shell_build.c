@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 05:03:34 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 17:04:55 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,10 +165,28 @@ void	put_shell_node_to_ast(t_ast_node **curr_node, t_shell_node *node, int i,
 	}
 }
 
-static void	get_borders_for_lvl(t_token_lvl	*token_lvl)
+t_token_lvl		*create_token_lvl(int lvl)
 {
+	t_token_lvl		*token_lvl;
+
+	token_lvl = malloc(sizeof(t_token_lvl));
+	if (token_lvl == NULL)
+		return (HANDLE_ERROR_NULL);
+	token_lvl->lvl = lvl;
 	token_lvl->start = (t_token_type)(-1);
 	token_lvl->end = (t_token_type)(-1);
+	return (token_lvl);
+}
+
+static t_token_lvl	*get_token_lvl(int lvl)
+{
+	t_token_lvl		*token_lvl;
+
+	token_lvl = create_token_lvl(lvl);
+	if (token_lvl == NULL)
+		return (HANDLE_ERROR_NULL);
+	// token_lvl->start = (t_token_type)(-1);
+	// token_lvl->end = (t_token_type)(-1);
 	if (token_lvl->lvl == 1)
 	{
 		token_lvl->start = TKN_LVL_1_FROM;
@@ -184,6 +202,7 @@ static void	get_borders_for_lvl(t_token_lvl	*token_lvl)
 		token_lvl->start = TKN_LVL_3_FROM;
 		token_lvl->end = TKN_LVL_3_TO;
 	}
+	return (token_lvl);
 }
 
 
@@ -245,9 +264,9 @@ t_token	*get_for_last(t_token *curr_token, t_token_lvl *token_lvl,
 		if (token_lvl->lvl == 1)
 			*found_token = curr_token;
 		else
-			return (curr_token);
+			return (free(token_lvl), curr_token);
 	}
-	return (*found_token);
+	return (free(token_lvl), *found_token);
 }
 
 t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
@@ -258,11 +277,9 @@ t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
 	t_token_lvl		*token_lvl;
 	int				subshell_opened;
 
-	token_lvl = malloc(sizeof(token_lvl));
-	token_lvl->lvl = lvl;
-	get_borders_for_lvl(token_lvl);
-	if (token_lvl->start == (t_token_type)(-1))
-		return (HANDLE_ERROR_NULL);
+	token_lvl = get_token_lvl(lvl);
+	if (!token_lvl || token_lvl->start == (t_token_type)(-1))
+		return (free(token_lvl), HANDLE_ERROR_NULL);
 	curr = start_token;
 	found_token = NULL;
 	subshell_opened = 0;
@@ -276,13 +293,13 @@ t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
 			if (lvl == 1)
 				found_token = curr;
 			else
-				return (curr);
+				return (free(token_lvl), curr);
 		}
 		curr = curr->next;
 	}
 	if (curr && curr == end_token)
 		return (get_for_last(curr, token_lvl, &found_token, subshell_opened));
-	return (found_token);
+	return (free(token_lvl), found_token);
 }
 
 // char	**parse_tokens_to_argv(t_token *start_tkn, t_token *end_tkn)
