@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/16 23:22:22 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 02:20:54 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,69 @@ static void	add_subshell_redir(t_shell_node *node, t_redir *redirect)
 		node->redirs = redir;
 }
 
-static void	collect_subshell_redirs(t_shell_node *node, t_token *start,
-		t_token *end)
+static int	is_redirect_type(t_token *curr, t_token_type type)
+{
+	if (curr->type == type && curr->next && curr->next->type == TOKEN_WORD)
+		return (OK);
+	else
+		return (NO);
+}
+
+t_redir_type	get_only_redir_types(t_token *token)
+{
+	if (is_redirect_type(token, TOKEN_REDIR_OUT))
+		return (REDIR_OUT);
+	else if (is_redirect_type(token, TOKEN_REDIR_APPEND))
+		return (REDIR_APPEND);
+	else if (is_redirect_type(token, TOKEN_REDIR_IN))
+		return (REDIR_IN);
+	else if (is_redirect_type(token, TOKEN_HEREDOC))
+		return (REDIR_HEREDOC);
+	else
+		return ((t_redir_type)(-1));
+}
+
+char	*collect_pieces_to_string(t_shell *shell, t_token *curr_tkn)
+{
+	char	**expanded_args;
+	char	*new_arg;
+	int		i;
+
+	i = 0;
+	if (curr_tkn->pieces)
+	{
+		expanded_args = expand_and_split_token(curr_tkn, shell->ctx->env,
+				shell->ctx->last_exit_status);
+		new_arg = ft_strdup("");
+		if (!expanded_args || new_arg == NULL)
+			return (free(expanded_args), free(new_arg), NULL);
+		while (expanded_args[i])
+		{
+			if (ft_strappend(&new_arg, expanded_args[i++]) == 0)
+			{
+				free_str_array(expanded_args);
+				return (free(new_arg), NULL);
+			}
+		}
+		free_str_array(expanded_args);
+	}
+	else
+		new_arg = ft_strdup(curr_tkn->value);
+	return (new_arg);
+}
+
+t_redir	*create_redirect(t_shell *shell, t_redir_type type, t_token *curr_tkn)
+{
+	char	*target;
+
+	target = collect_pieces_to_string(shell, curr_tkn);
+	if (target == NULL)
+		return (NULL);
+	return (create_redir(type, target));
+}
+
+static void	collect_subshell_redirs(t_shell *shell, t_shell_node *node,
+	t_token *start,	t_token *end)
 {
 	t_token			*curr;
 	t_redir			*redirect;
@@ -61,22 +122,10 @@ static void	collect_subshell_redirs(t_shell_node *node, t_token *start,
 	curr = start;
 	while (curr && curr != end && curr->type != TOKEN_END)
 	{
-		type = -1;
-		if (curr->type == TOKEN_REDIR_OUT && curr->next
-			&& curr->next->type == TOKEN_WORD)
-			type = REDIR_OUT;
-		else if (curr->type == TOKEN_REDIR_APPEND && curr->next
-			&& curr->next->type == TOKEN_WORD)
-			type = REDIR_APPEND;
-		else if (curr->type == TOKEN_REDIR_IN && curr->next
-			&& curr->next->type == TOKEN_WORD)
-			type = REDIR_IN;
-		else if (curr->type == TOKEN_HEREDOC && curr->next
-			&& curr->next->type == TOKEN_WORD)
-			type = REDIR_HEREDOC;
-		if (type != (t_redir_type)-1)
+		type = get_only_redir_types(curr);
+		if (type != (t_redir_type)(-1))
 		{
-			redirect = create_redir(type, curr->next->value);
+			redirect = create_redirect(shell, type, curr->next);
 			add_subshell_redir(node, redirect);
 			curr = curr->next;
 		}
@@ -115,7 +164,6 @@ void	put_shell_node_to_ast(t_ast_node **curr_node, t_shell_node *node, int i,
 		*curr_node = pipe_ast;
 	}
 }
-
 
 t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
 		int lvl)
@@ -182,38 +230,38 @@ t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
 	return (found_token);
 }
 
-char	**parse_tokens_to_argv(t_token *start_tkn, t_token *end_tkn)
-{
-	char	**argv;
-	t_token	*curr_tkn;
-	int		i;
+// char	**parse_tokens_to_argv(t_token *start_tkn, t_token *end_tkn)
+// {
+// 	char	**argv;
+// 	t_token	*curr_tkn;
+// 	int		i;
 
-	curr_tkn = start_tkn;
-	i = 1;
-	while (curr_tkn != end_tkn && curr_tkn->type != TOKEN_END)
-	{
-		i++;
-		curr_tkn = curr_tkn->next;
-	}
-	argv = malloc(sizeof(char *) * (i + 1));
-	if (!argv)
-		return (NULL);
-	curr_tkn = start_tkn;
-	i = 0;
-	while (curr_tkn != end_tkn && curr_tkn->type != TOKEN_END)
-	{
-		argv[i] = ft_strdup(curr_tkn->value);
-		curr_tkn = curr_tkn->next;
-		i++;
-	}
-	if (curr_tkn->type != TOKEN_END)
-	{
-		argv[i] = ft_strdup(curr_tkn->value);
-		i++;
-	}
-	argv[i] = NULL;
-	return (argv);
-}
+// 	curr_tkn = start_tkn;
+// 	i = 1;
+// 	while (curr_tkn != end_tkn && curr_tkn->type != TOKEN_END)
+// 	{
+// 		i++;
+// 		curr_tkn = curr_tkn->next;
+// 	}
+// 	argv = malloc(sizeof(char *) * (i + 1));
+// 	if (!argv)
+// 		return (NULL);
+// 	curr_tkn = start_tkn;
+// 	i = 0;
+// 	while (curr_tkn != end_tkn && curr_tkn->type != TOKEN_END)
+// 	{
+// 		argv[i] = ft_strdup(curr_tkn->value);
+// 		curr_tkn = curr_tkn->next;
+// 		i++;
+// 	}
+// 	if (curr_tkn->type != TOKEN_END)
+// 	{
+// 		argv[i] = ft_strdup(curr_tkn->value);
+// 		i++;
+// 	}
+// 	argv[i] = NULL;
+// 	return (argv);
+// }
 
 static void	add_redirect(t_cmd *cmd, t_redir *redirect)
 {
@@ -224,53 +272,6 @@ static void	add_redirect(t_cmd *cmd, t_redir *redirect)
 		ft_lstadd_back(&cmd->redirs, redir);
 	else
 		cmd->redirs = redir;
-}
-
-int	check_redir_token_type(t_token *token, t_token_type redir_token_type)
-{
-	if (token->type == redir_token_type && token->next
-		&& token->next->type == TOKEN_WORD)
-		return (1);
-	return (0);
-}
-
-char	*collect_pieces_to_string(t_shell *shell, t_token *curr_tkn)
-{
-	char	**expanded_args;
-	char	*new_arg;
-	int		i;
-
-	i = 0;
-	if (curr_tkn->pieces)
-	{
-		expanded_args = expand_and_split_token(curr_tkn, shell->ctx->env,
-				shell->ctx->last_exit_status);
-		new_arg = ft_strdup("");
-		if (!expanded_args || new_arg == NULL)
-			return (free(expanded_args), free(new_arg), NULL);
-		while (expanded_args[i])
-		{
-			if (ft_strappend(&new_arg, expanded_args[i++]) == 0)
-			{
-				free_str_array(expanded_args);
-				return (free(new_arg), NULL);
-			}
-		}
-		free_str_array(expanded_args);
-	}
-	else
-		new_arg = ft_strdup(curr_tkn->value);
-	return (new_arg);
-}
-
-t_redir	*create_redirect(t_shell *shell, t_redir_type type, t_token *curr_tkn)
-{
-	char	*target;
-
-	target = collect_pieces_to_string(shell, curr_tkn);
-	if (target == NULL)
-		return (NULL);
-	return (create_redir(type, target));
 }
 
 int	collect_redirs(t_shell *shell, t_cmd *cmd, t_token **start_tkn, t_token **end_tkn)
@@ -286,13 +287,14 @@ int	collect_redirs(t_shell *shell, t_cmd *cmd, t_token **start_tkn, t_token **en
 	while (running && curr_tkn && curr_tkn != *end_tkn
 		&& curr_tkn->type != TOKEN_END)
 	{
-		if (check_redir_token_type(curr_tkn, TOKEN_REDIR_OUT))
+		
+		if (is_redirect_type(curr_tkn, TOKEN_REDIR_OUT))
 			type = REDIR_OUT;
-		else if (check_redir_token_type(curr_tkn, TOKEN_REDIR_APPEND))
+		else if (is_redirect_type(curr_tkn, TOKEN_REDIR_APPEND))
 			type = REDIR_APPEND;
-		else if (check_redir_token_type(curr_tkn, TOKEN_REDIR_IN))
+		else if (is_redirect_type(curr_tkn, TOKEN_REDIR_IN))
 			type = REDIR_IN;
-		else if (check_redir_token_type(curr_tkn, TOKEN_HEREDOC))
+		else if (is_redirect_type(curr_tkn, TOKEN_HEREDOC))
 			type = REDIR_HEREDOC;
 		else
 		{
@@ -490,7 +492,7 @@ int	create_node_for_subshell(t_shell *shell, t_ast_node **node,
 	(*node)->set_left(*node, left_node);
 	matching_paren = find_paren(start_tkn);
 	if (matching_paren && matching_paren->next && matching_paren != end_tkn)
-		collect_subshell_redirs(shell_node, matching_paren->next, end_tkn->next);
+		collect_subshell_redirs(shell, shell_node, matching_paren->next, end_tkn->next);
 	build_ast(shell, &left_node, start_tkn->next, matching_paren->prev);
 	return (1);
 }

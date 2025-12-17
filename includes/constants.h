@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/16 02:49:03 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 01:39:18 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # define HANDLE_ERROR_NULL NULL
 # define HANDLE_ERROR_MINUS_ONE -1
 # define OK 1
+# define NO 0
 # define ERROR 0
 # define EXIT_MISUSE 2
 # define EXIT_CMD_CANNOT_EXEC 126
