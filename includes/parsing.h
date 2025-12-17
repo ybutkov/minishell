@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 14:25:07 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/17 20:37:23 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,5 +94,6 @@ char				**wildcard_expand(t_piece *piece);
 char 				**expand_and_split_token(t_token *token, t_env *env, int last_exit_status);
 
 int					validate_tokens(t_token *start);
+void				free_tokens(t_token *tokens);
 
 #endif

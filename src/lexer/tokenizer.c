@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/15 02:09:47 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 20:42:36 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,6 @@
 // append a token
 // free the whole token thing
 // recognize a token type
-
-static void	free_token(t_token *token)
-{
-	if (!token)
-		return ;
-	if (token->value)
-		free(token->value);
-	free(token);
-}
 
 static t_token	*create_token(void)
 {
