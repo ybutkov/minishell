@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   token_fixtures.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/22 15:24:35 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/03 00:27:00 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 15:32:19 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,16 @@ static t_token *set_prev_links(t_token *head)
 	return (head);
 }
 
-void	free_token(t_token *token)
-{
-	if (!token)
-		return ;
-	if (token->value)
-		free(token->value);
-	free(token);
-}
+// void	free_token(t_token *token)
+// {
+// 	if (!token)
+// 		return ;
+// 	if (token->value)
+// 		free(token->value);
+// 	free(token);
+// }
+
+
 
 t_token	*create_token(t_token_type type, char *value)
 {
@@ -60,7 +62,7 @@ t_token	*create_token(t_token_type type, char *value)
 	token->value = value;
 	token->next = NULL;
 	token->prev = NULL;
-	token->free = free_token;
+	token->free = NULL;
 	return (token);
 }
 

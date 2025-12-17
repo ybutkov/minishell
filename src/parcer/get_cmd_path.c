@@ -6,55 +6,68 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 13:03:41 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/11/23 13:18:27 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/17 18:34:49 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "envp_copy.h"
 
 char	*build_candidate(char *path, char *cmd_name);
 
-char	*envp_loop(char **envp)
+char	*envp_loop(t_env *envp)
 {
-	int	i;
+	t_env_pair *cur;
 
-	i = 0;
-	while (envp[i] != NULL)
+	cur = envp->head;
+	while (cur)
 	{
-		if (ft_strncmp(envp[i], "PATH=", 5) == 0)
-			return (envp[i] + 5);
-		i++;
+		if (ft_strcmp(cur->key, "PATH") == 0)
+			return (cur->value);
+		cur = cur->next;
 	}
 	return (NULL);
 }
 
-char	*check_paths(char **envp, char *cmd_name)
+char	*check_paths(t_env *envp, char *cmd_name)
 {
 	char	**paths;
 	char	*candidate;
-	int		i;
 	char	*envp_paths;
+	char	*valid_path;
 
-	i = 0;
+	candidate = build_candidate("", cmd_name);
+	if (candidate && access(candidate, X_OK) == 0)
+		return (candidate);
+	free(candidate);
+	if (cmd_name[0] == '/')
+		return (NULL);
 	envp_paths = envp_loop(envp);
 	if (envp_paths == NULL)
-		return (NULL);
+		envp_paths = "/usr/bin:/bin";
 	paths = ft_split(envp_paths, ':');
 	if (!paths)
 		return (NULL);
+	valid_path = searching_through_paths(paths, cmd_name);
+	free_split(paths);
+	return (valid_path);
+}
+
+char	*searching_through_paths(char **paths, char *cmd_name)
+{
+	int		i;
+	char	*candidate;
+
+	i = 0;
 	while (paths[i] != NULL)
 	{
 		candidate = build_candidate(paths[i], cmd_name);
 		if (candidate && access(candidate, X_OK) == 0)
-		{
-			free_split(paths);
 			return (candidate);
-		}
 		free(candidate);
 		i++;
 	}
-	free_split(paths);
-	return (perror("no path found"), NULL);
+	return (NULL);
 }
 
 char	*build_candidate(char *path, char *cmd_name)
@@ -86,6 +99,8 @@ void	free_split(char **array)
 	}
 	free(array);
 }
+
+
 
 // static void	ft_free_split(char **arr);
 // static char	*check_full_path(char *dir, char *cmd);
