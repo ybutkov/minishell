@@ -120,7 +120,6 @@ c : re
 	cp ./minishell ${HOME}/Documents/tmp_folder/minishell_for_test
 	cp ./minishell ${HOME}/42_minishell_tester
 
-
 # adds AddressSanitizer and UndefinedBehaviorSanitizer flags
 asan: CFLAGS += $(SAN_ASAN)
 asan: re
@@ -138,5 +137,11 @@ $(LIBFT) :
 
 .PHONY : all clean fclean re bonus s
 
-#valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all -s ./pipex "infiles/basic.txt" "nonexistingcommand" "cat -e" "outfiles/outfile"
-# minishell_test
+.PHONY: v
+
+v: re
+	valgrind --leak-check=full  --show-leak-kinds=all --track-fds=yes \
+		--suppressions=tools/sub.sub  ./minishell
+
+#valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all -s ./minishell
+

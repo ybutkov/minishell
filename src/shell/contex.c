@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 18:16:25 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 03:25:39 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 17:37:39 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@ static void	free_ctx_content(t_ctx *ctx)
 		return ;
 	if (ctx->envp)
 		free_str_array(ctx->envp);
+	if (ctx->env)
+		ctx->env->free(ctx->env);
 	free(ctx);
 }
 
@@ -57,6 +59,7 @@ t_ctx	*create_ctx(char **envp)
 	ctx->env = create_env();
 	ctx->env->copying(ctx->env, envp);
 	ctx->last_exit_status = 0;
+	ctx->should_exit = 0;
 	ctx->free_ctx = free_ctx_content;
 	return (ctx);
 }

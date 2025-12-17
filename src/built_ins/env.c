@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 16:35:25 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/15 21:54:59 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/16 02:26:31 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	bi_env(t_env *env)
 	current = env->head;
 	while (current != NULL)
 	{
-		if (current->key)
+		if (current->key && current->value)
 		{
 			len = ft_strlen(current->key);
 			write(STDOUT_FILENO, current->key, len);
@@ -31,10 +31,8 @@ int	bi_env(t_env *env)
 			len = ft_strlen(current->value);
 			write(STDOUT_FILENO, current->value, len);
 			write(STDOUT_FILENO, "\n", 1);
-			// printf("%s=", current->key);
-			// printf("%s\n", current->value);
 		}
 		current = current->next;
 	}
-	return (0);
+	return (EXIT_SUCCESS);
 }

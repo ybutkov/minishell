@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_internal.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:28:17 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/14 14:11:52 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/17 05:00:38 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 # define SHELL_INTERNAL_H
 
 # include "shell.h"
+
+typedef struct s_token_lvl
+{
+	t_token_type	start;
+	t_token_type	end;
+	int				lvl;
+}	t_token_lvl;
 
 int			execute_pipe(t_ast_node *node, t_shell *shell, int in_fd,
 				int out_fd);
@@ -26,6 +33,6 @@ int			execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd,
 int			collect_heredoc_node(t_ast_node *node, t_shell *shell);
 void		close_fds(int fds[2]);
 void		dup2_and_close(int oldfd, int newfd);
-t_node_type	get_node_type_by_token(t_token_type token_type);
+t_node_type	get_node_type(t_token_type token_type);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:25:11 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 01:29:18 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 19:08:30 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ typedef struct s_ctx
 	char			**envp;
 	t_env			*env;
 	int				last_exit_status;
+	int				should_exit;
 
 	void			(*free_ctx)(struct s_ctx *ctx);
 }					t_ctx;

@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 19:09:28 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/11/22 17:47:52 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 02:47:19 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ static void	init_node_type_mapping(t_node_type *node_type_map)
 	node_type_map[TOKEN_HEREDOC] = NODE_REDIR_HEREDOC;
 }
 
-t_node_type	get_node_type_by_token(t_token_type token_type)
+t_node_type	get_node_type(t_token_type token_type)
 {
 	static t_node_type	node_type[13];
 
