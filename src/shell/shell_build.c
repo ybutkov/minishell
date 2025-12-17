@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 03:16:33 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 05:03:34 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,68 +165,123 @@ void	put_shell_node_to_ast(t_ast_node **curr_node, t_shell_node *node, int i,
 	}
 }
 
-t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
-		int lvl)
+static void	get_borders_for_lvl(t_token_lvl	*token_lvl)
 {
-	t_token			*curr_token;
-	t_token			*found_token;
-	t_token_type	lvl_start;
-	t_token_type	lvl_end;
-	char			is_subshell_opened;
+	token_lvl->start = (t_token_type)(-1);
+	token_lvl->end = (t_token_type)(-1);
+	if (token_lvl->lvl == 1)
+	{
+		token_lvl->start = TKN_LVL_1_FROM;
+		token_lvl->end = TKN_LVL_1_TO;
+	}
+	else if (token_lvl->lvl == 2)
+	{
+		token_lvl->start = TKN_LVL_2_FROM;
+		token_lvl->end = TKN_LVL_2_TO;
+	}
+	else if (token_lvl->lvl == 3)
+	{
+		token_lvl->start = TKN_LVL_3_FROM;
+		token_lvl->end = TKN_LVL_3_TO;
+	}
+}
 
-	if (lvl == 1)
+
+// static void	get_borders_for_lvl2(t_token_type *lvl_start, t_token_type *lvl_end, int lvl)
+// {
+// 	*lvl_start = (t_token_type)(-1);
+// 	*lvl_end = (t_token_type)(-1);
+// 	if (lvl == 1)
+// 	{
+// 		*lvl_start = TKN_LVL_1_FROM;
+// 		*lvl_end = TKN_LVL_1_TO;
+// 	}
+// 	else if (lvl == 2)
+// 	{
+// 		*lvl_start = TKN_LVL_2_FROM;
+// 		*lvl_end = TKN_LVL_2_TO;
+// 	}
+// 	else if (lvl == 3)
+// 	{
+// 		*lvl_start = TKN_LVL_3_FROM;
+// 		*lvl_end = TKN_LVL_3_TO;
+// 	}
+// }
+
+static int	check_paren(t_token **curr_token, int *opened)
+{
+	if (!curr_token || !*curr_token)
+		return (0);
+	if ((*curr_token)->type == TOKEN_LEFT_PAREN)
 	{
-		lvl_start = TKN_LVL_1_FROM;
-		lvl_end = TKN_LVL_1_TO;
+		*opened += 1;
+		*curr_token = (*curr_token)->next;
+		return (1);
 	}
-	else if (lvl == 2)
+	if (*opened && (*curr_token)->type == TOKEN_RIGHT_PAREN)
 	{
-		lvl_start = TKN_LVL_2_FROM;
-		lvl_end = TKN_LVL_2_TO;
+		*opened -= 1;
+		*curr_token = (*curr_token)->next;
+		return (1);
 	}
-	else if (lvl == 3)
+	return (0);
+}
+
+// static int	token_in_range(t_token *tkn, t_token_type start, t_token_type end)
+// {
+// 	if (!tkn)
+// 		return (0);
+// 	if (tkn->type >= start && tkn->type <= end)
+// 		return (1);
+// 	return (0);
+// }
+
+t_token	*get_for_last(t_token *curr_token, t_token_lvl *token_lvl,
+		t_token **found_token, int subshell_opened)
+{
+	if (curr_token->type >= token_lvl->start
+		&& curr_token->type <= token_lvl->end && !subshell_opened)
 	{
-		lvl_start = TKN_LVL_3_FROM;
-		lvl_end = TKN_LVL_3_TO;
-	}
-	else
-		return (NULL);
-	curr_token = start_token;
-	found_token = NULL;
-	is_subshell_opened = 0;
-	while (curr_token != end_token)
-	{
-		if (curr_token && curr_token->type == TOKEN_LEFT_PAREN)
-		{
-			is_subshell_opened += 1;
-			curr_token = curr_token->next;
-			continue ;
-		}
-		else if (is_subshell_opened && curr_token
-			&& curr_token->type == TOKEN_RIGHT_PAREN)
-		{
-			is_subshell_opened -= 1;
-			curr_token = curr_token->next;
-			continue ;
-		}
-		if (!is_subshell_opened && curr_token && curr_token->type >= lvl_start
-			&& curr_token->type <= lvl_end)
-		{
-			if (lvl == 1)
-				found_token = curr_token;
-			else
-				return (curr_token);
-		}
-		curr_token = curr_token->next;
-	}
-	if (curr_token && curr_token == end_token && curr_token->type >= lvl_start
-		&& curr_token->type <= lvl_end && !is_subshell_opened)
-	{
-		if (lvl == 1)
-			found_token = curr_token;
+		if (token_lvl->lvl == 1)
+			*found_token = curr_token;
 		else
 			return (curr_token);
 	}
+	return (*found_token);
+}
+
+t_token	*get_next_token_for_lvl(t_token *start_token, t_token *end_token,
+		int lvl)
+{
+	t_token			*curr;
+	t_token			*found_token;
+	t_token_lvl		*token_lvl;
+	int				subshell_opened;
+
+	token_lvl = malloc(sizeof(token_lvl));
+	token_lvl->lvl = lvl;
+	get_borders_for_lvl(token_lvl);
+	if (token_lvl->start == (t_token_type)(-1))
+		return (HANDLE_ERROR_NULL);
+	curr = start_token;
+	found_token = NULL;
+	subshell_opened = 0;
+	while (curr != end_token)
+	{
+		if (check_paren(&curr, &subshell_opened) == 1)
+			continue ;
+		if (!subshell_opened && curr && curr->type >= token_lvl->start
+				&& curr->type <= token_lvl->end)
+		{
+			if (lvl == 1)
+				found_token = curr;
+			else
+				return (curr);
+		}
+		curr = curr->next;
+	}
+	if (curr && curr == end_token)
+		return (get_for_last(curr, token_lvl, &found_token, subshell_opened));
 	return (found_token);
 }
 
@@ -442,9 +497,7 @@ char	**collect_tokens_to_argv(t_shell *shell, t_token *start_tkn,
 		curr_tkn = curr_tkn->next;
 	}
 	// if (split_arg_list2(arg_list, &total_args) != OK)
-	// {
-	// 	// Handle error
-	// }
+	// {	Handle error // }
 	argv = list_to_array(arg_list);
 	ft_lstclear(&arg_list, empty_func);
 	return (argv);

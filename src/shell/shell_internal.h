@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:28:17 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 02:47:28 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 05:00:38 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 # define SHELL_INTERNAL_H
 
 # include "shell.h"
+
+typedef struct s_token_lvl
+{
+	t_token_type	start;
+	t_token_type	end;
+	int				lvl;
+}	t_token_lvl;
 
 int			execute_pipe(t_ast_node *node, t_shell *shell, int in_fd,
 				int out_fd);
