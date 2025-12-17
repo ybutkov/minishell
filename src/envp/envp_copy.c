@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 16:26:06 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 03:30:18 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 17:40:17 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,4 +72,5 @@ void	free_env_list(t_env *env)
 		free(node);
 		node = temp;
 	}
+	free(env);
 }

@@ -137,17 +137,11 @@ $(LIBFT) :
 
 .PHONY : all clean fclean re bonus s
 
-.PHONY: v gen_supp vv
+.PHONY: v
 
 v: re
-	@bash -lc "valgrind --leak-check=full --show-leak-kinds=definite,indirect \
-		--track-origins=yes --trace-children=yes \
-		--suppressions=valgrind_readline.supp ./$(NAME) 2> >(tee valgrind.log >&2)"
+	valgrind --leak-check=full  --show-leak-kinds=all --track-fds=yes \
+		--suppressions=tools/sub.sub  ./minishell
 
-vv: re
-	@bash -lc "valgrind --leak-check=full --show-leak-kinds=all \
-		--track-origins=yes --trace-children=yes ./$(NAME) 2> >(tee valgrind_all.log >&2)"
-
-# convenience: run minishell under valgrind
 #valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all -s ./minishell
 

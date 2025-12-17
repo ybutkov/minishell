@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 19:33:37 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/16 01:30:01 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/17 19:18:42 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,8 @@ int	bi_exit(t_shell *shell, char **args)
 		write(1, MSG_EXIT_NL, ft_strlen(MSG_EXIT_NL));
 	if (!args[1])
 	{
-		shell->free(shell);
-		exit(EXIT_SUCCESS);
+		shell->ctx->should_exit = 1;
+		return (EXIT_SUCCESS);
 	}
 	if (args[1] && is_good_numeric(args[1]) && args[2])
 	{
@@ -64,12 +64,12 @@ int	bi_exit(t_shell *shell, char **args)
 	{
 		err_msg = ft_strjoin(MSG_EXIT_2_COLON, args[1]);
 		output_error(err_msg, EXIT_MSG_NUMBER_REQUIRED);
-		shell->free(shell);
 		free(err_msg);
-		exit(EXIT_MISUSE);
+		shell->ctx->should_exit = 1;
+		return (EXIT_MISUSE);
 	}
 	// check for atoi overflows?
 	exit_status = ft_atoi(args[1]);
-	shell->free(shell);
-	exit(exit_status % 256);
+	shell->ctx->should_exit = 1;
+	return (exit_status % 256);
 }
