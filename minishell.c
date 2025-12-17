@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 20:05:35 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/17 20:36:33 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,49 +120,17 @@ void test_env(char **envp)
 	exit (0);
 }
 
-void	free_token(t_token *token)
-{
-	t_piece	*cur;
-	t_piece	*temp;
-	
-	free(token->value);
-	if (token->pieces)
-	{
-		cur = token->pieces;
-		while (cur)
-		{
-			temp = cur->next;
-			free(cur->text);
-			free(cur);
-			cur = temp;
-		}
-	}
-	free(token);
-}
-
-void	free_tokens(t_token *tokens)
-{
-	t_token	*cur;
-	t_token	*temp;
-
-	cur = tokens;
-	while (cur)
-	{
-		temp = cur->next;
-		free_token(cur);
-		cur = temp;
-	}
-}
-
-void	test_lexicalization(void)
+void	test_lexicalization( char **envp)
 {
     t_token *tokens;
+	t_shell	*shell;
     
+	shell = create_shell(envp);
     tokens = read_and_lexicalize();  // Or call lexicalization() directly
-    
+    print_tokens_brief_once(tokens, shell->ctx->env);
     // Free tokens here
     free_tokens(tokens);
-    
+    shell->free(shell);
     exit (0);
 }
 
@@ -179,7 +147,7 @@ int	main(int argc, char **argv, char **envp)
 	// 5 - run test_shell
 	// 6 - test env
 	is_print = 0;
-	test_lexicalization();
+	test_lexicalization(envp);
 	if (argc > 1 && argv[1][0] == '1')
 		is_print = 1;
 	else if (argc > 1 && argv[1][0] == '2')

@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 16:32:29 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/06 00:07:46 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/17 20:30:33 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,9 @@ void	token_init(t_token *tok)
 	tok->pieces_tail = NULL;
 	tok->prev = NULL;
 	tok->next = NULL;
+	tok->has_env_v = 0;
+	tok->has_wild = 0;
+	tok->free = free_token;
 }
 
 void	init_token(t_token *tok, t_token_type type)
@@ -74,6 +77,9 @@ void	init_token(t_token *tok, t_token_type type)
 	tok->pieces_tail = NULL;
 	tok->prev = NULL;
 	tok->next = NULL;
+	tok->has_env_v = 0;
+	tok->has_wild = 0;
+	tok->free = free_token;
 }
 
 void	type_of_parenthesis(t_token *tok)

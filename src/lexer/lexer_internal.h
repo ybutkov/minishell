@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/16 00:32:16 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/17 20:35:39 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,4 +100,9 @@ int		is_whitespace_or_special(char c);
 int		is_special(t_lex_inf *lex);
 int		is_space_or_quotes(char c);
 int		will_end_env_var(char c);
+
+//freeing
+void	free_token(t_token *token);
+void	free_tokens(t_token *tokens);
+
 #endif
