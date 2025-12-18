@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   envp_list_init.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:31:15 by ashadrin          #+#    #+#             */
 /*   Updated: 2025/12/18 04:45:16 by ybutkov          ###   ########.fr       */

@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:35:24 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/16 00:31:59 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/17 21:07:21 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,5 @@ int	is_space_or_quotes(char c)
 
 int	will_end_env_var(char c)
 {
-	return (c == ':' || c == '=' || c == '/' || c == '*' || c == '$'
-				|| is_space_or_quotes(c) || c == '\0');
+	return (!ft_isalnum(c) && c != '_');
 }

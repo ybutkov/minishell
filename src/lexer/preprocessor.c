@@ -3,7 +3,7 @@
 /*                                                        :::      ::::::::   */
 /*   preprocessor.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 22:08:41 by ybutkov           #+#    #+#             */
 /*   Updated: 2025/12/17 23:12:01 by ybutkov          ###   ########.fr       */
@@ -28,7 +28,7 @@ char	*preprocessing(char *str)
 	res = (char *)malloc(sizeof(char) * (res_len + 1));
 	if (res == NULL)
 		return (free(str), NULL);
-	memset(res, 0, (res_len + 1));
+	ft_memset(res, 0, (res_len + 1));
 	single_opened = 0;
 	double_opened = 0;
 	i = 0;
