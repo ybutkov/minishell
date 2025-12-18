@@ -55,10 +55,8 @@ C_SHELL_FILES += \
 	utils/free_str_array.c \
 	utils/heredoc_file_util.c \
 	utils/list_to_array.c \
-	test/token_fixtures.c \
 	printer/print_shell.c \
 	printer/print_tokens.c
-# 	test/get_cmd_path.c \
 
 C_SHELL_FILES += \
 	lexer/lexer.c \
@@ -87,7 +85,6 @@ C_SHELL_FILES += \
 	envp/envp_list_init.c \
 	expansion/wildcards.c \
  	parcer/get_cmd_path.c
-# 	parcer/parcer.c
 
 C_SHELL_FILES += \
 	expansion/expansion.c \
