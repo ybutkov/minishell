@@ -6,11 +6,11 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/04 16:26:06 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/17 17:40:17 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/18 04:17:07 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "envp_copy.h"
+#include "env_internal.h"
 
 t_env_pair	*copying(t_env *env, char **envp)
 {

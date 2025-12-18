@@ -6,91 +6,75 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:31:15 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/18 13:12:02 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/18 04:45:16 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "envp_copy.h"
+#include "env_internal.h"
+#include "constants.h"
 
-int	remove_pair(t_env *env, char *key)
+static t_env_pair	*get_env_pair(t_env *env, char *key)
 {
 	t_env_pair	*cur;
-	t_env_pair	*prev;
 
-	if (!env->head || !key)
-		return (0);
 	cur = env->head;
-	prev = NULL;
 	while (cur != NULL)
 	{
-		if (ft_strcmp(cur->key, key) == 0)
-		{
-			if (!prev)
-				env->head = cur->next;
-			else
-				prev->next = cur->next;
-			free(cur->key);
-			if (cur->value)
-				free(cur->value);
-			free(cur);
-			return (1);
-		}
-		prev = cur;
+		if (strcmp(cur->key, key) == 0)
+			return (cur);
 		cur = cur->next;
 	}
-	return (0);
+	return (NULL);
+}
+
+static t_env_pair	*add_env_pair(t_env *env, char *key, char *value)
+{
+	t_env_pair	*pair;
+	t_env_pair	*last;
+
+	last = env->head;
+	while (last && last->next)
+		last = last->next;
+	pair = malloc(sizeof(t_env_pair));
+	if (!pair)
+		return (HANDLE_ERROR_NULL);
+	pair->key = strdup(key);
+	pair->value = NULL;
+	if (value)
+		pair->value = strdup(value);
+	pair->next = NULL;
+	if (last)
+		last->next = pair;
+	else
+		env->head = pair;
+	return (pair);
 }
 
 void	set_env_pair(t_env *env, char *key, char *value)
 {
 	t_env_pair	*cur;
-	t_env_pair	*new;
-	t_env_pair	*last;
 
-	cur = env->head;
-	last = NULL;
-	while (cur != NULL)
+	cur = get_env_pair(env, key);
+	if (cur)
 	{
-		if (ft_strcmp(cur->key, key) == 0)
+		if (value)
 		{
-			if (value)
-			{
-				free(cur->value);
-				cur->value = ft_strdup(value);
-			}
-			return ;
+			free(cur->value);
+			cur->value = ft_strdup(value);
 		}
-		last = cur;
-		cur = cur->next;
-	}
-	//if doesn't exist yet
-	new = malloc(sizeof(t_env_pair));
-	if (!new)
 		return ;
-	new->key = ft_strdup(key);
-	if (value)
-		new->value = ft_strdup(value);
-	else
-		new->value = value;
-	new->next = NULL;
-	if (last)
-		last->next = new;
-	else
-		env->head = new;
+	}
+	add_env_pair(env, key, value);
 }
 
 char	*get_value(t_env *env, char *key)
 {
 	t_env_pair	*cur;
 
-	cur = env->head;
-	while (cur != NULL)
-	{
-		if (ft_strcmp(cur->key, key) == 0)
-			return (cur->value);
-		cur = cur->next;
-	}
+	cur = get_env_pair(env, key);
+	if (cur)
+		return (cur->value);
 	return (NULL);
 }
 
@@ -102,8 +86,8 @@ t_env	*create_env(void)
 	if (!env)
 		return (NULL);
 	env->head = NULL;
-	env->copying = copying;
-	env->copying_back = copying_back;
+	env->fill_from_array = copying;
+	env->to_array = copying_back;
 	env->free = free_env_list;
 	env->set_pair = set_env_pair;
 	env->get_value = get_value;

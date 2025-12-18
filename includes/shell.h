@@ -22,7 +22,7 @@ typedef struct s_shell
 	t_ast		*ast;
 	t_ctx		*ctx;
 
-	void		(*build)(struct s_shell *shell, t_token *token);
+	void		(*build)(struct s_shell *shell, t_token **token);
 	void		(*free)(struct s_shell *shell);
 	void		(*clear)(struct s_shell *shell);
 	int			(*execute)(struct s_shell *shell);

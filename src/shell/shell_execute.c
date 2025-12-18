@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_execute.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:51:39 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/16 02:06:40 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/18 15:59:34 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,18 @@
 #include <unistd.h>
 #include "signals.h"
 
-void	close_fds(int fds[2])
+void	close_fds(int *fd_0, int *fd_1)
 {
-	close(fds[0]);
-	close(fds[1]);
+	if (fd_0 && *fd_0 >= 0)
+	{
+		close(*fd_0);
+		*fd_0 = -1;
+	}
+	if (fd_1 && *fd_1 >= 0)
+	{
+		close(*fd_1);
+		*fd_1 = -1;
+	}
 }
 
 static int	execute_left(t_ast_node *node, t_shell *shell, int in_fd,
@@ -33,11 +41,14 @@ static int	execute_left(t_ast_node *node, t_shell *shell, int in_fd,
 {
 	int	exit_status;
 
-	close(pipe_fds[0]);
+	// close(pipe_fds[0]);
+	close_fds(&pipe_fds[0], NULL);
 	exit_status = 0;
 	if (node)
 		exit_status = execute_shell_node(node, shell, in_fd, pipe_fds[1]);
-	close(pipe_fds[1]);
+	// close(pipe_fds[1]);
+	close_fds(NULL, &pipe_fds[1]);
+	pipe_fds[1] = -1;
 	shell->free(shell);
 	exit(exit_status);
 }
@@ -46,23 +57,24 @@ static int	execute_right(t_ast_node *node, t_shell *shell, int pipe_fds[2], int 
 {
 	int	exit_status;
 
-	close(pipe_fds[1]);
+	// close(pipe_fds[1]);
+	close_fds(NULL, &pipe_fds[1]);
 	exit_status = 0;
 	if (node)
 		exit_status = execute_shell_node(node, shell, pipe_fds[0], out_fd);
-	close(pipe_fds[0]);
+	// close(pipe_fds[0]);
+	close_fds(&pipe_fds[0], NULL);
+	pipe_fds[0] = -1;
 	shell->free(shell);
 	exit(exit_status);
 }
 
 int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 {
-	// int		status_code;
 	int		pipe_fds[2];
 	pid_t	pids[2];
 	int		status;
 
-	// status_code = 0;
 	if (pipe(pipe_fds) == -1)
 		return (EXIT_FAILURE);
 	set_signals_waiting_parent();
@@ -70,7 +82,7 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	if (pids[0] == -1)
 	{
 		perror("fork");
-		close_fds(pipe_fds);
+		close_fds(&pipe_fds[0], &pipe_fds[1]);
 		return (EXIT_FAILURE);
 	}
 	if (pids[0] == 0)
@@ -78,13 +90,14 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 		set_signals_child();
 		return (execute_left(node->get_left(node), shell, in_fd, pipe_fds));
 	}
-	close(pipe_fds[1]);
+	// close(pipe_fds[1]);
+	close_fds(NULL, &pipe_fds[1]);
 
 	pids[1] = fork();
 	if (pids[1] == -1)
 	{
 		perror("fork");
-		close_fds(pipe_fds); // should close only fds[0] ?
+		close_fds(&pipe_fds[0], &pipe_fds[1]); // should close only fds[0] ?
 		return (EXIT_FAILURE);
 	}
 	if (pids[1] == 0)
@@ -92,7 +105,8 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 		set_signals_child();
 		return (execute_right(node->get_right(node), shell, pipe_fds, out_fd));
 	}
-	close(pipe_fds[0]);
+	// close(pipe_fds[0]);
+	close_fds(&pipe_fds[0], NULL);
 	waitpid(pids[0], &status, 0);
 	waitpid(pids[1], &status, 0);
 	if (WIFEXITED(status))

@@ -3,57 +3,54 @@
 /*                                                        :::      ::::::::   */
 /*   get_cmd_path.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 13:03:41 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/17 18:34:49 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/18 03:25:24 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "envp_copy.h"
+#include "constants.h"
+#include "utils.h"
 
-char	*build_candidate(char *path, char *cmd_name);
-
-char	*envp_loop(t_env *envp)
+static char	*default_getenv(void)
 {
-	t_env_pair *cur;
-
-	cur = envp->head;
-	while (cur)
-	{
-		if (ft_strcmp(cur->key, "PATH") == 0)
-			return (cur->value);
-		cur = cur->next;
-	}
-	return (NULL);
+	return ("/usr/local/sbin:/usr/local/bin:/usr/sbin:\
+		/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:");
 }
 
-char	*check_paths(t_env *envp, char *cmd_name)
-{
-	char	**paths;
-	char	*candidate;
-	char	*envp_paths;
-	char	*valid_path;
+// char	*envp_loop(t_env *envp)
+// {
+// 	t_env_pair *cur;
 
-	candidate = build_candidate("", cmd_name);
-	if (candidate && access(candidate, X_OK) == 0)
-		return (candidate);
-	free(candidate);
-	if (cmd_name[0] == '/')
+// 	cur = envp->head;
+// 	while (cur)
+// 	{
+// 		if (ft_strcmp(cur->key, "PATH") == 0)
+// 			return (cur->value);
+// 		cur = cur->next;
+// 	}
+// 	return (NULL);
+// }
+
+static char	*build_candidate(char *path, char *cmd_name)
+{
+	char	*with_slash;
+	char	*full_candidate;
+
+	with_slash = ft_strjoin(path, "/");
+	if (!with_slash)
 		return (NULL);
-	envp_paths = envp_loop(envp);
-	if (envp_paths == NULL)
-		envp_paths = "/usr/bin:/bin";
-	paths = ft_split(envp_paths, ':');
-	if (!paths)
-		return (NULL);
-	valid_path = searching_through_paths(paths, cmd_name);
-	free_split(paths);
-	return (valid_path);
+	full_candidate = ft_strjoin(with_slash, cmd_name);
+	if (!full_candidate)
+		return (free(with_slash), NULL);
+	free(with_slash);
+	return (full_candidate);
 }
 
-char	*searching_through_paths(char **paths, char *cmd_name)
+static char	*searching_through_paths(char **paths, char *cmd_name)
 {
 	int		i;
 	char	*candidate;
@@ -70,35 +67,46 @@ char	*searching_through_paths(char **paths, char *cmd_name)
 	return (NULL);
 }
 
-char	*build_candidate(char *path, char *cmd_name)
+char	*get_cmd_path(t_env *env, char *cmd_name)
 {
-	char	*with_slash;
-	char	*full_candidate;
+	char	**paths;
+	char	*candidate;
+	char	*envp_paths;
+	char	*valid_path;
 
-	with_slash = ft_strjoin(path, "/");
-	if (!with_slash)
+	candidate = build_candidate("", cmd_name);
+	if (candidate && access(candidate, X_OK) == 0)
+		return (candidate);
+	free(candidate);
+	if (cmd_name[0] == '/')
 		return (NULL);
-	full_candidate = ft_strjoin(with_slash, cmd_name);
-	if (!full_candidate)
-		return (free(with_slash), NULL);
-	free(with_slash);
-	return (full_candidate);
+	envp_paths = env->get_value(env, PATH);
+	if (envp_paths == NULL)
+		envp_paths = default_getenv();
+	paths = ft_split(envp_paths, ':');
+	if (!paths)
+		return (HANDLE_ERROR_NULL);
+	valid_path = searching_through_paths(paths, cmd_name);
+	free_str_array(paths);
+	return (valid_path);
 }
 
-void	free_split(char **array)
-{
-	int	i;
 
-	i = 0;
-	if (!array)
-		return ;
-	while (array[i])
-	{
-		free(array[i]);
-		i++;
-	}
-	free(array);
-}
+
+// void	free_split(char **array)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	if (!array)
+// 		return ;
+// 	while (array[i])
+// 	{
+// 		free(array[i]);
+// 		i++;
+// 	}
+// 	free(array);
+// }
 
 
 

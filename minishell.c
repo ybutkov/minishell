@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: Invalid date        by                   #+#    #+#             */
-/*   Updated: 2025/12/17 21:24:11 by ashadrin         ###   ########.fr       */
+/*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
+/*   Updated: 2025/12/18 00:45:56 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	test_shell(t_token *tokens, char **envp, char *test_comm, int isprint)
 	if (isprint)
 		printf("\n--- Test: %s ---\n", test_comm);
 	shell = create_shell(envp);
-	shell->build(shell, tokens);
+	shell->build(shell, &tokens);
 
 	print_shell_tree(shell);
 	printf("---------------------------------------------------------------\n");
@@ -125,7 +125,7 @@ void	test_lexicalization( char **envp)
 {
     t_token *tokens;
 	t_shell	*shell;
-    
+
 	shell = create_shell(envp);
     tokens = read_and_lexicalize();  // Or call lexicalization() directly
     print_tokens_brief_once(tokens, shell->ctx->env);
@@ -148,7 +148,6 @@ int	main(int argc, char **argv, char **envp)
 	// 5 - run test_shell
 	// 6 - test env
 	is_print = 0;
-	test_lexicalization(envp);
 	if (argc > 1 && argv[1][0] == '1')
 		is_print = 1;
 	else if (argc > 1 && argv[1][0] == '2')
@@ -161,7 +160,6 @@ int	main(int argc, char **argv, char **envp)
 		is_print = 5;
 	else if (argc > 1 && argv[1][0] == '6')
 		is_print = 6;
-	
 	if (is_print == 6)
 		test_env(envp);
 	// ( echo foo ; echo bar ) > out | ls -la
@@ -179,12 +177,9 @@ int	main(int argc, char **argv, char **envp)
 		if (is_print == 1 || is_print == 3 || is_print == 4)
 			print_tokens_brief_once(tokens, shell->ctx->env);
 
-		// print_tokens_brief_once(tokens);
-		//*************************************** */
-		// if (check_for_echo_$(tokens, exit_status) == 1)
-		// 	continue ;
-		shell->build(shell, tokens);
-
+		shell->build(shell, &tokens);
+		free_tokens(tokens);
+		tokens = NULL;
 		if (is_print == 2 || is_print == 3 || is_print == 4)
 			print_shell_tree(shell);
 		if (is_print == 4)
@@ -205,12 +200,10 @@ int	main(int argc, char **argv, char **envp)
 		}
 		clear_tmp_folder(get_file_n(0));
 		exit_status = shell->ctx->last_exit_status;
-		shell->clear(shell);
+			shell->clear(shell);
 		if (shell->ctx->should_exit)
 			break ;
 	}
-	shell->free(shell);
-	char *f = malloc(100);
-	(void)f;
+	(shell->free)(shell);
 	return (exit_status);
 }

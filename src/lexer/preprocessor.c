@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 22:08:41 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/18 13:15:30 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/17 23:12:01 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ char	*preprocessing(char *str)
 		else
 			res[j++] = str[i++];
 	}
+	free(str);
 	return (res);
 }
 
