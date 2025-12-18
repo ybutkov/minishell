@@ -1,24 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell_utils.h                                      :+:      :+:    :+:   */
+/*   env_internal.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/09 18:18:35 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/18 16:18:24 by ybutkov          ###   ########.fr       */
+/*   Created: 2025/12/18 04:11:43 by ybutkov           #+#    #+#             */
+/*   Updated: 2025/12/18 04:27:12 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SHELL_UTILS_H
-# define SHELL_UTILS_H
+#ifndef ENV_INTERNAL_H
 
-void	free_str_array(char **arr);
-void	clear_tmp_folder(int file_n);
-char	*get_tmp_file_name(int file_n);
-int		get_file_n(int delta);
-void	open_file_and_dup2(char *filename, int flags, int dup_fd,
-			t_shell *shell);
-void	apply_redirect(t_cmd *cmd, t_shell *shell);
+# define ENV_INTERNAL_H
+# include "envp_copy.h"
+
+void			free_env_list(t_env *env);
+int				remove_pair(t_env *env, char *key);
+t_env_pair		*copying(struct s_env *env, char **envp);
+int				length_of_list(t_env *env);
+char			**copying_back(t_env *env);
+char			*create_line(t_env_pair *node);
+void			set_env_pair(t_env *env, char *key, char *value);
+char			*get_value(t_env *envp, char *target);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 16:26:49 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/16 01:57:03 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/18 15:47:16 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ static char	*set_target(t_env *env, char **args)
 	char	*home;
 
 	if (!args[1] || ft_strcmp(args[1], "~") == 0)
-		target = env->get_value(env, "HOME");
+		target = ft_strdup(env->get_value(env, "HOME"));
 	else if (ft_strcmp(args[1], "-") == 0)
-		target = env->get_value(env, "OLDPWD");
+		target = ft_strdup(env->get_value(env, "OLDPWD"));
 	else if (args[1][0] == '~'
 		&& args[1][1] == '/')
 	{
@@ -52,16 +52,17 @@ int	bi_cd(t_env *env, char **args)
 	if (args[2])
 	{
 		output_error(MSG_CD, MSG_TOO_MANY_ARG);
-		return (1);
+		return (EXIT_FAILURE);
 	}
 	target = set_target(env, args);
-	prev_dir = ft_strdup(getcwd(NULL, BUFFER_PATH));
+	prev_dir = (getcwd(NULL, BUFFER_PATH));
 	if (chdir(target) != 0)
 	{
 		err_msg = ft_strjoin(CD_MSG_2_COLON, target);
 		output_error(err_msg, NO_SUCH_FILE_OR_DIR);
 		free(err_msg);
 		free(prev_dir);
+		free(target);
 		return (EXIT_FAILURE);
 	}
 	cur_dir = getcwd(NULL, BUFFER_PATH);
@@ -69,5 +70,6 @@ int	bi_cd(t_env *env, char **args)
 	env->set_pair(env, "PWD", cur_dir);
 	free(prev_dir);
 	free(cur_dir);
+	free(target);
 	return (EXIT_SUCCESS);
 }

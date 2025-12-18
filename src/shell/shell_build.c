@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 17:04:55 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/18 03:32:56 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "utils.h"
 
 t_ast_node		*build_ast(t_shell *shell, t_ast_node **node,
-					t_token *start_tkn, t_token *end_tkn);
+					t_token **start_tkn, t_token **end_tkn);
 
 static t_token	*find_paren(t_token *start_tkn)
 {
@@ -105,11 +105,14 @@ char	*collect_pieces_to_string(t_shell *shell, t_token *curr_tkn)
 t_redir	*create_redirect(t_shell *shell, t_redir_type type, t_token *curr_tkn)
 {
 	char	*target;
+	t_redir	*redirect;
 
 	target = collect_pieces_to_string(shell, curr_tkn);
 	if (target == NULL)
 		return (NULL);
-	return (create_redir(type, target));
+	redirect = create_redir(type, target);
+	free(target);
+	return (redirect);
 }
 
 static void	collect_subshell_redirs(t_shell *shell, t_shell_node *node,
@@ -520,30 +523,32 @@ char	**collect_tokens_to_argv(t_shell *shell, t_token *start_tkn,
 	return (argv);
 }
 
-t_cmd	*create_cmd_from_tokens(t_shell *shell, t_token *start_tkn,
-		t_token *end_tkn)
+ t_cmd	*create_cmd_from_tokens(t_shell *shell, t_token **start_tkn,
+		t_token **end_tkn)
 {
 	t_cmd	*cmd;
 	char	**argv;
 	char	*path;
 
 	cmd = create_cmd(NULL, NULL);
-	if (collect_redirs(shell, cmd, &start_tkn, &end_tkn) == ERROR)
+	if (collect_redirs(shell, cmd, start_tkn, end_tkn) == ERROR)
 		return (cmd->free_cmd(cmd), HANDLE_ERROR_NULL);
-	argv = collect_tokens_to_argv(shell, start_tkn, end_tkn);
+	argv = collect_tokens_to_argv(shell, *start_tkn, *end_tkn);
 	if (!argv)
 		return (cmd->free_cmd(cmd), HANDLE_ERROR_NULL);
 	if (argv[0] && argv[0][0] != '\0')
 	{
-		path = get_cmd_path(argv[0], shell->ctx->envp);
+		path = get_cmd_path(shell->ctx->env, argv[0]);
 		cmd->argv = argv;
 		cmd->path = path;
 	}
+	else
+		free(argv);
 	return (cmd);
 }
 
 int	create_node_for_subshell(t_shell *shell, t_ast_node **node,
-		t_token *start_tkn, t_token *end_tkn)
+	t_token *start_tkn, t_token *end_tkn)
 {
 	t_shell_node	*shell_node;
 	t_ast_node		*left_node;
@@ -557,12 +562,16 @@ int	create_node_for_subshell(t_shell *shell, t_ast_node **node,
 	if (matching_paren && matching_paren->next && matching_paren != end_tkn)
 		collect_subshell_redirs(shell, shell_node, matching_paren->next,
 			end_tkn->next);
-	build_ast(shell, &left_node, start_tkn->next, matching_paren->prev);
+	{
+		t_token *s = start_tkn->next;
+		t_token *e = matching_paren->prev;
+		build_ast(shell, &left_node, &s, &e);
+	}
 	return (1);
 }
 
 void	create_leaves(t_shell *shell, t_ast_node **node, t_token *curr_tkn,
-		t_token **start_end_tokens)
+	t_token **start_end_tokens)
 {
 	t_shell_node	*shell_node;
 	t_ast_node		*left_node;
@@ -574,8 +583,30 @@ void	create_leaves(t_shell *shell, t_ast_node **node, t_token *curr_tkn,
 	right_node = create_ast_node(NULL);
 	(*node)->set_left(*node, left_node);
 	(*node)->set_right(*node, right_node);
-	build_ast(shell, &left_node, start_end_tokens[0], curr_tkn->prev);
-	build_ast(shell, &right_node, curr_tkn->next, start_end_tokens[1]);
+	{
+		t_token *ls = start_end_tokens[0];
+		t_token *le = curr_tkn->prev;
+		build_ast(shell, &left_node, &ls, &le);
+		start_end_tokens[0] = ls;
+	}
+	{
+		t_token *rs = curr_tkn->next;
+		t_token *re = start_end_tokens[1];
+		build_ast(shell, &right_node, &rs, &re);
+		start_end_tokens[1] = re;
+	}
+	{
+		t_token *tmp = curr_tkn->next;
+		if (curr_tkn->prev)
+			curr_tkn->prev->next = tmp;
+		if (tmp)
+			tmp->prev = curr_tkn->prev;
+		if (curr_tkn == start_end_tokens[0])
+			start_end_tokens[0] = tmp;
+		if (curr_tkn == start_end_tokens[1])
+			start_end_tokens[1] = curr_tkn->prev;
+		curr_tkn->free(curr_tkn);
+	}
 }
 
 int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
@@ -599,7 +630,7 @@ int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
 		shell_node = create_shell_node(NODE_CMD, NULL);
 		(*node)->set_content(*node, shell_node);
 		shell_node->data.cmd = create_cmd_from_tokens(shell,
-				start_end_tokens[0], start_end_tokens[1]);
+			&start_end_tokens[0], &start_end_tokens[1]);
 		return (OK);
 	}
 	if (lvl >= 3 && is_subshell_start(start_end_tokens[0]))
@@ -608,36 +639,57 @@ int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
 	return (NO);
 }
 
-t_ast_node	*build_ast(t_shell *shell, t_ast_node **node, t_token *start_tkn,
-		t_token *end_tkn)
+t_ast_node	*build_ast(t_shell *shell, t_ast_node **node, t_token **start_tkn,
+		t_token **end_tkn)
 {
 	t_token	*start_end_tokens[2];
 
-	start_end_tokens[0] = start_tkn;
-	start_end_tokens[1] = end_tkn;
+	if (!start_tkn || !end_tkn || !*start_tkn || !*end_tkn)
+		return (NULL);
+	start_end_tokens[0] = *start_tkn;
+	start_end_tokens[1] = *end_tkn;
 	if (*node == NULL)
 		*node = create_ast_node(NULL);
 	if (create_ast_node_for_lvl(shell, node, start_end_tokens, 1) == 1)
+	{
+		*start_tkn = start_end_tokens[0];
+		*end_tkn = start_end_tokens[1];
 		return (*node);
+	}
 	if (create_ast_node_for_lvl(shell, node, start_end_tokens, 2) == 1)
+	{
+		*start_tkn = start_end_tokens[0];
+		*end_tkn = start_end_tokens[1];
 		return (*node);
+	}
 	if (create_ast_node_for_lvl(shell, node, start_end_tokens, 3) == 1)
+	{
+		*start_tkn = start_end_tokens[0];
+		*end_tkn = start_end_tokens[1];
 		return (*node);
+	}
+	/* propagate any changes to start/end back to caller */
+	*start_tkn = start_end_tokens[0];
+	*end_tkn = start_end_tokens[1];
 	return (*node);
 }
 
-void	build_shell(t_shell *shell, t_token *token)
+void	build_shell(t_shell *shell, t_token **token)
 {
 	t_ast_node	*root_node;
 	t_token		*end_token;
 
 	root_node = NULL;
-	end_token = token;
+	if (!token || !*token)
+		return ;
+	end_token = *token;
 	while (end_token->next)
 		end_token = end_token->next;
 	end_token = end_token->prev;
-	if (!validate_tokens(token))
+	if (!validate_tokens(*token))
 		return ;
-	root_node = build_ast(shell, &root_node, token, end_token);
+	end_token->next->free(end_token->next);
+	end_token->next = NULL;
+	root_node = build_ast(shell, &root_node, token, &end_token);
 	shell->ast->set_root(shell->ast, root_node);
 }

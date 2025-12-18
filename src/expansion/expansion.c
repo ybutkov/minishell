@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 01:30:19 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/18 04:04:30 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 	t_piece	*piece;
 	t_list	*res_list;
 	char	*expanded;
+	char	**result_array;
 
 	res_list = NULL;
 	piece = token->pieces;
@@ -85,7 +86,9 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 			ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(piece->text)));
 		piece = piece->next;
 	}
-	return (list_to_array(res_list));
+	result_array = list_to_array(res_list);
+	ft_lstclear(&res_list, empty_func);
+	return (result_array);
 }
 
 // static int	add_list_array(t_list **res_list, char **elems)

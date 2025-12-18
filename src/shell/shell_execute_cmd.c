@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_execute_cmd.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/16 02:06:24 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/18 16:20:19 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,54 +18,11 @@
 #include "shell.h"
 #include "utils.h"
 #include "builtin.h"
+#include "shell_utils.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <sys/wait.h>
 #include "signals.h"
-
-static void	open_file_and_dup2(char *filename, int flags, int dup_fd,
-		t_shell *shell)
-{
-	int	fd;
-	int	mode;
-
-	if (flags & O_CREAT)
-		mode = 0644;
-	else
-		mode = 0;
-	fd = open(filename, flags, mode);
-	if (fd == -1)
-		output_error_and_exit(filename, NULL, shell, EXIT_FAILURE);
-	dup2(fd, dup_fd);
-	close(fd);
-}
-
-static void	apply_redirect(t_cmd *cmd, t_shell *shell)
-{
-	t_list	*redir;
-	t_redir	*redirect;
-
-	if (!cmd)
-		return ;
-	redir = cmd->redirs;
-	while (redir)
-	{
-		redirect = (t_redir *)redir->content;
-		if (redirect->type == REDIR_IN || redirect->type == REDIR_HEREDOC)
-			open_file_and_dup2(redirect->target, O_RDONLY, STDIN_FILENO, shell);
-		else if (redirect->type == REDIR_OUT)
-			open_file_and_dup2(redirect->target, O_WRONLY | O_CREAT | O_TRUNC,
-				STDOUT_FILENO, shell);
-		else if (redirect->type == REDIR_APPEND)
-			open_file_and_dup2(redirect->target, O_WRONLY | O_CREAT | O_APPEND,
-				STDOUT_FILENO, shell);
-		else if (redirect->type == REDIR_HEREDOC)
-		{
-			// execute_redir_heredoc(shell, redirect, STDIN_FILENO);
-		}
-		redir = redir->next;
-	}
-}
 
 char	**get_built_in_list(void)
 {
@@ -105,47 +62,6 @@ int	builtin_func(char *command)
 	return (-1);
 }
 
-// void	dup2_and_close(int oldfd, int newfd)
-// {
-// 	dup2(oldfd, newfd);
-// 	close(oldfd);
-// }
-
-// static int	execute_cmd_child(t_cmd *cmd, t_shell *shell, int input_fd,
-// 		int output_fd)
-// {
-// 	if (input_fd != STDIN_FILENO)
-// 	{
-// 		dup2(input_fd, STDIN_FILENO);
-// 		close(input_fd);
-// 	}
-// 	if (output_fd != STDOUT_FILENO)
-// 	{
-// 		dup2(output_fd, STDOUT_FILENO);
-// 		close(output_fd);
-// 	}
-// 	apply_redirect(cmd, shell);
-// 	if (is_builtin(cmd->argv[0]))
-// 		return (builtin(cmd, shell, input_fd, output_fd));
-// 	if (!cmd->path || access(cmd->path, X_OK) != 0)
-// 		output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
-// 			EXIT_CMD_NOT_FOUND);
-// 	execve(cmd->path, cmd->argv, shell->ctx->envp);
-// 	shell->free(shell);
-// 	exit(EXIT_FAILURE);
-// }
-
-// int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
-// {
-// 	return (execute_cmd_child(cmd, shell, input_fd, output_fd));
-// }
-
-// void	dup2_and_close(int oldfd, int newfd)
-// {
-// 	dup2(oldfd, newfd);
-// 	close(oldfd);
-// }
-
 int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 		int output_fd)
 {
@@ -177,7 +93,7 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 		if (!cmd->path || access(cmd->path, X_OK) != 0)
 			output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
 				EXIT_CMD_NOT_FOUND);
-		execve(cmd->path, cmd->argv, shell->ctx->envp);
+		execve(cmd->path, cmd->argv, shell->ctx->env->to_array(shell->ctx->env));
 		shell->free(shell);
 		exit(EXIT_FAILURE);
 	}

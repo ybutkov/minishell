@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 01:39:18 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/18 03:10:08 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@
 # define BUFFER_PATH 4096
 # define HEREDOC_PREFIX_FILE "/tmp/heredoc_tmp_"
 # define HOME "HOME"
+# define SHLVL "SHLVL"
+# define PATH "PATH"
 # define MSG_EXIT "exit"
 # define MSG_EXIT_2_COLON "exit: "
 # define CD_MSG_2_COLON "cd: "

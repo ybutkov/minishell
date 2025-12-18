@@ -6,13 +6,15 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 18:16:25 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 17:37:39 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/18 04:18:07 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
 #include "shell_utils.h"
 #include "envp_copy.h"
+#include "constants.h"
+#include "libft.h"
 
 static void	free_ctx_content(t_ctx *ctx)
 {
@@ -48,16 +50,36 @@ static char	**apply_func_to_array(char **arr, char *(*func)(const char *))
 	return (new_arr);
 }
 
+static int	setup_shlvl(t_env *env)
+{
+	char	*value;
+	int		int_value;
+
+	value = env->get_value(env, SHLVL);
+	if (value)
+		int_value = ft_atoi(value) + 1;
+	else
+		int_value = 1;
+	value = ft_itoa(int_value);
+	if (value == NULL)
+		return (0);
+	env->set_pair(env, SHLVL, value);
+	free(value);
+	return (1);
+}
+
 t_ctx	*create_ctx(char **envp)
 {
 	t_ctx	*ctx;
 
 	ctx = malloc(sizeof(t_ctx));
 	if (!ctx)
-		return (NULL);
+		return (HANDLE_ERROR_NULL);
 	ctx->envp = apply_func_to_array(envp, ft_strdup);
 	ctx->env = create_env();
-	ctx->env->copying(ctx->env, envp);
+	ctx->env->fill_from_array(ctx->env, envp);
+	if (setup_shlvl(ctx->env) == 0)
+		return (HANDLE_ERROR_NULL);
 	ctx->last_exit_status = 0;
 	ctx->should_exit = 0;
 	ctx->free_ctx = free_ctx_content;

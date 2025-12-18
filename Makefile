@@ -47,6 +47,7 @@ C_SHELL_FILES += \
 	shell/contex.c \
 	shell/enams.c \
 	shell/shell_execute_utils.c \
+	shell/files_operations.c \
 	shell/validator.c
 
 C_SHELL_FILES += \
@@ -55,9 +56,9 @@ C_SHELL_FILES += \
 	utils/heredoc_file_util.c \
 	utils/list_to_array.c \
 	test/token_fixtures.c \
-	test/get_cmd_path.c \
 	printer/print_shell.c \
 	printer/print_tokens.c
+# 	test/get_cmd_path.c \
 
 C_SHELL_FILES += \
 	lexer/lexer.c \
@@ -84,9 +85,9 @@ C_SHELL_FILES += \
 	envp/envp_copy.c \
 	envp/copy_to_array.c \
 	envp/envp_list_init.c \
-	expansion/wildcards.c
-# 	parcer/parcer.c \
-# 	parcer/get_cmd_path.c \
+	expansion/wildcards.c \
+ 	parcer/get_cmd_path.c
+# 	parcer/parcer.c
 
 C_SHELL_FILES += \
 	expansion/expansion.c \
@@ -143,6 +144,7 @@ $(LIBFT) :
 v: re
 	valgrind --leak-check=full  --show-leak-kinds=all --track-fds=yes \
 		--suppressions=tools/sub.sub  ./minishell
+# 		--track-origins=yes --trace-children=yes --suppressions=tools/sub.sub  ./minishell
 
 #valgrind --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all -s ./minishell
 

@@ -6,11 +6,11 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:30:17 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 02:34:57 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/18 04:23:57 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "envp_copy.h"
+#include "env_internal.h"
 
 char	**copying_back(t_env *env)
 {
@@ -76,4 +76,33 @@ int	length_of_list(t_env *env)
 		i++;
 	}
 	return (i);
+}
+
+int	remove_pair(t_env *env, char *key)
+{
+	t_env_pair	*cur;
+	t_env_pair	*prev;
+
+	if (!env->head || !key)
+		return (0);
+	cur = env->head;
+	prev = NULL;
+	while (cur != NULL)
+	{
+		if (ft_strcmp(cur->key, key) == 0)
+		{
+			if (!prev)
+				env->head = cur->next;
+			else
+				prev->next = cur->next;
+			free(cur->key);
+			if (cur->value)
+				free(cur->value);
+			free(cur);
+			return (1);
+		}
+		prev = cur;
+		cur = cur->next;
+	}
+	return (0);
 }

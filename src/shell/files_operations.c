@@ -1,24 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   shell_utils.h                                      :+:      :+:    :+:   */
+/*   files_operations.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/11/09 18:18:35 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/18 16:18:24 by ybutkov          ###   ########.fr       */
+/*   Created: 2025/12/18 16:08:32 by ybutkov           #+#    #+#             */
+/*   Updated: 2025/12/18 16:13:22 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SHELL_UTILS_H
-# define SHELL_UTILS_H
+#include "shell.h"
+#include "error.h"
+#include <fcntl.h>
 
-void	free_str_array(char **arr);
-void	clear_tmp_folder(int file_n);
-char	*get_tmp_file_name(int file_n);
-int		get_file_n(int delta);
 void	open_file_and_dup2(char *filename, int flags, int dup_fd,
-			t_shell *shell);
-void	apply_redirect(t_cmd *cmd, t_shell *shell);
+		t_shell *shell)
+{
+	int	fd;
+	int	mode;
 
-#endif
+	if (flags & O_CREAT)
+		mode = 0644;
+	else
+		mode = 0;
+	fd = open(filename, flags, mode);
+	if (fd == -1)
+		output_error_and_exit(filename, NULL, shell, EXIT_FAILURE);
+	dup2(fd, dup_fd);
+	close(fd);
+}

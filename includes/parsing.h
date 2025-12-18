@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/17 20:37:23 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/18 03:32:40 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ typedef struct s_token
 
 
 
-char				*get_cmd_path(char *cmd, char **envp);
+char				*get_cmd_path(t_env *env, char *cmd_name);
 t_token				*lexicalization(char *line);
 t_token				*read_and_lexicalize();
 char				**wildcard_expand(t_piece *piece);
