@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   envp_list_init.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:31:15 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/15 18:09:21 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/18 13:12:02 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,9 @@ void	set_env_pair(t_env *env, char *key, char *value)
 	new = malloc(sizeof(t_env_pair));
 	if (!new)
 		return ;
-	new->key = strdup(key);
+	new->key = ft_strdup(key);
 	if (value)
-		new->value = strdup(value);
+		new->value = ft_strdup(value);
 	else
 		new->value = value;
 	new->next = NULL;
@@ -87,7 +87,7 @@ char	*get_value(t_env *env, char *key)
 	cur = env->head;
 	while (cur != NULL)
 	{
-		if (strcmp(cur->key, key) == 0)
+		if (ft_strcmp(cur->key, key) == 0)
 			return (cur->value);
 		cur = cur->next;
 	}

@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/17 21:11:01 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/18 16:30:16 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,7 +195,8 @@ void	assign_env_wild_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 	pi->i++;
 	if (t->value[pi->cur_start] == '$')
 	{
-		if (ft_isalpha(t->value[pi->cur_start + 1]) || t->value[pi->cur_start + 1] == '_')
+		if (ft_isalpha(t->value[pi->cur_start + 1]) || t->value[pi->cur_start + 1] == '_'
+				|| t->value[pi->cur_start + 1] == '?')
 		{
 			pi->i++;
 			while (!will_end_env_var(t->value[pi->i]))

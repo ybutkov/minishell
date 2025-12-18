@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 15:35:12 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/16 03:26:34 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/18 16:27:30 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ static void	split_key(char *line, t_export_par *var, char *separator)
 	else
 	{
 		var->key = ft_substr(line, 0, split_sign - line);
-		var->value = strdup(split_sign + ft_strlen(separator));
+		var->value = ft_strdup(split_sign + ft_strlen(separator));
 	}
 
 }
@@ -64,13 +64,77 @@ static int	is_valid_key(char *key)
 	return (1);
 }
 
-static void	print_export_sorted(void)
+void	sort_pointers_array(t_env_pair **array, int size)
 {
-	// ADD sort
-	printf("oops, still need to finish this sorting function\n");
+	int			i;
+	int			j;
+	t_env_pair	*temp;
+
+	j = 0;
+	while (j < size)
+	{
+		i = 0;
+		while (i < size - 1 - j)
+		{
+			if (ft_strcmp(array[i]->key, array[i + 1]->key) > 0)
+			{
+				temp = array[i];
+				array[i] = array[i + 1];
+				array[i + 1] = temp; 
+			}
+			i++;
+		}
+		j++;
+	}
 }
 
-void output_declare(t_env *env)
+void	print_pointers_array(t_env_pair **array, int size)
+{
+	int	i;
+	int	len;
+
+	i = 0;
+	while (i < size)
+	{
+		write(STDOUT_FILENO, "declare -x ", 11);
+		len = ft_strlen(array[i]->key);
+		write(STDOUT_FILENO, array[i]->key, len);
+		if (array[i]->value)
+		write(STDOUT_FILENO, "=", 1);
+		{
+			len = ft_strlen(array[i]->value);
+			write(STDOUT_FILENO, array[i]->value, len);
+		}
+		write(STDOUT_FILENO, "\n", 1);
+		i++;
+	}
+}
+
+static void	print_export_sorted(t_env *env)
+{
+	int			count;
+	t_env_pair	**pointers_arr;
+	t_env_pair	*cur;
+	int			i;
+	
+	count = env->amount_vars(env);
+	pointers_arr = malloc(sizeof(t_env_pair *) * count);
+	if (!pointers_arr)
+		return ;
+	cur = env->head;
+	i = 0;
+	while (cur)
+	{
+		pointers_arr[i] = cur;
+		cur = cur->next;
+		i++;
+	}
+	sort_pointers_array(pointers_arr, count);
+	print_pointers_array(pointers_arr, count);
+	free(pointers_arr);
+}
+
+void	output_declare(t_env *env)
 {
 	t_env_pair	*current;
 	int			len;
@@ -133,7 +197,7 @@ int	bi_export(t_env *env, char **args)
 
 	if (!args[1])
 	{
-		print_export_sorted();
+		print_export_sorted(env);
 		return (0);
 	}
 	status = 0;
