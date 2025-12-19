@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:27 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/16 20:22:26 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/19 15:46:19 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,13 @@ static int	open_file(char *filename, int flags, t_shell *shell)
 	return (fd);
 }
 
+void error_heredoc_delimiter(char *target)
+{
+	write(1, "warning: here-document delimited by end-of-file (wanted '", 57);
+	write(1, target, ft_strlen(target));
+	write(1, "')\n", 3);
+}
+
 static int	collect_heredoc_input(char *target, int write_fd, t_shell *shell)
 {
 	char	*line;
@@ -70,20 +77,21 @@ static int	collect_heredoc_input(char *target, int write_fd, t_shell *shell)
 	set_signals_heredoc();
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-			ft_putstr_fd("heredoc> ", STDOUT_FILENO);
-		line = get_next_line(STDIN_FILENO);
+		if (fcntl(STDIN_FILENO, F_GETFD) == -1)  // stdin was closed (Ctrl+C)
+		{
+			dup2(the_stdin, STDIN_FILENO);
+			close(the_stdin);
+			set_signals_parent_interactive();
+			shell->ctx->last_exit_status = 130;
+			return (130);
+		}
+		line = readline("heredoc> ");
 		if (!line)
 		{
-	        if (fcntl(STDIN_FILENO, F_GETFD) == -1)  // stdin was closed (Ctrl+C)
-            {
-                dup2(the_stdin, STDIN_FILENO);
-                close(the_stdin);
-                set_signals_parent_interactive();
-                shell->ctx->last_exit_status = 130;
-                return (130);
-            }
-			break ;
+			dup2(the_stdin, STDIN_FILENO);
+			close(the_stdin);
+			error_heredoc_delimiter(target);
+			break;
 		}
 		if (is_delimiter(line, target))
 		{

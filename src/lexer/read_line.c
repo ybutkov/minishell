@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 11:38:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/18 22:06:29 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/19 15:45:53 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,14 +45,14 @@ t_token	*read_and_lexicalize()
 		}
 		if (!line)
 			return (NULL);
-		if (*line == '\0')
-		{
-			free(line);
-			if (isatty(fileno(stdin)))
-				continue ;
-			else
-				continue ;
-		}
+		// if (*line == '\0')
+		// {
+		// 	free(line);
+		// 	if (isatty(fileno(stdin)))
+		// 		continue ;
+		// 	else
+		// 		continue ;
+		// }
 		if (line)
 			add_history(line);
 		line = preprocessing(line);
