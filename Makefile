@@ -46,7 +46,6 @@ C_SHELL_FILES += \
 	shell/commands.c \
 	shell/contex.c \
 	shell/enams.c \
-	shell/shell_execute_utils.c \
 	shell/files_operations.c \
 	shell/validator.c
 

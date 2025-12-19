@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:51:39 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/18 15:59:34 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/19 13:33:58 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,33 +22,17 @@
 #include <unistd.h>
 #include "signals.h"
 
-void	close_fds(int *fd_0, int *fd_1)
-{
-	if (fd_0 && *fd_0 >= 0)
-	{
-		close(*fd_0);
-		*fd_0 = -1;
-	}
-	if (fd_1 && *fd_1 >= 0)
-	{
-		close(*fd_1);
-		*fd_1 = -1;
-	}
-}
-
 static int	execute_left(t_ast_node *node, t_shell *shell, int in_fd,
 		int pipe_fds[2])
 {
 	int	exit_status;
 
-	// close(pipe_fds[0]);
-	close_fds(&pipe_fds[0], NULL);
 	exit_status = 0;
+	if (pipe_fds[1] != STDOUT_FILENO)
+		dup2_and_close(pipe_fds[1], STDOUT_FILENO);
+	close_fds(&pipe_fds[0], &pipe_fds[1]);
 	if (node)
-		exit_status = execute_shell_node(node, shell, in_fd, pipe_fds[1]);
-	// close(pipe_fds[1]);
-	close_fds(NULL, &pipe_fds[1]);
-	pipe_fds[1] = -1;
+		exit_status = execute_shell_node(node, shell, in_fd, STDOUT_FILENO);
 	shell->free(shell);
 	exit(exit_status);
 }
@@ -57,14 +41,12 @@ static int	execute_right(t_ast_node *node, t_shell *shell, int pipe_fds[2], int 
 {
 	int	exit_status;
 
-	// close(pipe_fds[1]);
-	close_fds(NULL, &pipe_fds[1]);
 	exit_status = 0;
+	if (pipe_fds[0] != STDIN_FILENO)
+		dup2_and_close(pipe_fds[0], STDIN_FILENO);
+	close_fds(&pipe_fds[0], &pipe_fds[1]);
 	if (node)
-		exit_status = execute_shell_node(node, shell, pipe_fds[0], out_fd);
-	// close(pipe_fds[0]);
-	close_fds(&pipe_fds[0], NULL);
-	pipe_fds[0] = -1;
+		exit_status = execute_shell_node(node, shell, STDIN_FILENO, out_fd);
 	shell->free(shell);
 	exit(exit_status);
 }
@@ -90,14 +72,12 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 		set_signals_child();
 		return (execute_left(node->get_left(node), shell, in_fd, pipe_fds));
 	}
-	// close(pipe_fds[1]);
 	close_fds(NULL, &pipe_fds[1]);
-
 	pids[1] = fork();
 	if (pids[1] == -1)
 	{
 		perror("fork");
-		close_fds(&pipe_fds[0], &pipe_fds[1]); // should close only fds[0] ?
+		close_fds(&pipe_fds[0], &pipe_fds[1]);
 		return (EXIT_FAILURE);
 	}
 	if (pids[1] == 0)
@@ -105,7 +85,6 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 		set_signals_child();
 		return (execute_right(node->get_right(node), shell, pipe_fds, out_fd));
 	}
-	// close(pipe_fds[0]);
 	close_fds(&pipe_fds[0], NULL);
 	waitpid(pids[0], &status, 0);
 	waitpid(pids[1], &status, 0);
@@ -116,37 +95,37 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 
 int	execute_and(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 {
-	int		status_code;
+	int	code;
 
-	status_code = 0;
+	code = 0;
 	if (node->get_left(node))
-		status_code = execute_shell_node(node->get_left(node), shell, in_fd, out_fd);
-	if (status_code == 0 && node->get_right(node))
-		status_code = execute_shell_node(node->get_right(node), shell, in_fd, out_fd);
-	return (status_code);
+		code = execute_shell_node(node->get_left(node), shell, in_fd, out_fd);
+	if (code == 0 && node->get_right(node))
+		code = execute_shell_node(node->get_right(node), shell, in_fd, out_fd);
+	return (code);
 }
 
 int	execute_or(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 {
-	int		status_code;
+	int		code;
 
-	status_code = 0;
+	code = 0;
 	if (node->get_left(node))
-		status_code = execute_shell_node(node->get_left(node), shell, in_fd, out_fd);
-	if (status_code != 0 && node->get_right(node))
-		status_code = execute_shell_node(node->get_right(node), shell, in_fd, out_fd);
-	return (status_code);
+		code = execute_shell_node(node->get_left(node), shell, in_fd, out_fd);
+	if (code != 0 && node->get_right(node))
+		code = execute_shell_node(node->get_right(node), shell, in_fd, out_fd);
+	return (code);
 }
 
 int	execute_simicolon(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 {
-	int		status_code;
+	int	code;
 
 	if (node->get_left(node))
-		status_code = execute_shell_node(node->get_left(node), shell, in_fd, out_fd);
+		code = execute_shell_node(node->get_left(node), shell, in_fd, out_fd);
 	if (node->get_right(node))
-		status_code = execute_shell_node(node->get_right(node), shell, in_fd, out_fd);
-	return (status_code);
+		code = execute_shell_node(node->get_right(node), shell, in_fd, out_fd);
+	return (code);
 }
 
 static void	apply_subshell_redirs(t_shell_node *shell_node)
