@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:51:39 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/19 13:33:58 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/19 13:51:17 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include "signals.h"
+#include "shell_utils.h"
 
 static int	execute_left(t_ast_node *node, t_shell *shell, int in_fd,
 		int pipe_fds[2])
@@ -128,45 +129,12 @@ int	execute_simicolon(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	return (code);
 }
 
-static void	apply_subshell_redirs(t_shell_node *shell_node)
+static void	apply_subshell_redirs(t_shell *shell, t_shell_node *shell_node)
 {
 	t_list	*redir_list;
-	t_redir	*redirect;
-	int		fd;
 
 	redir_list = shell_node->redirs;
-	while (redir_list)
-	{
-		redirect = (t_redir *)redir_list->content;
-		if (redirect->type == REDIR_IN || redirect->type == REDIR_HEREDOC)
-		{
-			fd = open(redirect->target, O_RDONLY);
-			if (fd != -1)
-			{
-				dup2(fd, STDIN_FILENO);
-				close(fd);
-			}
-		}
-		else if (redirect->type == REDIR_OUT)
-		{
-			fd = open(redirect->target, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-			if (fd != -1)
-			{
-				dup2(fd, STDOUT_FILENO);
-				close(fd);
-			}
-		}
-		else if (redirect->type == REDIR_APPEND)
-		{
-			fd = open(redirect->target, O_WRONLY | O_CREAT | O_APPEND, 0644);
-			if (fd != -1)
-			{
-				dup2(fd, STDOUT_FILENO);
-				close(fd);
-			}
-		}
-		redir_list = redir_list->next;
-	}
+	apply_redirects(redir_list, shell);
 }
 
 int	execute_subshell(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
@@ -193,7 +161,7 @@ int	execute_subshell(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 			dup2(STDOUT_FILENO, STDOUT_FILENO);
 		shell_node = (t_shell_node *)node->get_content(node);
 		if (shell_node && shell_node->redirs)
-			apply_subshell_redirs(shell_node);
+			apply_subshell_redirs(shell, shell_node);
 		status = execute_shell_node(node->get_left(node), shell,
 				STDIN_FILENO, STDOUT_FILENO);
 		shell->free(shell);
