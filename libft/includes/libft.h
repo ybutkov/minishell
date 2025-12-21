@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/03 14:56:00 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/15 03:33:07 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/21 16:31:12 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ int					ft_isdigit(int c);
 int					ft_isalnum(int c);
 int					ft_isascii(int c);
 int					ft_isprint(int c);
+int					is_char_space(char ch);
 
 int					ft_toupper(int c);
 int					ft_tolower(int c);

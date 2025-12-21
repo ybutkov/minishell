@@ -1,25 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.h                                            :+:      :+:    :+:   */
+/*   is_char_space.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/05 20:05:36 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/21 16:27:51 by ybutkov          ###   ########.fr       */
+/*   Created: 2025/12/21 16:29:39 by ybutkov           #+#    #+#             */
+/*   Updated: 2025/12/21 16:33:49 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef UTILS_H
-# define UTILS_H
+#include "utils.h"
 
-# include <stdlib.h>
-# include "../libft/includes/libft.h"
+int	is_char_space(char ch)
+{
+	return (in_set(ch, " \x9\xA\xB\xC\xD"));
+}
 
-void	free_str_array(char **arr);
-void	**list_to_array_generic(t_list *lst, void *(*convert)(void *));
-char	**list_to_array(t_list *lst);
-int		is_char_space(char ch);
-void	empty_func(void *p);
-
-#endif

@@ -62,7 +62,8 @@ LIBFT_CORE_FILES = ft_isalpha.c \
 		ft_lstdelone_bonus.c \
 		ft_lstclear_bonus.c \
 		ft_lstiter_bonus.c \
-		ft_lstmap_bonus.c
+		ft_lstmap_bonus.c \
+		is_char_space.c
 
 UTILS_FILES = compare_util.c \
 		time_func.c \
