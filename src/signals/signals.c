@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signals.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 16:31:47 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/17 23:12:38 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/21 14:18:29 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 //not print prompts; if readline isn’t used (you use get_next_line), handle EOF by exiting.
 
 #include "signals_internal.h"
-
+#include "signals.h"
+volatile sig_atomic_t g_heredoc_interrupted = 0;
 
 void	set_signals_parent_interactive(void)
 {
@@ -108,7 +109,13 @@ void	handle_sigint_parent(int sig)
 void	handle_sigint_heredoc(int sig)
 {
 	(void)sig;
-	write(STDOUT_FILENO, "\n", 1);
+	g_heredoc_interrupted = 1;
+	// rl_replace_line("", 0);
+	// rl_on_new_line();
+	// rl_redisplay();
+	rl_done = 1;
+	if (g_heredoc_interrupted)
+		write(STDOUT_FILENO, "\n", 1);
 	close(STDIN_FILENO);
 }
 

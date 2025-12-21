@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   constants.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/18 03:10:08 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/21 11:51:50 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # define EXIT_MISUSE 2
 # define EXIT_CMD_CANNOT_EXEC 126
 # define EXIT_CMD_NOT_FOUND 127
+# define TERMINATED_BY_SIGINT 130
 # define CMD_NOT_FOUND_MSG "command not found"
 # define MSG_TOO_MANY_ARG "too many arguments"
 # define MSG_INVALID_OPTION "invalid option"
