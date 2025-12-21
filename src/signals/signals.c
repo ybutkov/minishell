@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 16:31:47 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/21 14:18:29 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/21 15:05:43 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,8 @@ void	handle_sigint_parent(int sig)
 // sig - signal number that triggered the handler (2 in this case)
 {
 	(void)sig;
-	write(1, "\n", 1); // signal handler must use async-signal-safe functions
+	if (!g_heredoc_interrupted)
+		write(1, "\n", 1); // signal handler must use async-signal-safe functions
 	rl_on_new_line(); // updating internal cursor position
 	rl_replace_line("", 0); //clearing the current line
 	rl_redisplay(); // redrawing the prompt ($>) at screen
@@ -114,8 +115,7 @@ void	handle_sigint_heredoc(int sig)
 	// rl_on_new_line();
 	// rl_redisplay();
 	rl_done = 1;
-	if (g_heredoc_interrupted)
-		write(STDOUT_FILENO, "\n", 1);
+	write(STDOUT_FILENO, "\n", 1);
 	close(STDIN_FILENO);
 }
 
