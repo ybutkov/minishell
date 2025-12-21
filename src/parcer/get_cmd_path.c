@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_cmd_path.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 13:03:41 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/18 03:25:24 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/20 15:47:11 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ char	*get_cmd_path(t_env *env, char *cmd_name)
 
 // static char	*default_getenv(void)
 // {
-// 	return (ft_strdup("PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:\
+// 	return (ft_strdup("PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:
 // 		/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:"));
 // }
 

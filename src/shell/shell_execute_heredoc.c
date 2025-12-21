@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:27 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/19 15:46:19 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/21 13:57:05 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,26 +25,9 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "signals.h"
+#include <errno.h>
 
 int	collect_heredoc_node(t_ast_node *node, t_shell *shell);
-
-static int	is_delimiter(char *line, char *delimeter)
-{
-	char	*new_line_char;
-
-	new_line_char = ft_strchr(line, '\n');
-	if (new_line_char)
-		*new_line_char = '\0';
-	if (ft_strcmp(line, delimeter) == 0)
-	{
-		if (new_line_char)
-			*new_line_char = '\n';
-		return (1);
-	}
-	if (new_line_char)
-		*new_line_char = '\n';
-	return (0);
-}
 
 static int	open_file(char *filename, int flags, t_shell *shell)
 {
@@ -63,44 +46,75 @@ static int	open_file(char *filename, int flags, t_shell *shell)
 
 void error_heredoc_delimiter(char *target)
 {
-	write(1, "warning: here-document delimited by end-of-file (wanted '", 57);
-	write(1, target, ft_strlen(target));
-	write(1, "')\n", 3);
+	// write(STDERR_FILENO, "warning: here-document delimited by end-of-file (wanted '", 57);
+	// write(STDERR_FILENO, target, ft_strlen(target));
+	char *tmp = "here-document delimited by end-of-file (wanted '";
+	tmp = ft_strjoin(tmp, target);
+	char *str = ft_strjoin(tmp, "')");
+	free(tmp);
+	output_error("warning:", str);
+	free(str);
+	// write(STDERR_FILENO, "')\n", 3);
 }
 
 static int	collect_heredoc_input(char *target, int write_fd, t_shell *shell)
 {
-	char	*line;
-	int		the_stdin;
+	char    *line = NULL;
+	int     the_stdin;
 
 	the_stdin = dup(STDIN_FILENO);
 	set_signals_heredoc();
+	g_heredoc_interrupted = 0;
+	rl_done = 0;
+
 	while (1)
 	{
-		if (fcntl(STDIN_FILENO, F_GETFD) == -1)  // stdin was closed (Ctrl+C)
+		if (g_heredoc_interrupted)
 		{
+			if (line)
+				free(line);
+			dup2(the_stdin, STDIN_FILENO);
+			close(the_stdin);
+			set_signals_parent_interactive();
+			g_heredoc_interrupted = 0;
+			shell->ctx->last_exit_status = TERMINATED_BY_SIGINT;
+			return (130);
+		}
+		if (isatty(STDIN_FILENO))
+			line = readline("heredoc> ");
+		else
+			line = get_next_line(STDIN_FILENO);
+		if (g_heredoc_interrupted)
+		{
+			if (line)
+				free(line);
 			dup2(the_stdin, STDIN_FILENO);
 			close(the_stdin);
 			set_signals_parent_interactive();
 			shell->ctx->last_exit_status = 130;
 			return (130);
 		}
-		line = readline("heredoc> ");
 		if (!line)
 		{
-			dup2(the_stdin, STDIN_FILENO);
-			close(the_stdin);
-			error_heredoc_delimiter(target);
+			if (isatty(STDIN_FILENO))
+				error_heredoc_delimiter(target);
 			break;
 		}
-		if (is_delimiter(line, target))
+		if (!isatty(STDIN_FILENO))
+		{
+            if (line[ft_strlen(line) - 1] == '\n')
+                line[ft_strlen(line) - 1] = '\0';
+		}
+		if (ft_strcmp(line, target) == 0)
 		{
 			free(line);
-			break ;
+			break;
 		}
 		write(write_fd, line, ft_strlen(line));
+		write(write_fd, NEW_LINE, ft_strlen(NEW_LINE));
 		free(line);
 	}
+	dup2(the_stdin, STDIN_FILENO);
 	close(the_stdin);
 	set_signals_parent_interactive();
 	return (0);

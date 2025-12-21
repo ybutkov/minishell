@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/16 02:03:51 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/16 19:56:21 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/20 16:25:24 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <unistd.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+
+extern volatile sig_atomic_t g_heredoc_interrupted;
 
 void	set_signals_parent_interactive(void);
 void	set_signals_waiting_parent(void);
