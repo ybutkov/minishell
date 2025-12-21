@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/18 16:30:16 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/21 15:29:57 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,6 +269,11 @@ void	small_env_var_check (t_piece *p)
 		return ;
 	if (!ft_isalpha(p->text[1]) && p->text[1] != '_' && p->text[1] != '?' && p->text[1] != '\0')
 		return ;
+	if (p->text[1] == '\0')
+	{
+		p->has_env_v = 1;
+		return ;
+	}
 	if (p->text[1] == '?')
 	{
 		p->has_env_v = 1;

@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:27 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/21 13:57:05 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/21 15:08:43 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,17 +69,17 @@ static int	collect_heredoc_input(char *target, int write_fd, t_shell *shell)
 
 	while (1)
 	{
-		if (g_heredoc_interrupted)
-		{
-			if (line)
-				free(line);
-			dup2(the_stdin, STDIN_FILENO);
-			close(the_stdin);
-			set_signals_parent_interactive();
-			g_heredoc_interrupted = 0;
-			shell->ctx->last_exit_status = TERMINATED_BY_SIGINT;
-			return (130);
-		}
+		// if (g_heredoc_interrupted)
+		// {
+		// 	if (line)
+		// 		free(line);
+		// 	dup2(the_stdin, STDIN_FILENO);
+		// 	close(the_stdin);
+		// 	set_signals_parent_interactive();
+		// 	g_heredoc_interrupted = 0;
+		// 	shell->ctx->last_exit_status = TERMINATED_BY_SIGINT;
+		// 	return (130);
+		// }
 		if (isatty(STDIN_FILENO))
 			line = readline("heredoc> ");
 		else
@@ -91,7 +91,7 @@ static int	collect_heredoc_input(char *target, int write_fd, t_shell *shell)
 			dup2(the_stdin, STDIN_FILENO);
 			close(the_stdin);
 			set_signals_parent_interactive();
-			shell->ctx->last_exit_status = 130;
+			shell->ctx->last_exit_status = TERMINATED_BY_SIGINT;
 			return (130);
 		}
 		if (!line)
