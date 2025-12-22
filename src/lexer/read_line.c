@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 11:38:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/19 16:01:03 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/22 23:21:55 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,47 +14,46 @@
 #include "get_next_line.h"
 #include "signals.h"
 
-t_token	*read_and_lexicalize()
+char	*get_the_line(void)
 {
-	char    *line;
-	char 	*tmp;
-	t_token *tokens;
+	char	*line;
+	char	*tmp;
 	int		len;
+
+	if (isatty(fileno(stdin)))
+		line = readline("$> ");
+	else
+	{
+		tmp = get_next_line(fileno(stdin));
+		if (!tmp)
+			return (NULL);
+		line = tmp;
+		len = ft_strlen(line);
+		if (len > 0 && line[len - 1] == '\n')
+			line[len - 1] = '\0';
+	}
+	return (line);
+}
+
+t_token	*read_and_lexicalize(void)
+{
+	char	*line;
+	t_token	*tokens;
 
 	disable_ctrl_echo();
 	set_signals_parent_interactive();
 	while (1)
 	{
 		tokens = NULL;
-		if (isatty(fileno(stdin)))
-			line = readline("$> ");
-		else
-		{
-			tmp = get_next_line(fileno(stdin));
-			if (!tmp)
-				return (NULL);
-			// line = ft_strtrim(tmp, "\n");
-			// free(tmp);
-			line = tmp;
-			if (line)
-			{
-				len = ft_strlen(line);
-				if (len > 0 && line[len - 1] == '\n')
-					line[len - 1] = '\0';
-			}
-		}
+		line = get_the_line();
 		if (!line)
 			return (NULL);
 		if (*line == '\0')
 		{
 			free(line);
-			if (isatty(fileno(stdin)))
-				continue ;
-			else
-				continue ;
+			continue ;
 		}
-		if (line)
-			add_history(line);
+		add_history(line);
 		line = preprocessing(line);
 		tokens = lexicalization(line);
 		free(line);

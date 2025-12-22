@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/17 20:35:39 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/22 23:22:55 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,17 @@ typedef struct	s_pieces_internal
 	e_mix	q_stat;
 	char	quotes;
 }	t_pieces_internal;
+
+typedef struct s_preproc
+{
+	char	*res;
+	int		i;
+	int		j;
+	int		res_len;
+	int		single_opened;
+	int		double_opened;
+	int		delta_size;
+}	t_preproc;
 
 // preprocessor
 char	*preprocessing(char *str);
