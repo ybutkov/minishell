@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:25:11 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 19:08:30 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/21 23:01:40 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "libft.h"
 # include "envp_copy.h"
+# include "parsing.h"
 
 typedef enum e_node_type
 {
@@ -61,6 +62,7 @@ typedef struct s_cmd
 	char			**argv;
 	char			*path;
 	t_list			*redirs;
+	t_token			*tokens;
 
 	void			(*free_cmd)(struct s_cmd *cmd);
 }					t_cmd;

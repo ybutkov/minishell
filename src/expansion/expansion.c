@@ -6,13 +6,14 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/18 04:04:30 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 01:27:52 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "envp_copy.h"
 #include "parsing.h"
 #include "constants.h"
+#include "libft.h"
 
 static char	*expand_var(t_piece *piece, t_env *env, int last_exit_status)
 {
@@ -68,6 +69,7 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 	t_list	*res_list;
 	char	*expanded;
 	char	**result_array;
+	char	**array;
 
 	res_list = NULL;
 	piece = token->pieces;
@@ -77,7 +79,17 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 		{
 			expanded = expand_piece(piece, env, last_exit_status);
 			if (piece->quotes == NO_QUOTES)
-				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
+			{
+				array =	ft_split(expanded, ' ');
+				int i = 0;
+				while (array[i])
+				{
+					if (i > 0)
+						ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
+					ft_lstadd_back(&res_list, ft_lstnew(array[i++]));
+				}
+				free(array);
+			}
 			else
 				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
 			free(expanded);
@@ -90,6 +102,36 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 	ft_lstclear(&res_list, empty_func);
 	return (result_array);
 }
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+// char **expand_and_split_token_old(t_token *token, t_env *env, int last_exit_status)
+// {
+// 	t_piece	*piece;
+// 	t_list	*res_list;
+// 	char	*expanded;
+// 	char	**result_array;
+
+// 	res_list = NULL;
+// 	piece = token->pieces;
+// 	while (piece)
+// 	{
+// 		if ((piece->has_env_v || piece->has_tilde) && piece->quotes != SINGLE_Q)
+// 		{
+// 			expanded = expand_piece(piece, env, last_exit_status);
+// 			if (piece->quotes == NO_QUOTES)
+// 				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
+// 			else
+// 				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
+// 			free(expanded);
+// 		}
+// 		else
+// 			ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(piece->text)));
+// 		piece = piece->next;
+// 	}
+// 	result_array = list_to_array(res_list);
+// 	ft_lstclear(&res_list, empty_func);
+// 	return (result_array);
+// }
 
 // static int	add_list_array(t_list **res_list, char **elems)
 // {

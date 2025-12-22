@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/18 03:32:56 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 02:45:56 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,41 @@ t_redir_type	get_only_redir_types(t_token *token)
 		return (REDIR_HEREDOC);
 	else
 		return ((t_redir_type)(-1));
+}
+
+int	collect_pieces_to_strings(t_shell *shell, t_token *curr_tkn, t_list **arg_list)
+{
+	char	**expanded_args;
+	char	*new_arg;
+	int		i;
+
+	i = -1;
+	if (curr_tkn->pieces)
+	{
+		expanded_args = expand_and_split_token(curr_tkn, shell->ctx->env,
+				shell->ctx->last_exit_status);
+		if (!expanded_args)
+			return (free(expanded_args), NO);
+		new_arg = NULL;
+		while (expanded_args[++i])
+		{
+			if (ft_strcmp(expanded_args[i], " ") == 0)
+			{
+				ft_lstadd_back(arg_list, ft_lstnew(new_arg));
+				new_arg = NULL;
+			}
+			else if (ft_strappend(&new_arg, expanded_args[i]) == 0)
+			{
+				return (NO);
+			}
+		}
+		if (new_arg)
+			ft_lstadd_back(arg_list, ft_lstnew(new_arg));
+		free_str_array(expanded_args);
+	}
+	else
+		ft_lstadd_back(arg_list, ft_lstnew(ft_strdup(curr_tkn->value)));
+	return (OK);
 }
 
 char	*collect_pieces_to_string(t_shell *shell, t_token *curr_tkn)
@@ -493,6 +528,27 @@ int	collect_redirs(t_shell *shell, t_cmd *cmd, t_token **start_tkn,
 // 	return (OK);
 // }
 
+char	*get_raw_string(t_token *tkn)
+{
+	char	*quote;
+	char	*raw_str;
+
+	quote = NULL;
+	raw_str = NULL;
+	if (tkn->pieces)
+		return (ft_strdup(tkn->value));
+	if (tkn->stat == DOUBLE_Q)
+		quote = "\"";
+	else if (tkn->stat == SINGLE_Q)
+		quote = "\'";
+	if (quote)
+		ft_strappend(&raw_str, quote);
+	ft_strappend(&raw_str, tkn->value);
+	if (quote)
+		ft_strappend(&raw_str, quote);
+	return (raw_str);
+}
+
 char	**collect_tokens_to_argv(t_shell *shell, t_token *start_tkn,
 	t_token *end_tkn)
 {
@@ -501,51 +557,256 @@ char	**collect_tokens_to_argv(t_shell *shell, t_token *start_tkn,
 	t_list	*arg_list;
 	char	**argv;
 
+	(void)shell;
 	arg_list = NULL;
 	curr_tkn = start_tkn;
 	while (curr_tkn && curr_tkn->type != TOKEN_END)
 	{
-		new_arg = collect_pieces_to_string(shell, curr_tkn);
-		if (new_arg == NULL)
-		{
-			ft_lstclear(&arg_list, free);
-			return (free(arg_list), HANDLE_ERROR_NULL);
-		}
+		new_arg = get_raw_string(curr_tkn);
 		ft_lstadd_back(&arg_list, ft_lstnew(new_arg));
 		if (curr_tkn == end_tkn)
 			break ;
 		curr_tkn = curr_tkn->next;
 	}
-	// if (split_arg_list2(arg_list, &total_args) != OK)
-	// {	Handle error // }
 	argv = list_to_array(arg_list);
 	ft_lstclear(&arg_list, empty_func);
 	return (argv);
 }
 
- t_cmd	*create_cmd_from_tokens(t_shell *shell, t_token **start_tkn,
+t_cmd	*create_cmd_from_tokens(t_shell *shell, t_token **start_tkn,
 		t_token **end_tkn)
 {
 	t_cmd	*cmd;
 	char	**argv;
-	char	*path;
 
 	cmd = create_cmd(NULL, NULL);
 	if (collect_redirs(shell, cmd, start_tkn, end_tkn) == ERROR)
 		return (cmd->free_cmd(cmd), HANDLE_ERROR_NULL);
 	argv = collect_tokens_to_argv(shell, *start_tkn, *end_tkn);
+	cmd->tokens = copy_tokens(*start_tkn, *end_tkn);
 	if (!argv)
 		return (cmd->free_cmd(cmd), HANDLE_ERROR_NULL);
 	if (argv[0] && argv[0][0] != '\0')
-	{
-		path = get_cmd_path(shell->ctx->env, argv[0]);
 		cmd->argv = argv;
-		cmd->path = path;
-	}
 	else
 		free(argv);
 	return (cmd);
 }
+
+// char	**collect_tokens_to_argv(t_shell *shell, t_token *start_tkn,
+// 	t_token *end_tkn)
+// {
+// 	t_token	*curr_tkn;
+// 	char	*new_arg;
+// 	t_list	*arg_list;
+// 	char	**argv;
+
+// 	arg_list = NULL;
+// 	curr_tkn = start_tkn;
+// 	while (curr_tkn && curr_tkn->type != TOKEN_END)
+// 	{
+// 		new_arg = collect_pieces_to_string(shell, curr_tkn);
+// 		if (new_arg == NULL)
+// 		{
+// 			ft_lstclear(&arg_list, free);
+// 			return (free(arg_list), HANDLE_ERROR_NULL);
+// 		}
+// 		ft_lstadd_back(&arg_list, ft_lstnew(new_arg));
+// 		if (curr_tkn == end_tkn)
+// 			break ;
+// 		curr_tkn = curr_tkn->next;
+// 	}
+// 	// if (split_arg_list2(arg_list, &total_args) != OK)
+// 	// {	Handle error // }
+// 	argv = list_to_array(arg_list);
+// 	ft_lstclear(&arg_list, empty_func);
+// 	return (argv);
+// }
+
+// t_cmd	*create_cmd_from_tokens(t_shell *shell, t_token **start_tkn,
+// 		t_token **end_tkn)
+// {
+// 	t_cmd	*cmd;
+// 	char	**argv;
+// 	char	*path;
+
+// 	cmd = create_cmd(NULL, NULL);
+// 	if (collect_redirs(shell, cmd, start_tkn, end_tkn) == ERROR)
+// 		return (cmd->free_cmd(cmd), HANDLE_ERROR_NULL);
+// 	argv = collect_tokens_to_argv(shell, *start_tkn, *end_tkn);
+// 	if (!argv)
+// 		return (cmd->free_cmd(cmd), HANDLE_ERROR_NULL);
+// 	if (argv[0] && argv[0][0] != '\0')
+// 	{
+// 		path = get_cmd_path(shell->ctx->env, argv[0]);
+// 		cmd->argv = argv;
+// 		cmd->path = path;
+// 	}
+// 	else
+// 		free(argv);
+// 	return (cmd);
+// }
+
+int	split_string_to_list(char *str, t_list **arg_list)
+{
+	char	*new_elem;
+	int		i;
+	int		opened_quote;
+	int		prev;
+
+	(void)arg_list;
+	i = 0;
+	prev = 0;
+	opened_quote = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'')
+		{
+			if (opened_quote)
+				opened_quote = !opened_quote;
+			i++;
+			continue ;
+		}
+		if (!opened_quote && is_char_space(str[i]))
+		{
+			new_elem = ft_substr(str, prev, i - prev - 1);
+			if (new_elem == NULL)
+				return (NO);
+			ft_lstadd_back(arg_list, ft_lstnew(new_elem));
+			prev = i;
+		}
+		i++;
+	}
+	free(str);
+	return (OK);
+}
+
+// int	split_string_to_list(const char *str, t_list **arg_list)
+// {
+// 	int		i;
+// 	int		start;
+// 	char	quote;
+// 	char	*token;
+
+// 	if (!str || !arg_list)
+// 		return (NO);
+// 	i = 0;
+// 	while (str[i])
+// 	{
+// 		while (str[i] && (str[i] == ' ' || str[i] == '\t' || str[i] == '\n'
+// 				|| str[i] == '\r' || str[i] == '\v' || str[i] == '\f'))
+// 			i++;
+// 		if (!str[i])
+// 			break ;
+// 		if (str[i] == '\'' || str[i] == '"')
+// 		{
+// 			quote = str[i];
+// 			start = i;
+// 			i++; /* include opening quote */
+// 			while (str[i] && str[i] != quote)
+// 				i++;
+// 			if (str[i] == quote)
+// 				i++; /* include closing quote */
+// 			token = ft_substr(str, start, i - start);
+// 		}
+// 		else
+// 		{
+// 			start = i;
+// 			while (str[i] && !(str[i] == ' ' || str[i] == '\t' || str[i] == '\n'
+// 						|| str[i] == '\r' || str[i] == '\v' || str[i] == '\f'))
+// 			{
+// 				if (str[i] == '=')
+// 				{
+// 					int j = i + 1;
+// 					while (str[j] && (str[j] == ' ' || str[j] == '\t' || str[j] == '\n'
+// 						|| str[j] == '\r' || str[j] == '\v' || str[j] == '\f'))
+// 						j++;
+// 					if (str[j] == '\'' || str[j] == '"')
+// 					{
+// 						char q = str[j];
+// 						int k = j + 1;
+// 						while (str[k] && str[k] != q)
+// 							k++;
+// 						if (str[k] == q)
+// 							i = k + 1;
+// 						else
+// 							i = k;
+// 						continue ;
+// 					}
+// 				}
+// 				i++;
+// 			}
+// 			token = ft_substr(str, start, i - start);
+// 		}
+// 		if (!token)
+// 			return (NO);
+// 		ft_lstadd_back(arg_list, ft_lstnew(token));
+// 	}
+// 	return (OK);
+// }
+
+// int	collect_tokens_in_cmd(t_shell *shell, t_list **arg_list,
+// 	t_token *start_tkn)
+// {
+// 	t_token	*curr_tkn;
+// 	char	*new_arg;
+
+// 	curr_tkn = start_tkn;
+// 	while (curr_tkn && curr_tkn->type != TOKEN_END)
+// 	{
+// 		new_arg = collect_pieces_to_string(shell, curr_tkn);
+// 		if (new_arg == NULL)
+// 		{
+// 			ft_lstclear(arg_list, free);
+// 			return (free(*arg_list), NO);
+// 		}
+// 		// if (split_string_to_list(new_arg, arg_list) == NO)
+// 		// {
+// 		// 	ft_lstclear(arg_list, free);
+// 		// 	return (free(*arg_list), NO);
+// 		// }
+// 		ft_lstadd_back(arg_list, ft_lstnew(new_arg));
+// 		curr_tkn = curr_tkn->next;
+// 	}
+// 	// if (split_arg_list2(arg_list, &total_args) != OK)
+// 	// {	Handle error // }
+// 	// argv = list_to_array(arg_list);
+// 	// ft_lstclear(&arg_list, empty_func);
+// 	return (OK);
+// }
+
+// int	collect_argv_in_cmd(t_cmd *cmd, t_shell *shell)
+// {
+// 	t_list	*arg_list;
+// 	t_token	*tokens;
+// 	char	*path;
+// 	int		i;
+
+// 	i = 0;
+// 	arg_list = NULL;
+// 	while (cmd->argv && cmd->argv[i])
+// 	{
+// 		tokens = lexicalization(cmd->argv[i]);
+// 		if (collect_tokens_in_cmd(shell, &arg_list, tokens) == NO)
+// 			return (ft_lstclear(&arg_list, empty_func), NO);
+// 		free_tokens(tokens);
+// 		i++;
+// 	}
+// 	free_str_array(cmd->argv);
+// 	cmd->argv = list_to_array(arg_list);
+// 	if (cmd->argv[0] && cmd->argv[0][0] != '\0')
+// 	{
+// 		path = get_cmd_path(shell->ctx->env, cmd->argv[0]);
+// 		cmd->path = path;
+// 	}
+// 	else
+// 	{
+// 		free_str_array(cmd->argv);
+// 		cmd->argv = NULL;
+// 	}
+// 	ft_lstclear(&arg_list, empty_func);
+// 	return (OK);
+// }
 
 int	create_node_for_subshell(t_shell *shell, t_ast_node **node,
 	t_token *start_tkn, t_token *end_tkn)
@@ -668,7 +929,6 @@ t_ast_node	*build_ast(t_shell *shell, t_ast_node **node, t_token **start_tkn,
 		*end_tkn = start_end_tokens[1];
 		return (*node);
 	}
-	/* propagate any changes to start/end back to caller */
 	*start_tkn = start_end_tokens[0];
 	*end_tkn = start_end_tokens[1];
 	return (*node);

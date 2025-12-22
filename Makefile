@@ -66,7 +66,8 @@ C_SHELL_FILES += \
 	lexer/utils.c \
 	lexer/read_line.c \
 	lexer/preprocessor.c \
-	lexer/freeing.c
+	lexer/freeing.c \
+	lexer/tokens.c
 
 C_SHELL_FILES += \
 	built_ins/cd.c \
