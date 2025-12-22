@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 16:32:29 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/17 20:30:33 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 00:35:01 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	cust_strchr(char c, char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])
@@ -26,7 +26,7 @@ int	cust_strchr(char c, char *str)
 	return (0);
 }
 
-void	decide_on_quotes(t_lex_inf *l, e_mix *q, char *quotes)
+void	decide_on_quotes(t_lex_inf *l, t_mix *q, char *quotes)
 {
 	if (l->line[l->i] == '"')
 	{
@@ -42,7 +42,7 @@ void	decide_on_quotes(t_lex_inf *l, e_mix *q, char *quotes)
 		else if (*q == 2)
 			*q = 0;
 	}
-	*quotes = l->line[l->i]; 
+	*quotes = l->line[l->i];
 }
 
 void	initialize_pieces(t_pieces_internal *pieces)
@@ -80,12 +80,4 @@ void	init_token(t_token *tok, t_token_type type)
 	tok->has_env_v = 0;
 	tok->has_wild = 0;
 	tok->free = free_token;
-}
-
-void	type_of_parenthesis(t_token *tok)
-{
-	if (ft_strcmp(tok->value, "(") == 0)
-		tok->type = TOKEN_LEFT_PAREN;
-	else if (ft_strcmp(tok->value, ")") == 0)
-		tok->type = TOKEN_RIGHT_PAREN;	
 }

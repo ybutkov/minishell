@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 11:26:58 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/18 19:37:16 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 00:29:57 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ t_token	*lexicalization(char *line)
 	return (lex.head);
 }
 
-void lex_struct_init(char *line, t_lex_inf *lex)
+void	lex_struct_init(char *line, t_lex_inf *lex)
 {
 	lex->line = line;
 	lex->i = 0;

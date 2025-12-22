@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/17 20:20:19 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/17 20:35:46 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 00:29:39 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	free_token(t_token *token)
 {
 	t_piece	*cur;
 	t_piece	*temp;
-	
+
 	free(token->value);
 	if (token->pieces)
 	{
@@ -42,7 +42,6 @@ void	free_tokens(t_token *tokens)
 	while (cur)
 	{
 		temp = cur->next;
-		// free_token(cur);
 		cur->free(cur);
 		cur = temp;
 	}

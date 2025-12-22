@@ -63,11 +63,14 @@ C_SHELL_FILES += \
 	lexer/spaces_quotes.c \
 	lexer/symbol_identifier.c \
 	lexer/tokenizer.c \
+	lexer/tokenizer2.c \
 	lexer/utils.c \
 	lexer/read_line.c \
 	lexer/preprocessor.c \
 	lexer/freeing.c \
-	lexer/tokens.c
+	lexer/tokens.c \
+	lexer/assigning_pieces.c \
+	lexer/extras_decide.c \
 
 C_SHELL_FILES += \
 	built_ins/cd.c \
