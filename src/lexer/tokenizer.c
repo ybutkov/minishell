@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 23:17:54 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/22 23:40:09 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	new_token(t_lex_inf *lex, e_quotes_status status)
 	simple_value(lex, tok);
 	check_mixed(tok);
 	if (tok->stat == MIXED)
-		mixed_value_assign(lex, tok);
+		mixed_value_assign(tok);
 	decide_on_extra_in_token(tok);
 	type_of_token(tok);
 	push_token(lex, tok);

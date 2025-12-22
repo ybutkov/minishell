@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 23:22:55 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/22 23:35:51 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,15 +83,15 @@ void	end_token(t_lex_inf *lex);
 void	check_mixed(t_token *tok);
 
 //mixed token values
-void	mixed_value_assign(t_lex_inf *l, t_token *t);
-void	assign_s_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi);
-void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi);
-void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_status q);
+void	mixed_value_assign(t_token *t);
+void	assign_s_quo_pieces(t_token *t, t_pieces_internal *pi);
+void	assign_d_quo_pieces(t_token *t, t_pieces_internal *pi);
+void	new_piece(t_token *t, t_pieces_internal *pi, e_quotes_status q);
 void	decide_on_extra(t_piece *p);
 void	decide_on_extra_in_token(t_token *t);
 void	extras_token(t_token *t);
 void	push_piece(t_token *t, t_piece *p);
-void	assign_env_wild_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi);
+void	assign_env_wild_pieces(t_token *t, t_pieces_internal *pi);
 void	small_env_var_check (t_piece *p);
 void	small_tilde_check(t_piece *p);
 

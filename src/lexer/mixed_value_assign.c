@@ -6,13 +6,13 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/21 15:29:57 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/22 23:39:25 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
 
-void	mixed_value_assign(t_lex_inf *l, t_token *t)
+void	mixed_value_assign(t_token *t)
 {
 	t_pieces_internal	pi;
 
@@ -21,11 +21,11 @@ void	mixed_value_assign(t_lex_inf *l, t_token *t)
 	while (t->value[pi.i] != '\0')
 	{
 		if (t->value[pi.i] == '"')
-			assign_d_quo_pieces(l, t, &pi);
+			assign_d_quo_pieces(t, &pi);
 		else if (t->value[pi.i] == '\'')
-			assign_s_quo_pieces(l, t, &pi);
+			assign_s_quo_pieces(t, &pi);
 		else if (t->value[pi.i] == '$' || t->value[pi.i] == '*' || t->value[pi.i] == '~')
-			assign_env_wild_pieces(l, t, &pi);
+			assign_env_wild_pieces(t, &pi);
 		else
 		{
 			pi.cur_start = pi.i;
@@ -40,14 +40,14 @@ void	mixed_value_assign(t_lex_inf *l, t_token *t)
 				if (t->value[pi.i] != '\0')
 					pi.i++;
 			}
-			new_piece(t, &pi, l, NO_QUOTES);
+			new_piece(t, &pi, NO_QUOTES);
 		}
 		// else
 		// 	pi.i++;
 	}
 }
 
-void	assign_s_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
+void	assign_s_quo_pieces(t_token *t, t_pieces_internal *pi)
 {
 	pi->i++;
 	pi->cur_start = pi->i;
@@ -55,11 +55,11 @@ void	assign_s_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 		pi->i++;
 	pi->cur_end = pi->i - 1;
 	if (pi->cur_end >= pi->cur_start)
-		new_piece(t, pi, l, SINGLE_Q);
+		new_piece(t, pi, SINGLE_Q);
 	pi->i++;
 }
 
-void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
+void	assign_d_quo_pieces(t_token *t, t_pieces_internal *pi)
 {
 	int	starting_i;
 	
@@ -71,7 +71,7 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
     {
         if (t->value[pi->i] == '$')
         {
-            assign_env_wild_pieces(l, t, pi);
+            assign_env_wild_pieces(t, pi);
             continue;
         }
 
@@ -81,13 +81,13 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
             pi->i++;
         pi->cur_end = pi->i - 1;
         if (pi->cur_end >= pi->cur_start)
-            new_piece(t, pi, l, DOUBLE_Q);
+            new_piece(t, pi, DOUBLE_Q);
     }
 	if (pi->i == starting_i)
     {
         pi->cur_start = pi->i;
         pi->cur_end = pi->i - 1;
-        new_piece(t, pi, l, DOUBLE_Q);
+        new_piece(t, pi, DOUBLE_Q);
     }
     if (t->value[pi->i] == '"')
         pi->i++;
@@ -159,23 +159,19 @@ void	assign_d_quo_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 //         pi->i++;
 // }
 
-void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_status q)
+void	new_piece(t_token *t, t_pieces_internal *pi, e_quotes_status q)
 {
 	t_piece	*p;
 	int		len;
 
 	p = malloc(sizeof(t_piece));
 	if (!p)
-	{
-		lex->error_code = 2;
 		return ;
-	}
 	len = pi->cur_end - pi->cur_start + 1;
 	p->text = malloc(sizeof(char) * (len + 1));
 	if (!p->text)
 	{
 		free(p);
-		lex->error_code = 2;
 		return ;
 	}
 	ft_memcpy(p->text, t->value + pi->cur_start, len);
@@ -189,7 +185,7 @@ void	new_piece(t_token *t, t_pieces_internal *pi, t_lex_inf *lex, e_quotes_statu
 	push_piece(t, p);
 }
 
-void	assign_env_wild_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
+void	assign_env_wild_pieces(t_token *t, t_pieces_internal *pi)
 {
 	pi->cur_start = pi->i;
 	pi->i++;
@@ -210,9 +206,9 @@ void	assign_env_wild_pieces(t_lex_inf *l, t_token *t, t_pieces_internal *pi)
 	}
 	pi->cur_end = pi->i - 1;
 	if (pi->q_stat == STILL_DOUBLE)
-		new_piece(t, pi, l, DOUBLE_Q);
+		new_piece(t, pi, DOUBLE_Q);
 	else
-		new_piece(t, pi, l, NO_QUOTES);
+		new_piece(t, pi, NO_QUOTES);
 }
 
 void	decide_on_extra(t_piece *p)
