@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/18 03:32:40 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/21 23:02:58 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,6 @@ char 				**expand_and_split_token(t_token *token, t_env *env, int last_exit_stat
 
 int					validate_tokens(t_token *start);
 void				free_tokens(t_token *tokens);
+t_token				*copy_tokens(t_token *start, t_token *end);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 16:26:49 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/21 14:33:27 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/22 03:40:28 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,13 @@ int	bi_cd(t_env *env, char **args)
 	char	*prev_dir;
 	char	*cur_dir;
 	char	*err_msg;
+	int		argc;
 
-	if (args[2])
+	argc = 0;
+	if (args)
+		while (args[argc])
+			argc++;
+	if (argc > 2)
 	{
 		output_error(MSG_CD, MSG_TOO_MANY_ARG);
 		return (EXIT_FAILURE);

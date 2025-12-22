@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 18:26:08 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/17 01:32:51 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/21 23:00:52 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ t_cmd	*create_cmd(char **argv, char *path)
 	cmd->argv = argv;
 	cmd->path = path;
 	cmd->redirs = NULL;
+	cmd->tokens = NULL;
 	cmd->free_cmd = free_cmd;
 	return (cmd);
 }
@@ -50,5 +51,6 @@ static void	free_cmd(t_cmd *cmd)
 		free(cmd->path);
 	if (cmd->redirs)
 		ft_lstclear(&cmd->redirs, free_redir_bridge);
+	free_tokens(cmd->tokens);
 	free(cmd);
 }

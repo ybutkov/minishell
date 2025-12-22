@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:09 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/19 13:45:08 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 03:45:34 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,24 +65,9 @@ void	apply_redirects(t_list *redir, t_shell *shell)
 void	apply_redirect(t_cmd *cmd, t_shell *shell)
 {
 	t_list	*redir;
-	// t_redir	*redirect;
 
 	if (!cmd)
 		return ;
 	redir = cmd->redirs;
 	apply_redirects(redir, shell);
-
-	// while (redir)
-	// {
-	// 	redirect = (t_redir *)redir->content;
-	// 	if (redirect->type == REDIR_IN || redirect->type == REDIR_HEREDOC)
-	// 		open_file_and_dup2(redirect->target, O_RDONLY, STDIN_FILENO, shell);
-	// 	else if (redirect->type == REDIR_OUT)
-	// 		open_file_and_dup2(redirect->target, O_WRONLY | O_CREAT | O_TRUNC,
-	// 			STDOUT_FILENO, shell);
-	// 	else if (redirect->type == REDIR_APPEND)
-	// 		open_file_and_dup2(redirect->target, O_WRONLY | O_CREAT | O_APPEND,
-	// 			STDOUT_FILENO, shell);
-	// 	redir = redir->next;
-	// }
 }

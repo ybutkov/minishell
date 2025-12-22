@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 15:33:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/14 15:46:51 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 03:50:38 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,15 +64,11 @@ static int	syntax_error_token(t_token *token)
 	ft_strappend(&msg, "'");
 	output_error(NULL, msg);
 	free(msg);
-	// ft_putstr_fd("minishell: syntax error near unexpected token `", 2);
-	// ft_putstr_fd((char *)get_token_str(token), 2);
-	// ft_putstr_fd("'\n", 2);
 	return (0);
 }
 
 static int	syntax_error_eof(void)
 {
-	// ft_putstr_fd("minishell: syntax error: unexpected end of file\n", 2);
 	output_error(SYNTAX_ERROR, SYNTAX_ERROR_UNEXPECTED_EOF);
 	return (0);
 }

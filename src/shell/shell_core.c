@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:47:26 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/07 14:21:30 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 03:43:42 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,36 +60,6 @@ static void	clear_shell(t_shell *shell)
 	}
 	shell->ast = create_ast_tree();
 }
-
-// static int	execute_shell(t_shell *shell)
-// {
-// 	t_ast_node		*root;
-// 	int 			status;
-// 	pid_t			pid;
-
-// 	root = shell->ast->get_root(shell->ast);
-// 	if (!root)
-// 		return (1);
-
-// 	pid = fork();
-// 	if (pid == -1)
-// 	{
-// 		perror("fork");
-// 		return (EXIT_FAILURE_CREATE_FORK);
-// 	}
-// 	if (pid == 0)
-// 	{
-// 		int exit_code = execute_shell_node(root, shell, STDIN_FILENO, STDOUT_FILENO);
-// 		shell->free(shell);
-// 		printf("execute_shell end\n");
-// 		exit(exit_code);
-// 	}
-
-// 	// Parent: wait for child
-// 	waitpid(pid, &status, 0);
-// 	shell->ctx->last_exit_status = WEXITSTATUS(status);
-// 	return (shell->ctx->last_exit_status);
-// }
 
 static int	execute_shell(t_shell *shell)
 {
