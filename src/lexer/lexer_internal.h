@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 23:35:51 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/22 23:47:31 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ void	push_piece(t_token *t, t_piece *p);
 void	assign_env_wild_pieces(t_token *t, t_pieces_internal *pi);
 void	small_env_var_check (t_piece *p);
 void	small_tilde_check(t_piece *p);
+void	dollar_sign_assign(t_token *t, t_pieces_internal *pi);
 
 //utils
 int		cust_strchr(char c, char *str);
