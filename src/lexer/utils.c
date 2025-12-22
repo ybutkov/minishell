@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 16:32:29 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 23:56:29 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 00:35:01 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	cust_strchr(char c, char *str)
 	return (0);
 }
 
-void	decide_on_quotes(t_lex_inf *l, e_mix *q, char *quotes)
+void	decide_on_quotes(t_lex_inf *l, t_mix *q, char *quotes)
 {
 	if (l->line[l->i] == '"')
 	{

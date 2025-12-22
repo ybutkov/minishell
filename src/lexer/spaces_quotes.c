@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 22:22:09 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/23 00:29:09 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 00:34:56 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	is_space(t_lex_inf *lex)
 
 void	quotes_within(t_lex_inf *l)
 {
-	e_mix	quo_closed;
+	t_mix	quo_closed;
 	char	quotes;
 
 	quo_closed = ALL_CLOSED;

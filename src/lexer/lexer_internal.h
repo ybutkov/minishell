@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/23 00:31:48 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 00:34:40 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,14 @@ typedef enum s_mix
 	ALL_CLOSED = 0,
 	STILL_DOUBLE = 1,
 	STILL_SINGLE = 2,
-}	e_mix;
+}	t_mix;
 
 typedef struct s_pieces_internal
 {
 	int		i;
 	int		cur_start;
 	int		cur_end;
-	e_mix	q_stat;
+	t_mix	q_stat;
 	char	quotes;
 }	t_pieces_internal;
 
@@ -98,7 +98,7 @@ void	dollar_sign_assign(t_token *t, t_pieces_internal *pi);
 
 //utils
 int		cust_strchr(char c, char *str);
-void	decide_on_quotes(t_lex_inf *l, e_mix *q, char *quotes);
+void	decide_on_quotes(t_lex_inf *l, t_mix *q, char *quotes);
 void	initialize_pieces(t_pieces_internal *pieces);
 // change token_init with init_token or create_token
 void	token_init(t_token *tok);
