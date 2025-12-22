@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shell_execute_heredoc.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:27 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/21 15:08:43 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/22 03:49:43 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,15 +46,15 @@ static int	open_file(char *filename, int flags, t_shell *shell)
 
 void error_heredoc_delimiter(char *target)
 {
-	// write(STDERR_FILENO, "warning: here-document delimited by end-of-file (wanted '", 57);
-	// write(STDERR_FILENO, target, ft_strlen(target));
-	char *tmp = "here-document delimited by end-of-file (wanted '";
+	char	*tmp;
+	char	*str;
+
+	tmp = "here-document delimited by end-of-file (wanted '";
 	tmp = ft_strjoin(tmp, target);
-	char *str = ft_strjoin(tmp, "')");
+	str = ft_strjoin(tmp, "')");
 	free(tmp);
 	output_error("warning:", str);
 	free(str);
-	// write(STDERR_FILENO, "')\n", 3);
 }
 
 static int	collect_heredoc_input(char *target, int write_fd, t_shell *shell)
