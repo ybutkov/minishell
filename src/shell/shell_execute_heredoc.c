@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:27 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 20:43:05 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 23:01:58 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,6 +120,7 @@ int	expand_heredoc_line(char **line, t_shell *shell)
 	{
 		append_str = ft_substr((*line), start, i - start);
 		ft_strappend(&res, append_str);
+		free(append_str);
 	}
 	free(*line);
 	*line = res;
@@ -198,6 +199,7 @@ int	execute_redir_heredoc(t_shell *shell, t_redir *redirect)
 		free(file_name);
 		return (EXIT_TERMINATED_BY_SIGINT);
 	}
+	free(redirect->target);
 	redirect->target = file_name;
 	return (EXIT_SUCCESS);
 }
