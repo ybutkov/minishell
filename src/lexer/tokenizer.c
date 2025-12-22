@@ -3,19 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 02:45:09 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 23:17:54 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "lexer_internal.h"
-
-// create a token
-// append a token
-// free the whole token thing
-// recognize a token type
 
 static t_token	*create_token(void)
 {
@@ -33,14 +28,11 @@ static t_token	*create_token(void)
 
 void	new_token(t_lex_inf *lex, e_quotes_status status)
 {
-	t_token *tok;
+	t_token	*tok;
 
 	tok = create_token();
 	if (!tok)
-	{
-		lex->error_code = 2;
 		return ;
-	}
 	tok->stat = status;
 	simple_value(lex, tok);
 	check_mixed(tok);
@@ -61,8 +53,8 @@ void	check_mixed(t_token *tok)
 		while (tok->value[i])
 		{
 			if (tok->value[i] == '$'
-					|| (tok->value[i] == '*' && tok->stat == NO_QUOTES)
-					|| (tok->value[i] == '~' && tok->stat == NO_QUOTES))
+				|| (tok->value[i] == '*' && tok->stat == NO_QUOTES)
+				|| (tok->value[i] == '~' && tok->stat == NO_QUOTES))
 				tok->stat = MIXED;
 			i++;
 		}
@@ -78,7 +70,6 @@ void	simple_value(t_lex_inf *lex, t_token *tok)
 	if (!tok->value)
 	{
 		free(tok);
-		lex->error_code = 2;
 		return ;
 	}
 	ft_memcpy(tok->value, lex->line + lex->start, len);
@@ -98,58 +89,4 @@ void	push_token(t_lex_inf *lex, t_token *tok)
 	lex->tail->next = tok;
 	tok->prev = lex->tail;
 	lex->tail = tok;
-}
-
-void	type_of_token(t_token *tok)
-{
-	if (tok->stat != NO_QUOTES)
-	{
-		tok->type = TOKEN_WORD;
-		return ;
-	}
-	if (ft_strcmp(tok->value, "&&") == 0)
-		tok->type = TOKEN_AND;
-	else if (ft_strcmp(tok->value, "||") == 0)
-		tok->type = TOKEN_OR;
-	else if (ft_strcmp(tok->value, ";") == 0)
-		tok->type = TOKEN_SEMICOLON;
-	else if (ft_strcmp(tok->value, "|") == 0)
-		tok->type = TOKEN_PIPE;
-	else if (ft_strcmp(tok->value, "<") == 0)
-		tok->type = TOKEN_REDIR_IN;
-	else if (ft_strcmp(tok->value, ">") == 0)
-		tok->type = TOKEN_REDIR_OUT;
-	else if (ft_strcmp(tok->value, ">>") == 0)
-		tok->type = TOKEN_REDIR_APPEND;
-	else if (ft_strcmp(tok->value, "<<") == 0)
-		tok->type = TOKEN_HEREDOC;
-	else if (ft_strcmp(tok->value, "\n") == 0)
-		tok->type = TOKEN_NEWLINE;
-	else if (tok->value[0] == '(' || tok->value[0] == ')')
-		type_of_parenthesis(tok);
-	else if (cust_strchr('*', tok->value))
-		tok->type = TOKEN_WILDCARD;
-	else
-		tok->type = TOKEN_WORD;
-}
-
-void	end_token(t_lex_inf *lex)
-{
-	t_token	*tok;
-
-	tok = malloc(sizeof(t_token));
-	if (!tok)
-	{
-		lex->error_code = 2;
-		return ;
-	}
-	init_token(tok, TOKEN_END);
-	// tok->type = TOKEN_END;
-	// tok->value = NULL;
-
-	if(lex->tail)
-		lex->tail->next = tok;
-	tok->prev = lex->tail;
-	lex->tail = tok;
-	// tok->next = NULL;
 }
