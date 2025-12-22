@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/19 15:44:59 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/22 20:39:02 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "shell_node.h"
 #include "shell_utils.h"
 #include "printers.h"
+#include "constants.h"
 #include <errno.h>
 
 int	main(int argc, char **argv, char **envp)
@@ -63,10 +64,10 @@ int	main(int argc, char **argv, char **envp)
 		}
 
 		int heredoc_status = shell->collect_heredoc(shell);
-		if (heredoc_status == 130)
+		if (heredoc_status == EXIT_TERMINATED_BY_SIGINT)
 		{
     		// Heredoc was interrupted, don't execute
-    		shell->ctx->last_exit_status = 130;
+    		shell->ctx->last_exit_status = EXIT_TERMINATED_BY_SIGINT;
 		}
 		else
 		{

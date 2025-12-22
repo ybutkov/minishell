@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 03:48:34 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 20:17:11 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,7 +145,7 @@ t_redir	*create_redirect(t_shell *shell, t_redir_type type, t_token *curr_tkn)
 	target = collect_pieces_to_string(shell, curr_tkn);
 	if (target == NULL)
 		return (NULL);
-	redirect = create_redir(type, target);
+	redirect = create_redir(type, target, curr_tkn->stat);
 	free(target);
 	return (redirect);
 }

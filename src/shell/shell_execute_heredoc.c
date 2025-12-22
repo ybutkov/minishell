@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:27 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 03:49:43 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 20:43:05 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "signals.h"
+#include "parsing.h"
 #include <errno.h>
 
 int	collect_heredoc_node(t_ast_node *node, t_shell *shell);
@@ -57,7 +58,75 @@ void error_heredoc_delimiter(char *target)
 	free(str);
 }
 
-static int	collect_heredoc_input(char *target, int write_fd, t_shell *shell)
+char	*get_var_name(char *line, int *i)
+{
+	int		start;
+
+	start = *i;
+	while (!will_end_env_var(line[*i]))
+		(*i)++;
+	return (ft_substr(line, start, (size_t)(*i - start)));
+}
+
+int	expand_heredoc_line(char **line, t_shell *shell)
+{
+	char	*str;
+	char	*value;
+	char	*res;
+	char	*append_str;
+	int		i;
+	int		start;
+
+	i = 0;
+	start = 0;
+	res = NULL;
+	value = NULL;
+	while ((*line)[i])
+	{
+		if ((*line)[i] == '$'
+			&& (ft_isalpha((*line)[i+1]) || (*line)[i+1] == '?'))
+		{
+			append_str = ft_substr((*line), start, i - start);
+			i += 1;
+			if ((*line)[i] == '?')
+			{
+				i += 1;
+				start = i;
+				ft_strappend(&res, append_str);
+				free(append_str);
+				append_str = ft_itoa(shell->ctx->last_exit_status);
+				ft_strappend(&res, append_str);
+				free(append_str);
+				continue ;
+			}
+			str = get_var_name((*line), &i);
+			if (str)
+				value = shell->ctx->env->get_value(shell->ctx->env, str);
+			free(str);
+			if (value)
+			{
+				start = i;
+				ft_strappend(&res, append_str);
+				free(append_str);
+				ft_strappend(&res, value);
+				// add copy to get_value
+				// free(value);
+				continue ;
+			}
+		}
+		i += 1;
+	}
+	if (start < i)
+	{
+		append_str = ft_substr((*line), start, i - start);
+		ft_strappend(&res, append_str);
+	}
+	free(*line);
+	*line = res;
+	return (OK);
+}
+
+static int	collect_heredoc_input(t_redir *redir, int write_fd, t_shell *shell)
 {
 	char    *line = NULL;
 	int     the_stdin;
@@ -69,17 +138,6 @@ static int	collect_heredoc_input(char *target, int write_fd, t_shell *shell)
 
 	while (1)
 	{
-		// if (g_heredoc_interrupted)
-		// {
-		// 	if (line)
-		// 		free(line);
-		// 	dup2(the_stdin, STDIN_FILENO);
-		// 	close(the_stdin);
-		// 	set_signals_parent_interactive();
-		// 	g_heredoc_interrupted = 0;
-		// 	shell->ctx->last_exit_status = TERMINATED_BY_SIGINT;
-		// 	return (130);
-		// }
 		if (isatty(STDIN_FILENO))
 			line = readline("heredoc> ");
 		else
@@ -91,25 +149,27 @@ static int	collect_heredoc_input(char *target, int write_fd, t_shell *shell)
 			dup2(the_stdin, STDIN_FILENO);
 			close(the_stdin);
 			set_signals_parent_interactive();
-			shell->ctx->last_exit_status = TERMINATED_BY_SIGINT;
-			return (130);
+			shell->ctx->last_exit_status = EXIT_TERMINATED_BY_SIGINT;
+			return (EXIT_TERMINATED_BY_SIGINT);
 		}
 		if (!line)
 		{
 			if (isatty(STDIN_FILENO))
-				error_heredoc_delimiter(target);
-			break;
+				error_heredoc_delimiter(redir->target);
+			break ;
 		}
 		if (!isatty(STDIN_FILENO))
 		{
             if (line[ft_strlen(line) - 1] == '\n')
                 line[ft_strlen(line) - 1] = '\0';
 		}
-		if (ft_strcmp(line, target) == 0)
+		if (ft_strcmp(line, redir->target) == 0)
 		{
 			free(line);
-			break;
+			break ;
 		}
+		if (redir->quotes == NO_QUOTES)
+			expand_heredoc_line(&line, shell);
 		write(write_fd, line, ft_strlen(line));
 		write(write_fd, NEW_LINE, ft_strlen(NEW_LINE));
 		free(line);
@@ -130,13 +190,13 @@ int	execute_redir_heredoc(t_shell *shell, t_redir *redirect)
 	if (file_name == NULL)
 		return (EXIT_FAILURE);
 	fd = open_file(file_name, O_WRONLY | O_CREAT | O_TRUNC, shell);
-	status = collect_heredoc_input(redirect->target, fd, shell);
+	status = collect_heredoc_input(redirect, fd, shell);
 	close(fd);
-	if (status == 130)
+	if (status == EXIT_TERMINATED_BY_SIGINT)
 	{
 		unlink(file_name);
 		free(file_name);
-		return (130);
+		return (EXIT_TERMINATED_BY_SIGINT);
 	}
 	redirect->target = file_name;
 	return (EXIT_SUCCESS);
@@ -174,7 +234,7 @@ static int	apply_heredoc(t_cmd *cmd, t_shell *shell)
 		if (redirect->type == REDIR_HEREDOC)
 		{
 			status = execute_redir_heredoc(shell, redirect);
-			if (status == 130)
+			if (status == EXIT_TERMINATED_BY_SIGINT)
 				return (status);
 		}
 		redir = redir->next;
