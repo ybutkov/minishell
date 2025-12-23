@@ -6,52 +6,36 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:27 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 00:39:23 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 00:47:38 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "shell_internal.h"
+#include "constants.h"
 #include "error.h"
 #include "get_next_line.h"
 #include "libft.h"
-#include "shell.h"
-#include "utils.h"
-#include "shell_utils.h"
-#include "constants.h"
-#include <fcntl.h>
-#include <stdio.h>
-#include <sys/wait.h>
-#include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include "signals.h"
 #include "parsing.h"
+#include "shell.h"
+#include "shell_internal.h"
+#include "shell_utils.h"
+#include "signals.h"
+#include "utils.h"
 #include <errno.h>
+#include <fcntl.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/wait.h>
 
-int	collect_heredoc_node(t_ast_node *node, t_shell *shell);
+int			collect_heredoc_node(t_ast_node *node, t_shell *shell);
 
-static int	open_file(char *filename, int flags, t_shell *shell)
-{
-	int	fd;
-	int	mode;
-
-	if (flags & O_CREAT)
-		mode = 0644;
-	else
-		mode = 0;
-	fd = open(filename, flags, mode);
-	if (fd == -1)
-		output_error_and_exit(filename, NULL, shell, EXIT_FAILURE);
-	return (fd);
-}
-
-void error_heredoc_delimiter(char *target)
+void	error_heredoc_delimiter(char *target)
 {
 	char	*tmp;
 	char	*str;
 
-	tmp = "here-document delimited by end-of-file (wanted '";
-	tmp = ft_strjoin(tmp, target);
+	tmp = ft_strjoin(HEREDOC_DELIMITED_EOF, target);
 	str = ft_strjoin(tmp, "')");
 	free(tmp);
 	output_error("warning:", str);
@@ -60,13 +44,22 @@ void error_heredoc_delimiter(char *target)
 
 char	*get_var_name(char *line, int *i)
 {
-	int		start;
+	int	start;
 
 	start = *i;
 	while (!will_end_env_var(line[*i]))
 		(*i)++;
 	return (ft_substr(line, start, (size_t)(*i - start)));
 }
+
+// int	append_and_free(char	*res)
+// {
+// 	char	*append_str;
+
+// 	append_str = ft_substr((*line), start, i - start);
+// 	ft_strappend(&res, append_str);
+// 	free(append_str);
+// }
 
 int	expand_heredoc_line(char **line, t_shell *shell)
 {
@@ -83,8 +76,7 @@ int	expand_heredoc_line(char **line, t_shell *shell)
 	value = NULL;
 	while ((*line)[i])
 	{
-		if ((*line)[i] == '$'
-			&& (ft_isalpha((*line)[i+1]) || (*line)[i+1] == '?'))
+		if ((*line)[i] == '$' && (ft_isalpha((*line)[i + 1]) || (*line)[i + 1] == '?'))
 		{
 			append_str = ft_substr((*line), start, i - start);
 			ft_strappend(&res, append_str);
@@ -119,59 +111,119 @@ int	expand_heredoc_line(char **line, t_shell *shell)
 	return (OK);
 }
 
-static int	collect_heredoc_input(t_redir *redir, int write_fd, t_shell *shell)
+static void	restore_signals_and_stdin(int the_stdin)
 {
-	char    *line = NULL;
-	int     the_stdin;
+	dup2_and_close(the_stdin, STDIN_FILENO);
+	set_signals_parent_interactive();
+}
 
-	the_stdin = dup(STDIN_FILENO);
-	set_signals_heredoc();
-	g_heredoc_interrupted = 0;
-	rl_done = 0;
+static char	*read_heredoc_line(void)
+{
+	char	*line;
+
+	if (isatty(STDIN_FILENO))
+		line = readline(HEREDOC_PROMT);
+	else
+		line = get_next_line(STDIN_FILENO);
+	return (line);
+}
+
+int	input_heredoc(t_redir *redir, int write_fd, t_shell *shell)
+{
+	char	*line;
 
 	while (1)
 	{
-		if (isatty(STDIN_FILENO))
-			line = readline("heredoc> ");
-		else
-			line = get_next_line(STDIN_FILENO);
+		line = read_heredoc_line();
 		if (g_heredoc_interrupted)
 		{
-			if (line)
-				free(line);
-			dup2(the_stdin, STDIN_FILENO);
-			close(the_stdin);
-			set_signals_parent_interactive();
-			shell->ctx->last_exit_status = EXIT_TERMINATED_BY_SIGINT;
+			free(line);
 			return (EXIT_TERMINATED_BY_SIGINT);
 		}
+		if (!line && isatty(STDIN_FILENO))
+			error_heredoc_delimiter(redir->target);
 		if (!line)
-		{
-			if (isatty(STDIN_FILENO))
-				error_heredoc_delimiter(redir->target);
 			break ;
-		}
-		if (!isatty(STDIN_FILENO))
-		{
-            if (line[ft_strlen(line) - 1] == '\n')
-                line[ft_strlen(line) - 1] = '\0';
-		}
+		if (!isatty(STDIN_FILENO) && line[ft_strlen(line) - 1] == '\n')
+			line[ft_strlen(line) - 1] = '\0';
 		if (ft_strcmp(line, redir->target) == 0)
-		{
-			free(line);
-			break ;
-		}
+			return (free(line), 0);
 		if (redir->quotes == NO_QUOTES)
 			expand_heredoc_line(&line, shell);
 		write(write_fd, line, ft_strlen(line));
 		write(write_fd, NEW_LINE, ft_strlen(NEW_LINE));
 		free(line);
 	}
-	dup2(the_stdin, STDIN_FILENO);
-	close(the_stdin);
-	set_signals_parent_interactive();
 	return (0);
 }
+
+static int	collect_heredoc_input(t_redir *redir, int write_fd, t_shell *shell)
+{
+	int		the_stdin;
+
+	the_stdin = dup(STDIN_FILENO);
+	set_signals_heredoc();
+	g_heredoc_interrupted = 0;
+	rl_done = 0;
+	if (input_heredoc(redir, write_fd, shell) == EXIT_TERMINATED_BY_SIGINT)
+	{
+		restore_signals_and_stdin(the_stdin);
+		shell->ctx->last_exit_status = EXIT_TERMINATED_BY_SIGINT;
+		return (EXIT_TERMINATED_BY_SIGINT);
+	}
+	restore_signals_and_stdin(the_stdin);
+	return (0);
+}
+
+// static int	collect_heredoc_input(t_redir *redir, int write_fd, t_shell *shell)
+// {
+// 	char	*line;
+// 	int		the_stdin;
+
+// 	line = NULL;
+// 	the_stdin = dup(STDIN_FILENO);
+// 	set_signals_heredoc();
+// 	g_heredoc_interrupted = 0;
+// 	rl_done = 0;
+// 	while (1)
+// 	{
+// 		if (isatty(STDIN_FILENO))
+// 			line = readline("heredoc> ");
+// 		else
+// 			line = get_next_line(STDIN_FILENO);
+// 		if (g_heredoc_interrupted)
+// 		{
+// 			if (line)
+// 				free(line);
+// 			restore_signals_and_stdin(the_stdin);
+// 			shell->ctx->last_exit_status = EXIT_TERMINATED_BY_SIGINT;
+// 			return (EXIT_TERMINATED_BY_SIGINT);
+// 		}
+// 		if (!line)
+// 		{
+// 			if (isatty(STDIN_FILENO))
+// 				error_heredoc_delimiter(redir->target);
+// 			break ;
+// 		}
+// 		if (!isatty(STDIN_FILENO))
+// 		{
+// 			if (line[ft_strlen(line) - 1] == '\n')
+// 				line[ft_strlen(line) - 1] = '\0';
+// 		}
+// 		if (ft_strcmp(line, redir->target) == 0)
+// 		{
+// 			free(line);
+// 			break ;
+// 		}
+// 		if (redir->quotes == NO_QUOTES)
+// 			expand_heredoc_line(&line, shell);
+// 		write(write_fd, line, ft_strlen(line));
+// 		write(write_fd, NEW_LINE, ft_strlen(NEW_LINE));
+// 		free(line);
+// 	}
+// 	restore_signals_and_stdin(the_stdin);
+// 	return (0);
+// }
 
 int	execute_redir_heredoc(t_shell *shell, t_redir *redirect)
 {
@@ -196,7 +248,7 @@ int	execute_redir_heredoc(t_shell *shell, t_redir *redirect)
 	return (EXIT_SUCCESS);
 }
 
-int collect_heredoc_subshell(t_ast_node *node, t_shell *shell)
+int	collect_heredoc_subshell(t_ast_node *node, t_shell *shell)
 {
 	return (collect_heredoc_node(node->get_left(node), shell));
 }

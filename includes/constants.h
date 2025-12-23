@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 21:51:27 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 23:24:15 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 
 # define BUFFER_PATH 4096
 # define HEREDOC_PREFIX_FILE "/tmp/heredoc_tmp_"
+# define HEREDOC_PROMT "heredoc> "
 # define HOME "HOME"
 # define SHLVL "SHLVL"
 # define PATH "PATH"
@@ -46,6 +47,7 @@
 # define MALLOC_ERROR "malloc error"
 # define FORK_ERROR "fork error"
 # define SYNTAX_ERROR_UNEXPECTED_TOKEN "syntax error near unexpected token `"
+# define HEREDOC_DELIMITED_EOF "here-document delimited by end-of-file (wanted '"
 # define SYNTAX_ERROR_UNEXPECTED_EOF "unexpected end of file"
 # define MSG_IS_DIRECTORY "is a directory"
 # define NOT_VALID_IDENTIFIER "not a valid identifier"
