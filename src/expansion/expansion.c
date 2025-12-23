@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 03:52:09 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 01:45:18 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,8 @@
 #include "libft.h"
 #include "parsing.h"
 
-static char	*expand_var(t_piece *piece, t_env *env, int last_exit_status)
+static char	*expand_var(t_piece *piece, e_quotes_status stat, t_env *env,
+	int last_exit_status)
 {
 	char	*result;
 	char	*key;
@@ -28,7 +29,9 @@ static char	*expand_var(t_piece *piece, t_env *env, int last_exit_status)
 		return (result);
 	}
 	value = env->get_value(env, key);
-	if (value == NULL)
+	if (value == NULL && stat == DOUBLE_Q)
+		value = "$";
+	else if (value == NULL)
 		value = "";
 	result = ft_strdup(value);
 	return (result);
@@ -50,12 +53,13 @@ static char	*expand_tilde(t_piece *piece, t_env *env)
 	return (result);
 }
 
-char	*expand_piece(t_piece *piece, t_env *env, int last_exit_status)
+char	*expand_piece(t_piece *piece, e_quotes_status stat, t_env *env,
+	int last_exit_status)
 {
 	char	*result;
 
 	if (piece->text[0] == '$')
-		result = expand_var(piece, env, last_exit_status);
+		result = expand_var(piece, stat, env, last_exit_status);
 	else if (piece->text[0] == '~')
 		result = expand_tilde(piece, env);
 	else
@@ -64,7 +68,7 @@ char	*expand_piece(t_piece *piece, t_env *env, int last_exit_status)
 }
 
 char	**expand_and_split_token(t_token *token, t_env *env,
-		int last_exit_status)
+	int last_exit_status)
 {
 	t_piece	*piece;
 	t_list	*res_list;
@@ -79,10 +83,13 @@ char	**expand_and_split_token(t_token *token, t_env *env,
 	{
 		if ((piece->has_env_v || piece->has_tilde) && piece->quotes != SINGLE_Q)
 		{
-			expanded = expand_piece(piece, env, last_exit_status);
+			expanded = expand_piece(piece, piece->quotes, env, last_exit_status);
 			if (piece->quotes == NO_QUOTES)
 			{
 				array = ft_split(expanded, ' ');
+				if (expanded != NULL && res_list
+					&& is_char_space(expanded[0]) == OK)
+					ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
 				i = 0;
 				while (array[i])
 				{
@@ -90,6 +97,10 @@ char	**expand_and_split_token(t_token *token, t_env *env,
 						ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
 					ft_lstadd_back(&res_list, ft_lstnew(array[i++]));
 				}
+				if (expanded != NULL && i > 0
+					&& is_char_space(expanded[ft_strlen(expanded) - 1]) == OK)
+					ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
+
 				free(array);
 			}
 			else

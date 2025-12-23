@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 20:41:30 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 02:44:24 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@
 # define MALLOC_ERROR "malloc error"
 # define SYNTAX_ERROR_UNEXPECTED_TOKEN "syntax error near unexpected token `"
 # define SYNTAX_ERROR_UNEXPECTED_EOF "unexpected end of file"
+# define MSG_IS_DIRECTORY "is a directory"
 # define NOT_VALID_IDENTIFIER "not a valid identifier"
 # define NO_SUCH_FILE_OR_DIR "No such file or directory"
 # define COLON_SPACE ": "

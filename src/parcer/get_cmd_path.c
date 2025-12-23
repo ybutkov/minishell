@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_cmd_path.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 13:03:41 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/20 15:47:11 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 03:15:45 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,12 +74,14 @@ char	*get_cmd_path(t_env *env, char *cmd_name)
 	char	*envp_paths;
 	char	*valid_path;
 
+	if (ft_strchr(cmd_name, '/') != NULL)
+		return (NULL);
 	candidate = build_candidate("", cmd_name);
 	if (candidate && access(candidate, X_OK) == 0)
 		return (candidate);
 	free(candidate);
-	if (cmd_name[0] == '/')
-		return (NULL);
+	// if (cmd_name[0] == '/')
+		// return (NULL);
 	envp_paths = env->get_value(env, PATH);
 	if (envp_paths == NULL)
 		envp_paths = default_getenv();
