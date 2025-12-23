@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 20:17:11 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 05:06:22 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,32 +73,42 @@ t_redir_type	get_only_redir_types(t_token *token)
 		return ((t_redir_type)(-1));
 }
 
-int	collect_pieces_to_strings(t_shell *shell, t_token *curr_tkn, t_list **arg_list)
+int	collect_exp_args_to_list(char **expanded_args, char **new_arg,
+	t_list **arg_list)
 {
-	char	**expanded_args;
-	char	*new_arg;
 	int		i;
 
 	i = -1;
+	while (expanded_args[++i])
+	{
+		if (ft_strcmp(expanded_args[i], " ") == 0)
+		{
+			ft_lstadd_back(arg_list, ft_lstnew(*new_arg));
+			*new_arg = NULL;
+		}
+		else if (ft_strappend(new_arg, expanded_args[i]) == 0)
+		{
+			return (NO);
+		}
+	}
+	return (OK);
+}
+
+int	collect_pieces_to_strings(t_shell *shell, t_token *curr_tkn,
+	t_list **arg_list)
+{
+	char	**expanded_args;
+	char	*new_arg;
+
+	new_arg = NULL;
 	if (curr_tkn->pieces)
 	{
 		expanded_args = expand_and_split_token(curr_tkn, shell->ctx->env,
 				shell->ctx->last_exit_status);
 		if (!expanded_args)
 			return (free(expanded_args), NO);
-		new_arg = NULL;
-		while (expanded_args[++i])
-		{
-			if (ft_strcmp(expanded_args[i], " ") == 0)
-			{
-				ft_lstadd_back(arg_list, ft_lstnew(new_arg));
-				new_arg = NULL;
-			}
-			else if (ft_strappend(&new_arg, expanded_args[i]) == 0)
-			{
-				return (NO);
-			}
-		}
+		if (collect_exp_args_to_list(expanded_args, &new_arg, arg_list) == NO)
+			return (NO);
 		if (new_arg)
 			ft_lstadd_back(arg_list, ft_lstnew(new_arg));
 		free_str_array(expanded_args);
@@ -203,7 +213,7 @@ void	put_shell_node_to_ast(t_ast_node **curr_node, t_shell_node *node, int i,
 	}
 }
 
-t_token_lvl		*create_token_lvl(int lvl)
+t_token_lvl	*create_token_lvl(int lvl)
 {
 	t_token_lvl		*token_lvl;
 
@@ -407,6 +417,8 @@ int	create_node_for_subshell(t_shell *shell, t_ast_node **node,
 	t_shell_node	*shell_node;
 	t_ast_node		*left_node;
 	t_token			*matching_paren;
+	t_token			*start;
+	t_token			*end;
 
 	shell_node = create_shell_node(NODE_SUBSHELL, NULL);
 	(*node)->set_content(*node, shell_node);
@@ -417,11 +429,35 @@ int	create_node_for_subshell(t_shell *shell, t_ast_node **node,
 		collect_subshell_redirs(shell, shell_node, matching_paren->next,
 			end_tkn->next);
 	{
-		t_token *s = start_tkn->next;
-		t_token *e = matching_paren->prev;
-		build_ast(shell, &left_node, &s, &e);
+		start = start_tkn->next;
+		end = matching_paren->prev;
+		build_ast(shell, &left_node, &start, &end);
 	}
 	return (1);
+}
+
+void	build_left_leaf(t_shell *shell, t_ast_node **node, t_token **start,
+	t_token **end)
+{
+	t_token	*ls;
+	t_token	*le;
+
+	ls = *start;
+	le = *end;
+	build_ast(shell, node, &ls, &le);
+	*start = ls;
+}
+
+void	build_right_leaf(t_shell *shell, t_ast_node **node, t_token **start,
+	t_token **end)
+{
+	t_token	*rs;
+	t_token	*re;
+
+	rs = *start;
+	re = *end;
+	build_ast(shell, node, &rs, &re);
+	*end = re;
 }
 
 void	create_leaves(t_shell *shell, t_ast_node **node, t_token *curr_tkn,
@@ -430,6 +466,7 @@ void	create_leaves(t_shell *shell, t_ast_node **node, t_token *curr_tkn,
 	t_shell_node	*shell_node;
 	t_ast_node		*left_node;
 	t_ast_node		*right_node;
+	t_token			*tmp;
 
 	shell_node = create_shell_node(get_node_type(curr_tkn->type), NULL);
 	(*node)->set_content(*node, shell_node);
@@ -437,30 +474,18 @@ void	create_leaves(t_shell *shell, t_ast_node **node, t_token *curr_tkn,
 	right_node = create_ast_node(NULL);
 	(*node)->set_left(*node, left_node);
 	(*node)->set_right(*node, right_node);
-	{
-		t_token *ls = start_end_tokens[0];
-		t_token *le = curr_tkn->prev;
-		build_ast(shell, &left_node, &ls, &le);
-		start_end_tokens[0] = ls;
-	}
-	{
-		t_token *rs = curr_tkn->next;
-		t_token *re = start_end_tokens[1];
-		build_ast(shell, &right_node, &rs, &re);
-		start_end_tokens[1] = re;
-	}
-	{
-		t_token *tmp = curr_tkn->next;
-		if (curr_tkn->prev)
-			curr_tkn->prev->next = tmp;
-		if (tmp)
-			tmp->prev = curr_tkn->prev;
-		if (curr_tkn == start_end_tokens[0])
-			start_end_tokens[0] = tmp;
-		if (curr_tkn == start_end_tokens[1])
-			start_end_tokens[1] = curr_tkn->prev;
-		curr_tkn->free(curr_tkn);
-	}
+	build_left_leaf(shell, &left_node, &start_end_tokens[0], &curr_tkn->prev);
+	build_right_leaf(shell, &right_node, &curr_tkn->next, &start_end_tokens[1]);
+	tmp = curr_tkn->next;
+	if (curr_tkn->prev)
+		curr_tkn->prev->next = tmp;
+	if (tmp)
+		tmp->prev = curr_tkn->prev;
+	if (curr_tkn == start_end_tokens[0])
+		start_end_tokens[0] = tmp;
+	if (curr_tkn == start_end_tokens[1])
+		start_end_tokens[1] = curr_tkn->prev;
+	curr_tkn->free(curr_tkn);
 }
 
 int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
@@ -484,7 +509,7 @@ int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
 		shell_node = create_shell_node(NODE_CMD, NULL);
 		(*node)->set_content(*node, shell_node);
 		shell_node->data.cmd = create_cmd_from_tokens(shell,
-			&start_end_tokens[0], &start_end_tokens[1]);
+				&start_end_tokens[0], &start_end_tokens[1]);
 		return (OK);
 	}
 	if (lvl >= 3 && is_subshell_start(start_end_tokens[0]))
@@ -504,24 +529,14 @@ t_ast_node	*build_ast(t_shell *shell, t_ast_node **node, t_token **start_tkn,
 	start_end_tokens[1] = *end_tkn;
 	if (*node == NULL)
 		*node = create_ast_node(NULL);
-	// Make only conditions and one statement  ???
 	if (create_ast_node_for_lvl(shell, node, start_end_tokens, 1) == 1)
 	{
-		*start_tkn = start_end_tokens[0];
-		*end_tkn = start_end_tokens[1];
-		return (*node);
 	}
-	if (create_ast_node_for_lvl(shell, node, start_end_tokens, 2) == 1)
+	else if (create_ast_node_for_lvl(shell, node, start_end_tokens, 2) == 1)
 	{
-		*start_tkn = start_end_tokens[0];
-		*end_tkn = start_end_tokens[1];
-		return (*node);
 	}
-	if (create_ast_node_for_lvl(shell, node, start_end_tokens, 3) == 1)
+	else if (create_ast_node_for_lvl(shell, node, start_end_tokens, 3) == 1)
 	{
-		*start_tkn = start_end_tokens[0];
-		*end_tkn = start_end_tokens[1];
-		return (*node);
 	}
 	*start_tkn = start_end_tokens[0];
 	*end_tkn = start_end_tokens[1];
