@@ -6,13 +6,14 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 02:27:46 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 17:10:43 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "envp_copy.h"
 #include "parsing.h"
 #include "constants.h"
+#include "expansion_internal.h"
 
 static char	*expand_var(t_piece *piece, t_env *env, int last_exit_status)
 {
@@ -85,8 +86,8 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 				i = 0;
 				while (array[i])
 				{
-					// if (i > 0)
-					// 	ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
+					if (i > 0)
+						ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
 					ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(array[i++])));
 				}
 				free(array);
@@ -103,6 +104,8 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
         		i = 0;
         		while (expanded_wild[i])
         		{
+					if (i > 0)
+						ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
             		ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded_wild[i])));
             		i++;
         		}

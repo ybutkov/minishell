@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:36:45 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/23 02:22:43 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 18:55:33 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ char	**wildcard_expand(t_piece *piece)
 	int				size;
 
 	size = count_entries(piece);
+	// printf("wildcard_expand: pattern='%s', size=%d\n", piece->text, size);
 	if (size == 0)
 	{
 		result = malloc(sizeof(char *) * 2);
@@ -53,21 +54,18 @@ void	fill_matches(t_piece *piece, char **result, DIR *dir)
 	int				i;
 
 	i = 0;
-	direntry = readdir(dir);
-	while (direntry)
-	{
-		if (piece->text[0] != '.' && direntry->d_name[0] == '.')
-		{
-			direntry = readdir(dir);
-			continue ;
-		}
-		if (suits_the_pattern(piece->text, direntry->d_name, 0, 0))
-		{
-			result[i] = ft_strdup(direntry->d_name);
-			i++;
-		}
-		direntry = readdir(dir);
-	}
+	while ((direntry = readdir(dir)))
+{
+    // printf("Checking: %s against pattern %s\n", direntry->d_name, piece->text);
+    if (piece->text[0] != '.' && direntry->d_name[0] == '.')
+        continue;
+    if (suits_the_pattern(piece->text, direntry->d_name, 0, 0))
+    {
+        // printf("MATCHED: %s\n", direntry->d_name);
+        result[i] = ft_strdup(direntry->d_name);
+        i++;
+    }
+}
 	result[i] = NULL;
 }
 
@@ -81,19 +79,13 @@ int	count_entries(t_piece *piece)
 	dir = opendir(".");
 	if (!dir)
 		return (0);
-	while (1)
-	{
-		direntry = readdir(dir);
-		if (!direntry)
-			break ;
-		if (piece->text[0] != '.' && direntry->d_name[0] == '.')
-		{
-			direntry = readdir(dir);
-			continue ;
-		}
-		if (suits_the_pattern(piece->text, direntry->d_name, 0, 0))
-			count++;
-	}
+	while ((direntry = readdir(dir)))
+{
+    if (piece->text[0] != '.' && direntry->d_name[0] == '.')
+        continue;
+    if (suits_the_pattern(piece->text, direntry->d_name, 0, 0))
+        count++;
+}
 	closedir(dir);
 	return (count);
 }
