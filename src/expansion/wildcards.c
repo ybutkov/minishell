@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:36:45 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 02:00:35 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 20:40:07 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,57 +21,55 @@
 
 #include "expansion_internal.h"
 
-char	**wildcard_expand(t_piece *piece)
+char	**wildcard_expand(char *pattern)
 {
 	char			**result;
 	DIR				*dir;
 	int				size;
 
-	size = count_entries(piece);
+	size = count_entries(pattern);
+	// printf("wildcard_expand: pattern='%s', size=%d\n", piece->text, size);
 	if (size == 0)
 	{
 		result = malloc(sizeof(char *) * 2);
 		if (!result)
 			return (NULL);
-		result[0] = ft_strdup(piece->text);
+		result[0] = ft_strdup(pattern);
 		result[1] = NULL;
 		return (result);
 	}
 	dir = opendir("."); // opendir returns a pointer to a DIR structure
-	result = malloc(sizeof(char *) * size);
+	result = malloc(sizeof(char *) * (size + 1));
 	if (!result)
 		return (NULL);
-	fill_matches(piece, result, dir);
+	fill_matches(pattern, result, dir);
 	sort_entries(result, size);
 	closedir(dir);
 	return (result);
 }
 
-void	fill_matches(t_piece *piece, char **result, DIR *dir)
+void	fill_matches(char *pattern, char **result, DIR *dir)
 {
 	struct dirent	*direntry;
 	int				i;
 
 	i = 0;
-	direntry = readdir(dir);
-	while (direntry)
-	{
-		if (piece->text[0] != '.' && direntry->d_name[0] == '.')
-		{
-			direntry = readdir(dir);
-			continue ;
-		}
-		if (suits_the_pattern(piece->text, direntry->d_name, 0, 0))
-		{
-			result[i] = ft_strdup(direntry->d_name);
-			i++;
-		}
-		direntry = readdir(dir);
-	}
+	while ((direntry = readdir(dir)))
+{
+    // printf("Checking: %s against pattern %s\n", direntry->d_name, piece->text);
+    if (pattern[0] != '.' && direntry->d_name[0] == '.')
+        continue;
+    if (suits_the_pattern(pattern, direntry->d_name, 0, 0))
+    {
+        // printf("MATCHED: %s\n", direntry->d_name);
+        result[i] = ft_strdup(direntry->d_name);
+        i++;
+    }
+}
 	result[i] = NULL;
 }
 
-int	count_entries(t_piece *piece)
+int	count_entries(char *pattern)
 {
 	int				count;
 	DIR				*dir;
@@ -81,19 +79,13 @@ int	count_entries(t_piece *piece)
 	dir = opendir(".");
 	if (!dir)
 		return (0);
-	while (1)
-	{
-		direntry = readdir(dir);
-		if (!direntry)
-			break ;
-		if (piece->text[0] != '.' && direntry->d_name[0] == '.')
-		{
-			direntry = readdir(dir);
-			continue ;
-		}
-		if (suits_the_pattern(piece->text, direntry->d_name, 0, 0))
-			count++;
-	}
+	while ((direntry = readdir(dir)))
+{
+    if (pattern[0] != '.' && direntry->d_name[0] == '.')
+        continue;
+    if (suits_the_pattern(pattern, direntry->d_name, 0, 0))
+        count++;
+}
 	closedir(dir);
 	return (count);
 }
@@ -127,8 +119,12 @@ int	suits_the_pattern(char *pattern, char *filename, int i, int j)
 	if (pattern[i] == '\0' && filename[j] == '\0')
 		return (1);
 	if (pattern[i] == '*')
+	{
+		if (filename[j] == '\0')
+			return (suits_the_pattern(pattern, filename, i + 1, j));
 		return (suits_the_pattern(pattern, filename, i, j + 1)
 				|| suits_the_pattern(pattern, filename, i + 1, j));
+	}
 	// if (pattern[i] != filename[j])
 	// 	return (0);
 	if (pattern[i] == filename[j])
