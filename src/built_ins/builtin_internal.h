@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:47:16 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/23 22:06:52 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 23:44:39 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,11 @@ int					bi_unset(t_env *env, char **args);
 int					bi_env(t_env *envp);
 // exit
 int					bi_exit(t_shell *shell, char **args);
+
+int					wrapper_pwd(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd);
+int					wrapper_cd(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd);
+int					wrapper_echo(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd);
+int					wrapper_env(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd);
+int					wrapper_exit(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd);
 
 #endif
