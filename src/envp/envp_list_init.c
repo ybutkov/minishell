@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:31:15 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 19:18:38 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 00:36:05 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,12 @@ static t_env_pair	*get_env_pair(t_env *env, char *key)
 {
 	t_env_pair	*cur;
 
+	if (key == NULL)
+		return (NULL);
 	cur = env->head;
 	while (cur != NULL)
 	{
-		if (strcmp(cur->key, key) == 0)
+		if (ft_strcmp(cur->key, key) == 0)
 			return (cur);
 		cur = cur->next;
 	}

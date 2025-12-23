@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:27 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 23:01:58 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 00:39:23 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,34 +87,26 @@ int	expand_heredoc_line(char **line, t_shell *shell)
 			&& (ft_isalpha((*line)[i+1]) || (*line)[i+1] == '?'))
 		{
 			append_str = ft_substr((*line), start, i - start);
+			ft_strappend(&res, append_str);
+			free(append_str);
 			i += 1;
 			if ((*line)[i] == '?')
 			{
 				i += 1;
 				start = i;
-				ft_strappend(&res, append_str);
-				free(append_str);
 				append_str = ft_itoa(shell->ctx->last_exit_status);
 				ft_strappend(&res, append_str);
 				free(append_str);
 				continue ;
 			}
 			str = get_var_name((*line), &i);
-			if (str)
-				value = shell->ctx->env->get_value(shell->ctx->env, str);
+			value = shell->ctx->env->get_value(shell->ctx->env, str);
 			free(str);
-			if (value)
-			{
-				start = i;
-				ft_strappend(&res, append_str);
-				free(append_str);
-				ft_strappend(&res, value);
-				// add copy to get_value
-				// free(value);
-				continue ;
-			}
+			start = i;
+			ft_strappend(&res, value);
 		}
-		i += 1;
+		else
+			i += 1;
 	}
 	if (start < i)
 	{
