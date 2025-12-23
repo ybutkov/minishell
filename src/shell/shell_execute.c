@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:51:39 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/19 13:51:17 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 18:54:06 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,7 @@ int	execute_pipe(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	close_fds(&pipe_fds[0], NULL);
 	waitpid(pids[0], &status, 0);
 	waitpid(pids[1], &status, 0);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	return (status);
+	return (return_status(status));
 }
 
 int	execute_and(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
@@ -153,12 +151,7 @@ int	execute_subshell(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 	else if (pid == 0)
 	{
 		set_signals_child();
-		if (in_fd != STDIN_FILENO)
-			dup2_and_close(in_fd, STDIN_FILENO);
-		if (out_fd != STDOUT_FILENO)
-			dup2_and_close(out_fd, STDOUT_FILENO);
-		else
-			dup2(STDOUT_FILENO, STDOUT_FILENO);
+		dup2_and_close_both(in_fd, out_fd);
 		shell_node = (t_shell_node *)node->get_content(node);
 		if (shell_node && shell_node->redirs)
 			apply_subshell_redirs(shell, shell_node);
@@ -168,9 +161,7 @@ int	execute_subshell(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 		exit(status);
 	}
 	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	return (status);
+	return (return_status(status));
 }
 
 int	execute_shell_node(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)

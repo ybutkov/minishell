@@ -47,7 +47,8 @@ C_SHELL_FILES += \
 	shell/contex.c \
 	shell/enams.c \
 	shell/files_operations.c \
-	shell/validator.c
+	shell/validator.c \
+	shell/shell_utils.c
 
 C_SHELL_FILES += \
 	error/output_error.c \
@@ -80,7 +81,8 @@ C_SHELL_FILES += \
 	built_ins/export.c \
 	built_ins/pwd.c \
 	built_ins/unset.c \
-	built_ins/bi_wrapper.c
+	built_ins/bi_wrapper_1.c \
+	built_ins/bi_wrapper_2.c
 
 C_SHELL_FILES += \
 	envp/envp_copy.c \

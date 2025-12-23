@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 04:16:57 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 18:53:15 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,17 +97,12 @@ int	collect_argv(t_shell *shell, t_cmd *cmd)
 		if (!cmd->path)
 			cmd->path = ft_strdup(cmd->argv[0]);
 	}
-	else
-	{
-		// free_str_array(cmd->argv);
-		// cmd->argv = NULL;
-	}
 	ft_lstclear(&arg_list, empty_func);
 	return (OK);
 }
 
-int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
-		int output_fd)
+int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int in_fd,
+		int out_fd)
 {
 	pid_t	pid;
 	int		status;
@@ -122,12 +117,7 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 	else if (pid == 0)
 	{
 		set_signals_child();
-		if (input_fd != STDIN_FILENO)
-			dup2_and_close(input_fd, STDIN_FILENO);
-		if (output_fd != STDOUT_FILENO)
-			dup2_and_close(output_fd, STDOUT_FILENO);
-		else
-			dup2(STDOUT_FILENO, STDOUT_FILENO);
+		dup2_and_close_both(in_fd, out_fd);
 		apply_redirect(cmd, shell);
 		if (cmd->argv == NULL)
 		{
@@ -145,9 +135,7 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 		exit(EXIT_FAILURE);
 	}
 	waitpid(pid, &status, 0);
-	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	return (status);
+	return (return_status(status));
 }
 
 int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)

@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:28:17 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 02:00:13 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 19:01:23 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,7 @@ char				*collect_pieces_to_string(t_shell *shell,
 						t_token *curr_tkn);
 int					collect_pieces_to_strings(t_shell *shell, t_token *curr_tkn,
 						t_list **arg_list);
-void				close_fds(int *fd_0, int *fd_1);
-void				dup2_and_close(int oldfd, int newfd);
 t_node_type			get_node_type(t_token_type token_type);
+int					return_status(int status);
 
 #endif
