@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 18:53:15 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 21:56:42 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,21 @@ int	collect_argv(t_shell *shell, t_cmd *cmd)
 	return (OK);
 }
 
+void	validate_argv(t_cmd *cmd, t_shell *shell)
+{
+	if (cmd->argv == NULL)
+	{
+		shell->free(shell);
+		exit(EXIT_SUCCESS);
+	}
+	if (opendir(cmd->argv[0]) != NULL)
+		output_error_and_exit(cmd->argv[0], MSG_IS_DIRECTORY, shell,
+			EXIT_CMD_CANNOT_EXEC);
+	if (!cmd->path || access(cmd->path, X_OK) != 0)
+		output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
+			EXIT_CMD_NOT_FOUND);
+}
+
 int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int in_fd,
 		int out_fd)
 {
@@ -111,26 +126,17 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int in_fd,
 	pid = fork();
 	if (pid < 0)
 	{
-		perror("fork");
-		return (EXIT_FAILURE);
+		output_error(FORK_ERROR, NULL);
+		return (EXIT_FAILURE_CREATE_FORK);
 	}
 	else if (pid == 0)
 	{
 		set_signals_child();
 		dup2_and_close_both(in_fd, out_fd);
 		apply_redirect(cmd, shell);
-		if (cmd->argv == NULL)
-		{
-			shell->free(shell);
-			exit(EXIT_SUCCESS);
-		}
-		if (opendir(cmd->argv[0]) != NULL)
-			output_error_and_exit(cmd->argv[0], MSG_IS_DIRECTORY, shell,
-				EXIT_CMD_CANNOT_EXEC);
-		if (!cmd->path || access(cmd->path, X_OK) != 0)
-			output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
-				EXIT_CMD_NOT_FOUND);
-		execve(cmd->path, cmd->argv, shell->ctx->env->to_array(shell->ctx->env));
+		validate_argv(cmd, shell);
+		execve(cmd->path, cmd->argv,
+			shell->ctx->env->to_array(shell->ctx->env));
 		shell->free(shell);
 		exit(EXIT_FAILURE);
 	}
@@ -177,6 +183,6 @@ int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 	// execve(cmd->path, cmd->argv, shell->ctx->envp);
 	// shell->free(shell);
 	// exit(EXIT_FAILURE);
-	// Always execute external commands in a fork to avoid replacing the shell process ??
+	// Always in fork to avoid replacing the shell process ??
 	return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
 }

@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 02:44:24 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 21:51:27 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # define SHELL_ERROR_PREFIX "minishell: "
 # define SYNTAX_ERROR "syntax error"
 # define MALLOC_ERROR "malloc error"
+# define FORK_ERROR "fork error"
 # define SYNTAX_ERROR_UNEXPECTED_TOKEN "syntax error near unexpected token `"
 # define SYNTAX_ERROR_UNEXPECTED_EOF "unexpected end of file"
 # define MSG_IS_DIRECTORY "is a directory"

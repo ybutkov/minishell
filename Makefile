@@ -38,6 +38,9 @@ C_SHELL_FILES = \
 C_SHELL_FILES += \
  	shell/shell_core.c \
 	shell/shell_build.c \
+	shell/shell_build_subshell.c \
+	shell/shell_build_redirs.c \
+	shell/shell_build_leaves.c \
 	shell/shell_execute.c \
 	shell/shell_execute_heredoc.c \
 	shell/shell_execute_cmd.c \
@@ -87,12 +90,13 @@ C_SHELL_FILES += \
 C_SHELL_FILES += \
 	envp/envp_copy.c \
 	envp/copy_to_array.c \
-	envp/envp_list_init.c \
-	expansion/wildcards.c \
- 	parcer/get_cmd_path.c
+	envp/envp_list_init.c
 
 C_SHELL_FILES += \
 	expansion/expansion.c \
+	expansion/wildcards.c \
+	expansion/collecting.c \
+ 	parcer/get_cmd_path.c \
 	signals/signals.c
 
 C_FIlES = $(addprefix $(SRC)/, $(C_SHELL_FILES))

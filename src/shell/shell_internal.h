@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:28:17 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 19:01:23 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 21:45:23 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,26 @@ typedef struct s_token_lvl
 	t_token_type	end;
 	int				lvl;
 }					t_token_lvl;
+
+/* Shell build*/
+t_ast_node			*build_ast(t_shell *shell, t_ast_node **node,
+						t_token **start_tkn, t_token **end_tkn);
+int					is_subshell_start(t_token *start_tkn);
+int					create_node_for_subshell(t_shell *shell, t_ast_node **node,
+						t_token *start_tkn, t_token *end_tkn);
+int					collect_redirs(t_shell *shell, t_cmd *cmd,
+						t_token **start_tkn, t_token **end_tkn);
+void				add_redirect(t_cmd *cmd, t_redir *redirect);
+t_token				*get_next_token_for_lvl(t_token *curr, t_token *end_token,
+						t_token_lvl *token_lvl);
+t_token_lvl			*get_token_lvl(int lvl);
+int					check_paren(t_token **curr_token, int *opened);
+void				create_leaves(t_shell *shell, t_ast_node **node,
+						t_token *curr_tkn, t_token **start_end_tokens);
+t_redir_type		get_only_redir_types(t_token *token);
+t_redir				*create_redirect(t_shell *shell, t_redir_type type,
+						t_token *curr_tkn);
+void				free_shell_node_bridge(void *content);
 
 int					execute_pipe(t_ast_node *node, t_shell *shell, int in_fd,
 						int out_fd);

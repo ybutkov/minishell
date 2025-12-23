@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:47:26 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 03:43:42 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 21:45:49 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,17 +20,6 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include <limits.h>
-
-static void	free_shell_node_bridge(void *content)
-{
-	t_shell_node	*node;
-
-	if (!content)
-		return ;
-	node = (t_shell_node *)content;
-	if (node && node->free)
-		node->free(node);
-}
 
 static void	free_shell(t_shell *shell)
 {

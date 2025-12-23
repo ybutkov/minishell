@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:24:57 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 20:16:26 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 21:59:27 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include "ast.h"
 # include "parsing.h"
 # include "shell_node.h"
+# include "constants.h"
 
 typedef struct s_shell
 {
@@ -31,7 +32,6 @@ typedef struct s_shell
 
 t_shell			*create_shell(char **envp);
 t_cmd			*create_cmd(char **argv, char *path);
-// t_cmd			*create_cmd_from_raw_str(char *raw_command, t_shell *shell);
 t_shell_node	*create_shell_node(t_node_type type, void *data);
 t_redir			*create_redir(t_redir_type type, char *target,
 					e_quotes_status quotes);
