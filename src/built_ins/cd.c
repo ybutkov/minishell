@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 16:26:49 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 03:40:28 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 22:10:02 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ int	bi_cd(t_env *env, char **args)
 	env->set_pair(env, "PWD", cur_dir);
 	if (args[1] && ft_strcmp(args[1], "-") == 0)
 	{
-    	write(STDOUT_FILENO, cur_dir, ft_strlen(cur_dir));
-    	write(STDOUT_FILENO, "\n", 1);
+		write(STDOUT_FILENO, cur_dir, ft_strlen(cur_dir));
+		write(STDOUT_FILENO, "\n", 1);
 	}
 	free(prev_dir);
 	free(cur_dir);

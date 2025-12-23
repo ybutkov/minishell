@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 18:27:18 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/15 21:51:22 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 22:07:46 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include "builtin_internal.h"
 #include <unistd.h>
 
-int	bi_pwd()
+int	bi_pwd(void)
 {
 	char	buffer[BUFFER_PATH];
 	int		len;
@@ -24,7 +24,6 @@ int	bi_pwd()
 		return (1);
 	else
 	{
-		// printf("%s\n", buffer);
 		len = ft_strlen(buffer);
 		write(STDOUT_FILENO, buffer, len);
 		write(STDOUT_FILENO, "\n", 1);

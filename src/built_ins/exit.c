@@ -3,24 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 19:33:37 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/17 19:18:42 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 23:32:09 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-//either user types exit: then write "exit" and exit, haha -
-//or the programm incounters a fatal internal error in the process
-
-//all the error codes and their sources here
-
-// 0: Success (standard EXIT_SUCCESS). Used across the code (e.g., shell_execute.c, heredoc child).
-// 1: General failure / internal error (EXIT_FAILURE, and project-specific EXIT_FAILURE_CREATE_PIPE / EXIT_FAILURE_CREATE_FORK are defined as 1 in error.h).
-// 127: Command not found. The project defines #define EXIT_CMD_NOT_FOUND 127 in constants.h and uses it when an exec fails to find a command.
-// 126: Command found but not executable (permission problem). Common shell convention — implement if you want consistent behavior with POSIX shells.
-// 128 + N: Child terminated by signal N. Shells set the exit status to 128 + signal number (examples: SIGINT → 130, SIGQUIT → 131). Your shell should follow this when reporting child exit status (use WIFSIGNALED/WTERMSIG on wait status).
-// 255 (convention): Invalid numeric argument to exit (many shells use 255 for "numeric argument required"). If the exit builtin is given a non-numeric argument you should print an error and choose a code (255 is common).
 
 #include "builtin_internal.h"
 #include "error.h"
@@ -68,8 +56,6 @@ int	bi_exit(t_shell *shell, char **args)
 		shell->ctx->should_exit = 1;
 		return (EXIT_MISUSE);
 	}
-	// check for atoi overflows?
 	exit_status = ft_atoi(args[1]);
-	shell->ctx->should_exit = 1;
-	return (exit_status % 256);
+	return (shell->ctx->should_exit = 1, exit_status % 256);
 }

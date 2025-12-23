@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/02 15:35:12 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/18 16:27:30 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 23:33:12 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ static void	split_key(char *line, t_export_par *var, char *separator)
 		var->key = ft_substr(line, 0, split_sign - line);
 		var->value = ft_strdup(split_sign + ft_strlen(separator));
 	}
-
 }
 // char	*ft_substr(char const *s, unsigned int start, size_t len)
 //mallocs
@@ -80,7 +79,7 @@ void	sort_pointers_array(t_env_pair **array, int size)
 			{
 				temp = array[i];
 				array[i] = array[i + 1];
-				array[i + 1] = temp; 
+				array[i + 1] = temp;
 			}
 			i++;
 		}
@@ -100,7 +99,7 @@ void	print_pointers_array(t_env_pair **array, int size)
 		len = ft_strlen(array[i]->key);
 		write(STDOUT_FILENO, array[i]->key, len);
 		if (array[i]->value)
-		write(STDOUT_FILENO, "=", 1);
+			write(STDOUT_FILENO, "=", 1);
 		{
 			len = ft_strlen(array[i]->value);
 			write(STDOUT_FILENO, array[i]->value, len);
@@ -116,7 +115,7 @@ static void	print_export_sorted(t_env *env)
 	t_env_pair	**pointers_arr;
 	t_env_pair	*cur;
 	int			i;
-	
+
 	count = env->amount_vars(env);
 	pointers_arr = malloc(sizeof(t_env_pair *) * count);
 	if (!pointers_arr)
@@ -158,7 +157,6 @@ void	output_declare(t_env *env)
 		current = current->next;
 	}
 }
-
 
 int	check_flags(t_env *env, char **args, int *i)
 {
