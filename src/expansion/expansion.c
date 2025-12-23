@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/18 04:04:30 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 02:27:46 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,9 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 	t_list	*res_list;
 	char	*expanded;
 	char	**result_array;
+	char	**array;
+	int		i;
+	char	**expanded_wild;
 
 	res_list = NULL;
 	piece = token->pieces;
@@ -77,10 +80,38 @@ char **expand_and_split_token(t_token *token, t_env *env, int last_exit_status)
 		{
 			expanded = expand_piece(piece, env, last_exit_status);
 			if (piece->quotes == NO_QUOTES)
-				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
+			{
+				array = ft_split(expanded, ' ');
+				i = 0;
+				while (array[i])
+				{
+					// if (i > 0)
+					// 	ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
+					ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(array[i++])));
+				}
+				free(array);
+			}
 			else
 				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
 			free(expanded);
+		}
+		else if (piece->has_wild && piece->quotes == NO_QUOTES)
+		{
+			expanded_wild = wildcard_expand(piece);
+			if (expanded_wild && expanded_wild[0])
+			{
+        		i = 0;
+        		while (expanded_wild[i])
+        		{
+            		ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded_wild[i])));
+            		i++;
+        		}
+			}
+			else
+			{
+				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(piece->text)));
+			}
+			free_str_array(expanded_wild);
 		}
 		else
 			ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(piece->text)));

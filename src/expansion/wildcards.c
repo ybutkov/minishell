@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:36:45 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 02:00:35 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/23 02:22:43 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	**wildcard_expand(t_piece *piece)
 		return (result);
 	}
 	dir = opendir("."); // opendir returns a pointer to a DIR structure
-	result = malloc(sizeof(char *) * size);
+	result = malloc(sizeof(char *) * (size + 1));
 	if (!result)
 		return (NULL);
 	fill_matches(piece, result, dir);
@@ -127,8 +127,12 @@ int	suits_the_pattern(char *pattern, char *filename, int i, int j)
 	if (pattern[i] == '\0' && filename[j] == '\0')
 		return (1);
 	if (pattern[i] == '*')
+	{
+		if (filename[j] == '\0')
+			return (suits_the_pattern(pattern, filename, i + 1, j));
 		return (suits_the_pattern(pattern, filename, i, j + 1)
 				|| suits_the_pattern(pattern, filename, i + 1, j));
+	}
 	// if (pattern[i] != filename[j])
 	// 	return (0);
 	if (pattern[i] == filename[j])
