@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 03:56:02 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 04:16:57 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <sys/wait.h>
 #include "signals.h"
+#include <sys/types.h>
+#include <dirent.h>
 
 char	**get_built_in_list(void)
 {
@@ -92,11 +94,13 @@ int	collect_argv(t_shell *shell, t_cmd *cmd)
 	if (cmd->argv[0] && cmd->argv[0][0] != '\0')
 	{
 		cmd->path = get_cmd_path(shell->ctx->env, cmd->argv[0]);
+		if (!cmd->path)
+			cmd->path = ft_strdup(cmd->argv[0]);
 	}
 	else
 	{
-		free_str_array(cmd->argv);
-		cmd->argv = NULL;
+		// free_str_array(cmd->argv);
+		// cmd->argv = NULL;
 	}
 	ft_lstclear(&arg_list, empty_func);
 	return (OK);
@@ -130,6 +134,9 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int input_fd,
 			shell->free(shell);
 			exit(EXIT_SUCCESS);
 		}
+		if (opendir(cmd->argv[0]) != NULL)
+			output_error_and_exit(cmd->argv[0], MSG_IS_DIRECTORY, shell,
+				EXIT_CMD_CANNOT_EXEC);
 		if (!cmd->path || access(cmd->path, X_OK) != 0)
 			output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
 				EXIT_CMD_NOT_FOUND);
@@ -157,11 +164,7 @@ int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 		bi_func = builtin_func(cmd->argv[0]);
 		if (bi_func != -1)
 		{
-			// if (collect_argv(cmd, shell) == NO)
-			// {
-			// 	shell->free(shell);
-			// 	exit(EXIT_FAILURE);
-			// }
+
 			return (builtin(bi_func, cmd, shell, input_fd, output_fd));
 		}
 	}

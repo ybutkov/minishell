@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   envp_list_init.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:31:15 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/18 04:45:16 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 19:18:38 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ char	*get_value(t_env *env, char *key)
 	t_env_pair	*cur;
 
 	cur = get_env_pair(env, key);
+	// return copy !!!
 	if (cur)
 		return (cur->value);
 	return (NULL);

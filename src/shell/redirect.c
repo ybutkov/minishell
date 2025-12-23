@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:09 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 03:45:34 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/22 20:15:52 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ static void	free_redir_content(t_redir *redir)
 	free(redir);
 }
 
-t_redir	*create_redir(t_redir_type type, char *target)
+t_redir	*create_redir(t_redir_type type, char *target, e_quotes_status quotes)
 {
 	t_redir	*redir;
 
@@ -32,6 +32,7 @@ t_redir	*create_redir(t_redir_type type, char *target)
 		return (NULL);
 	redir->type = type;
 	redir->target = ft_strdup(target);
+	redir->quotes = quotes;
 	if (!redir->target)
 	{
 		free(redir);
