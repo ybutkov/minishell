@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "shell.h"
 #include "shell_internal.h"
 #include "parsing.h"
 #include "shell_utils.h"

@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 02:20:25 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 04:24:12 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 04:36:14 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "get_next_line.h"
 #include "libft.h"
 #include "parsing.h"
-#include "shell.h"
 #include "shell_internal.h"
 #include "shell_utils.h"
 #include "signals.h"

@@ -11,9 +11,7 @@
 /* ************************************************************************** */
 
 #include "error.h"
-#include "get_next_line.h"
 #include "libft.h"
-#include "shell.h"
 #include "shell_internal.h"
 #include "shell_utils.h"
 #include "signals.h"

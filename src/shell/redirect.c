@@ -6,11 +6,12 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:09 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 03:52:59 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 04:36:44 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
+#include "libft.h"
 #include "shell_utils.h"
 #include <fcntl.h>
 

@@ -6,12 +6,11 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 21:39:15 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 04:36:47 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "constants.h"
-#include "libft.h"
 #include "parsing.h"
 #include "shell_internal.h"
 #include "utils.h"

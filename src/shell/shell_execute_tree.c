@@ -6,14 +6,12 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 02:52:06 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 02:52:08 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 04:35:34 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "error.h"
-#include "get_next_line.h"
 #include "libft.h"
-#include "shell.h"
 #include "shell_internal.h"
 #include "shell_utils.h"
 #include "signals.h"
