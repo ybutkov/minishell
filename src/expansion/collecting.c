@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 21:14:18 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 19:17:20 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 19:55:12 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,20 @@ void	expand_wild_card(t_list **arg_list, char *new_arg)
 	free(new_arg);
 }
 
+int	check_wild_in_line(char *line)
+{
+	int	i;
+
+	i = 0;
+	while (line[i])
+	{
+		if (line[i] == '*')
+			return (OK);
+		i++;
+	}
+	return (NO);
+}
+
 int	collect_pieces_to_strings(t_shell *shell, t_token *curr_tkn,
 	t_list **arg_list)
 {
@@ -59,7 +73,7 @@ int	collect_pieces_to_strings(t_shell *shell, t_token *curr_tkn,
 			return (free(expanded_args), NO);
 		if (collect_exp_args_to_list(expanded_args, &new_arg, arg_list) == NO)
 			return (NO);
-		if (new_arg && curr_tkn->has_wild)
+		if (new_arg && (curr_tkn->has_wild || check_wild_in_line(new_arg)))
 			expand_wild_card(arg_list, new_arg);
 		else if (new_arg)
 			ft_lstadd_back(arg_list, ft_lstnew(new_arg));
