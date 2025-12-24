@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/21 16:29:39 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/21 16:33:49 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 03:47:35 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,4 +16,3 @@ int	is_char_space(char ch)
 {
 	return (in_set(ch, " \x9\xA\xB\xC\xD"));
 }
-

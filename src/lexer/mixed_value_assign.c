@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mixed_value_assign.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 19:45:44 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 23:51:45 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/24 03:53:26 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	mixed_value_assign(t_token *t)
 		handle_piece(t, &pi);
 }
 
-void	new_piece(t_token *t, t_pieces_internal *pi, e_quotes_status q)
+void	new_piece(t_token *t, t_pieces_internal *pi, t_quotes_status q)
 {
 	t_piece	*p;
 	int		len;

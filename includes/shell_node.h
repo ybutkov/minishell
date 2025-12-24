@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:25:11 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 20:14:52 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 03:52:42 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ typedef struct s_redir
 {
 	t_redir_type	type;
 	char			*target;
-	e_quotes_status	quotes;
+	t_quotes_status	quotes;
 
 	void			(*free_redir)(struct s_redir *redir);
 }					t_redir;

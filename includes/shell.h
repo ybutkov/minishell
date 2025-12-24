@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:24:57 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 21:59:27 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 03:52:49 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ t_shell			*create_shell(char **envp);
 t_cmd			*create_cmd(char **argv, char *path);
 t_shell_node	*create_shell_node(t_node_type type, void *data);
 t_redir			*create_redir(t_redir_type type, char *target,
-					e_quotes_status quotes);
+					t_quotes_status quotes);
 t_ctx			*create_ctx(char **envp);
 
 #endif

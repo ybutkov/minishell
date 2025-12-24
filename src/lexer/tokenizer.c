@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 23:40:09 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/24 03:53:36 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ static t_token	*create_token(void)
 	return (token);
 }
 
-void	new_token(t_lex_inf *lex, e_quotes_status status)
+void	new_token(t_lex_inf *lex, t_quotes_status status)
 {
 	t_token	*tok;
 
