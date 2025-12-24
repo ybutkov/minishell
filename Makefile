@@ -47,13 +47,13 @@ C_SHELL_FILES += \
 	shell/shell_execute_heredoc_expand.c \
 	shell/shell_execute_heredoc_input.c \
 	shell/shell_execute_cmd.c \
+	shell/shell_execute_builtin_type.c \
 	shell/shell_node.c \
 	shell/redirect.c \
 	shell/commands.c \
 	shell/contex.c \
 	shell/enams.c \
 	shell/files_operations.c \
-	shell/validator.c \
 	shell/shell_utils.c
 
 C_SHELL_FILES += \
@@ -100,6 +100,9 @@ C_SHELL_FILES += \
 	expansion/wildcards.c \
 	expansion/collecting.c \
  	parcer/get_cmd_path.c \
+	parcer/validator_checker.c \
+	parcer/validator_bools.c \
+	parcer/validator.c \
 	signals/signals.c
 
 C_FIlES = $(addprefix $(SRC)/, $(C_SHELL_FILES))

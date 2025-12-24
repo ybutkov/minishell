@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:28:17 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 02:44:19 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 03:31:22 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ int					collect_heredoc_input(t_redir *redir, int write_fd,
 int					expand_heredoc_line(char **line, t_shell *shell);
 void				apply_subshell_redirs(t_shell *shell,
 						t_shell_node *shell_node);
+int					builtin_func(char *command);
 
 int					execute_pipe(t_ast_node *node, t_shell *shell, int in_fd,
 						int out_fd);

@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 02:50:08 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 03:31:32 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,44 +25,6 @@
 #include "signals.h"
 #include <sys/types.h>
 #include <dirent.h>
-
-char	**get_built_in_list(void)
-{
-	static char	*builtins[8];
-	static int	initialized;
-
-	if (!initialized)
-	{
-		builtins[0] = "echo";
-		builtins[1] = "cd";
-		builtins[2] = "pwd";
-		builtins[3] = "export";
-		builtins[4] = "unset";
-		builtins[5] = "env";
-		builtins[6] = "exit";
-		builtins[7] = NULL;
-		initialized = 1;
-	}
-	return (builtins);
-}
-
-int	builtin_func(char *command)
-{
-	char	**built_ins;
-	int		i;
-
-	if (!command)
-		return (-1);
-	built_ins = get_built_in_list();
-	i = 0;
-	while (built_ins[i])
-	{
-		if (ft_strcmp(command, built_ins[i]) == 0)
-			return (i);
-		i++;
-	}
-	return (-1);
-}
 
 int	collect_tokens_in_cmd(t_shell *shell, t_list **arg_list,
 	t_token *start_tkn)
@@ -147,6 +109,7 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int in_fd,
 int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 {
 	int	bi_func;
+	int	in_out[2];
 
 	if (collect_argv(shell, cmd) == NO)
 	{
@@ -158,31 +121,10 @@ int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 		bi_func = builtin_func(cmd->argv[0]);
 		if (bi_func != -1)
 		{
-
-			return (builtin(bi_func, cmd, shell, input_fd, output_fd));
+			in_out[0] = input_fd;
+			in_out[1] = output_fd;
+			return (builtin(bi_func, cmd, shell, in_out));
 		}
 	}
-	// check for single command. execute in sep fork
-	// if (input_fd == STDIN_FILENO && output_fd == STDOUT_FILENO)
-	// 	return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
-	// // apply_heredoc(cmd, shell);
-	// if (input_fd != STDIN_FILENO)
-	// {
-	// 	dup2(input_fd, STDIN_FILENO);
-	// 	close(input_fd);
-	// }
-	// if (output_fd != STDOUT_FILENO)
-	// {
-	// 	dup2(output_fd, STDOUT_FILENO);
-	// 	close(output_fd);
-	// }
-	// apply_cmd_redirects(cmd, shell);
-	// if (!cmd->path || access(cmd->path, X_OK) != 0)
-	// 	output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
-	// 		EXIT_CMD_NOT_FOUND);
-	// execve(cmd->path, cmd->argv, shell->ctx->envp);
-	// shell->free(shell);
-	// exit(EXIT_FAILURE);
-	// Always in fork to avoid replacing the shell process ??
 	return (execute_single_in_fork(cmd, shell, input_fd, output_fd));
 }
