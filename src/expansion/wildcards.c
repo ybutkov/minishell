@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:36:45 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/23 20:40:07 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/24 15:01:29 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,12 @@ char	**wildcard_expand(char *pattern)
 	char			**result;
 	DIR				*dir;
 	int				size;
+	char			*path;
 
-	size = count_entries(pattern);
+	path = ".";
+	if (ft_strchr(pattern, '/'))
+		wild_with_path(&pattern, &path);
+	size = count_entries(pattern, path);
 	// printf("wildcard_expand: pattern='%s', size=%d\n", piece->text, size);
 	if (size == 0)
 	{
@@ -38,14 +42,46 @@ char	**wildcard_expand(char *pattern)
 		result[1] = NULL;
 		return (result);
 	}
-	dir = opendir("."); // opendir returns a pointer to a DIR structure
+	dir = opendir(path); // opendir returns a pointer to a DIR structure
 	result = malloc(sizeof(char *) * (size + 1));
 	if (!result)
 		return (NULL);
 	fill_matches(pattern, result, dir);
 	sort_entries(result, size);
 	closedir(dir);
+	if (pattern)
+		free(pattern);
+	if (path)
+		free(path);
 	return (result);
+}
+
+void	wild_with_path(char **pattern, char **path)
+{
+	char	*temp_pattern;
+	char	*temp_path;
+	char	*last_slash;
+	int		len;
+
+	last_slash = ft_strrchr(pattern, '/');
+	if (last_slash == NULL)
+		return;
+	len = last_slash - pattern;
+	temp_path = malloc(sizeof(char) * len + 1);
+	if (!temp_path)
+		return ;
+	ft_strncpy(temp_path, pattern, len);
+	temp_path[len] = '\0';
+	len = ft_strlen(last_slash + 1);
+	temp_pattern = malloc(sizeof(char) * len + 1);
+	if (!temp_pattern)
+	{
+		free(temp_path);
+		return ;
+	}
+	ft_strcpy(temp_pattern, last_slash + 1);
+	*pattern = temp_pattern;
+	*path = temp_path;
 }
 
 void	fill_matches(char *pattern, char **result, DIR *dir)
@@ -69,14 +105,14 @@ void	fill_matches(char *pattern, char **result, DIR *dir)
 	result[i] = NULL;
 }
 
-int	count_entries(char *pattern)
+int	count_entries(char *pattern, char *path)
 {
 	int				count;
 	DIR				*dir;
 	struct dirent	*direntry;
 
 	count = 0;
-	dir = opendir(".");
+	dir = opendir(path);
 	if (!dir)
 		return (0);
 	while ((direntry = readdir(dir)))
@@ -131,33 +167,3 @@ int	suits_the_pattern(char *pattern, char *filename, int i, int j)
 		return (suits_the_pattern(pattern, filename, i + 1, j + 1));
 	return (0);
 }
-
-// int	suits_the_pattern(char *pattern, char *filename)
-// {
-// 	int	i;
-// 	int	j;
-// 	int	len;
-
-// 	i = 0;
-// 	j = 0;
-// 	len = ft_strlen(pattern);
-// 	if (pattern[0] != '.' && filename[0] == '.')
-// 		return (0);
-// 	while (pattern[i] != '\0' && (pattern[i] == filename[j] || pattern[i] == '*'))
-// 	{
-// 		if (pattern[i] == '*')
-// 		{
-// 			if (pattern[i + 1] == '\0')
-// 				return (1);
-// 			while (filename[j] != pattern[i] && filename[j])
-// 				j++;
-// 			if (filename[j] == pattern[i])
-// 				i++;
-// 		}
-// 		i++;
-// 		j++;
-// 	}
-// 	if (i == len)
-// 		return (1);
-// 	return (0);
-// }
