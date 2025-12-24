@@ -105,7 +105,8 @@ C_SHELL_FILES += \
 	parcer/validator_checker.c \
 	parcer/validator_bools.c \
 	parcer/validator.c \
-	signals/signals.c
+	signals/signals.c \
+	signals/handle_and_disable.c
 
 C_FIlES = $(addprefix $(SRC)/, $(C_SHELL_FILES))
 C_OBJ_FIlES =	$(C_FIlES:%.c=$(BUILD_DIR)/%.o)
