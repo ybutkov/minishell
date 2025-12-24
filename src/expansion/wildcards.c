@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcards.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:36:45 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/24 15:01:29 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/24 16:09:55 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,35 @@
 //bash sorts results alphabetically, but readddir() reads them in filesystem order
 
 #include "expansion_internal.h"
+#include "libft.h"
+
+void	wild_with_path(char **pattern, char **path)
+{
+	char	*temp_pattern;
+	char	*temp_path;
+	char	*last_slash;
+	int		len;
+
+	last_slash = ft_strrchr(*pattern, '/');
+	if (last_slash == NULL)
+		return ;
+	len = last_slash - *pattern;
+	temp_path = malloc(sizeof(char) * (len + 1));
+	if (!temp_path)
+		return ;
+	ft_strlcpy(temp_path, *pattern, len);
+	temp_path[len] = '\0';
+	len = ft_strlen(last_slash + 1);
+	temp_pattern = malloc(sizeof(char) * (len + 1));
+	if (!temp_pattern)
+	{
+		free(temp_path);
+		return ;
+	}
+	ft_strcpy(temp_pattern, last_slash + 1);
+	*pattern = temp_pattern;
+	*path = temp_path;
+}
 
 char	**wildcard_expand(char *pattern)
 {
@@ -54,34 +83,6 @@ char	**wildcard_expand(char *pattern)
 	if (path)
 		free(path);
 	return (result);
-}
-
-void	wild_with_path(char **pattern, char **path)
-{
-	char	*temp_pattern;
-	char	*temp_path;
-	char	*last_slash;
-	int		len;
-
-	last_slash = ft_strrchr(pattern, '/');
-	if (last_slash == NULL)
-		return;
-	len = last_slash - pattern;
-	temp_path = malloc(sizeof(char) * len + 1);
-	if (!temp_path)
-		return ;
-	ft_strncpy(temp_path, pattern, len);
-	temp_path[len] = '\0';
-	len = ft_strlen(last_slash + 1);
-	temp_pattern = malloc(sizeof(char) * len + 1);
-	if (!temp_pattern)
-	{
-		free(temp_path);
-		return ;
-	}
-	ft_strcpy(temp_pattern, last_slash + 1);
-	*pattern = temp_pattern;
-	*path = temp_path;
 }
 
 void	fill_matches(char *pattern, char **result, DIR *dir)
@@ -131,7 +132,7 @@ void	sort_entries(char **result, int size)
 	int		i;
 	int		j;
 	char	*temp;
-	
+
 	i = 0;
 	while (i < size)
 	{
