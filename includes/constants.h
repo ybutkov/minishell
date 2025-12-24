@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 02:10:14 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 04:23:59 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 # define CMD_NOT_FOUND_MSG "command not found"
 # define MSG_TOO_MANY_ARG "too many arguments"
 # define MSG_INVALID_OPTION "invalid option"
+# define MSG_INVALID_PARAMS "uknown parameters"
+# define MSG_REQUIRED_PARAMS "Run ./minishell"
 # define EXIT_MSG_NUMBER_REQUIRED "numeric argument required"
 # define EXIT_FAILURE_CREATE_PIPE 1
 # define EXIT_FAILURE_CREATE_FORK 1
@@ -48,7 +50,7 @@
 # define MALLOC_ERROR "malloc error"
 # define FORK_ERROR "fork error"
 # define SYNTAX_ERROR_UNEXPECTED_TOKEN "syntax error near unexpected token `"
-# define HEREDOC_DELIMITED_EOF "here-document delimited by end-of-file (wanted '"
+# define HRDOC_DELIMITED_EOF "here-document delimited by end-of-file (wanted '"
 # define SYNTAX_ERROR_UNEXPECTED_EOF "unexpected end of file"
 # define MSG_IS_DIRECTORY "is a directory"
 # define NOT_VALID_IDENTIFIER "not a valid identifier"

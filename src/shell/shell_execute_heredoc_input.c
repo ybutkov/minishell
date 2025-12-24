@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 02:20:25 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 02:20:27 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 04:24:12 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static void	error_heredoc_delimiter(char *target)
 	char	*tmp;
 	char	*str;
 
-	tmp = ft_strjoin(HEREDOC_DELIMITED_EOF, target);
+	tmp = ft_strjoin(HRDOC_DELIMITED_EOF, target);
 	str = ft_strjoin(tmp, "')");
 	free(tmp);
 	output_error(MSG_WARNING_2_COLON, str);

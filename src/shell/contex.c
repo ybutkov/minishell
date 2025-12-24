@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 18:16:25 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/18 04:18:07 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 04:08:14 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ t_ctx	*create_ctx(char **envp)
 	if (setup_shlvl(ctx->env) == 0)
 		return (HANDLE_ERROR_NULL);
 	ctx->last_exit_status = 0;
-	ctx->should_exit = 0;
+	ctx->should_exit = NO;
 	ctx->free_ctx = free_ctx_content;
 	return (ctx);
 }
