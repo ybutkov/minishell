@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_internal.h                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:47:16 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/23 19:07:11 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 16:34:18 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,5 +46,17 @@ int					bi_export(t_env *envp, char **args);
 int					bi_unset(t_env *env, char **args);
 int					bi_env(t_env *envp);
 int					bi_exit(t_shell *shell, char **args);
+
+static void			split_key(char *line, t_export_par *var, char *separator);
+static int			is_valid_key(char *key);
+void				sort_pointers_array(t_env_pair **array, int size);
+void				print_pointers_array(t_env_pair **array, int size);
+static void			print_export_sorted(t_env *env);
+void				output_declare(t_env *env);
+int					check_flags(t_env *env, char **args, int *i);
+void				safe_error_output(int *status, char *arg);
+void				handle_plus_equal(t_env *env, t_export_par *var,
+						char *arg, int *is_valid);
+void				key_value_free(t_export_par *var);
 
 #endif
