@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 00:48:08 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 19:05:15 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 02:49:53 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ int	builtin(int bi_func, t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 	if (saved_stdin == -1 || saved_stdout == -1)
 		return (EXIT_FAILURE);
 	dup2_and_close_both(in_fd, out_fd);
-	apply_redirect(cmd, shell);
+	apply_cmd_redirects(cmd, shell);
 	wrapper = bi_function(bi_func);
 	if (wrapper)
 		result_status = wrapper(cmd, shell, STDIN_FILENO, STDOUT_FILENO);

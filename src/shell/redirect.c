@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 19:23:09 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/22 20:15:52 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 02:49:31 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	apply_redirects(t_list *redir, t_shell *shell)
 	}
 }
 
-void	apply_redirect(t_cmd *cmd, t_shell *shell)
+void	apply_cmd_redirects(t_cmd *cmd, t_shell *shell)
 {
 	t_list	*redir;
 
@@ -71,4 +71,12 @@ void	apply_redirect(t_cmd *cmd, t_shell *shell)
 		return ;
 	redir = cmd->redirs;
 	apply_redirects(redir, shell);
+}
+
+void	apply_subshell_redirs(t_shell *shell, t_shell_node *shell_node)
+{
+	t_list	*redir_list;
+
+	redir_list = shell_node->redirs;
+	apply_redirects(redir_list, shell);
 }

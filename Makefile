@@ -41,7 +41,8 @@ C_SHELL_FILES += \
 	shell/shell_build_subshell.c \
 	shell/shell_build_redirs.c \
 	shell/shell_build_leaves.c \
-	shell/shell_execute.c \
+	shell/shell_execute_tree.c \
+	shell/shell_execute_pipe.c \
 	shell/shell_execute_heredoc_tree.c \
 	shell/shell_execute_heredoc_expand.c \
 	shell/shell_execute_heredoc_input.c \

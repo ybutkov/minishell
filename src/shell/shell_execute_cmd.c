@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 21:56:42 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 02:50:08 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int in_fd,
 	{
 		set_signals_child();
 		dup2_and_close_both(in_fd, out_fd);
-		apply_redirect(cmd, shell);
+		apply_cmd_redirects(cmd, shell);
 		validate_argv(cmd, shell);
 		execve(cmd->path, cmd->argv,
 			shell->ctx->env->to_array(shell->ctx->env));
@@ -176,7 +176,7 @@ int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)
 	// 	dup2(output_fd, STDOUT_FILENO);
 	// 	close(output_fd);
 	// }
-	// apply_redirect(cmd, shell);
+	// apply_cmd_redirects(cmd, shell);
 	// if (!cmd->path || access(cmd->path, X_OK) != 0)
 	// 	output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
 	// 		EXIT_CMD_NOT_FOUND);
