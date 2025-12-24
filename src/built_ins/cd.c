@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 16:26:49 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 03:40:28 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 15:38:53 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,42 @@ static char	*set_target(t_env *env, char **args)
 	return (target);
 }
 
+void	update_env_print_and_free(t_env *env, char *prev_dir, char **args)
+{
+	char	*cur_dir;
+
+	cur_dir = getcwd(NULL, BUFFER_PATH);
+	env->set_pair(env, "OLDPWD", prev_dir);
+	env->set_pair(env, "PWD", cur_dir);
+	if (args[1] && ft_strcmp(args[1], "-") == 0)
+	{
+		write(STDOUT_FILENO, cur_dir, ft_strlen(cur_dir));
+		write(STDOUT_FILENO, "\n", 1);
+	}
+	free(prev_dir);
+	free(cur_dir);
+}
+
+int	no_target_found(char *target, char *prev_dir)
+{
+	char	*err_msg;
+
+	if (chdir(target) != 0)
+	{
+		err_msg = ft_strjoin(CD_MSG_2_COLON, target);
+		output_error(err_msg, NO_SUCH_FILE_OR_DIR);
+		free(err_msg);
+		free(prev_dir);
+		free(target);
+		return (1);
+	}
+	return (0);
+}
+
 int	bi_cd(t_env *env, char **args)
 {
 	char	*target;
 	char	*prev_dir;
-	char	*cur_dir;
-	char	*err_msg;
 	int		argc;
 
 	argc = 0;
@@ -61,25 +91,9 @@ int	bi_cd(t_env *env, char **args)
 	}
 	target = set_target(env, args);
 	prev_dir = (getcwd(NULL, BUFFER_PATH));
-	if (chdir(target) != 0)
-	{
-		err_msg = ft_strjoin(CD_MSG_2_COLON, target);
-		output_error(err_msg, NO_SUCH_FILE_OR_DIR);
-		free(err_msg);
-		free(prev_dir);
-		free(target);
+	if (no_target_found(target, prev_dir))
 		return (EXIT_FAILURE);
-	}
-	cur_dir = getcwd(NULL, BUFFER_PATH);
-	env->set_pair(env, "OLDPWD", prev_dir);
-	env->set_pair(env, "PWD", cur_dir);
-	if (args[1] && ft_strcmp(args[1], "-") == 0)
-	{
-    	write(STDOUT_FILENO, cur_dir, ft_strlen(cur_dir));
-    	write(STDOUT_FILENO, "\n", 1);
-	}
-	free(prev_dir);
-	free(cur_dir);
+	update_env_print_and_free(env, prev_dir, args);
 	free(target);
 	return (EXIT_SUCCESS);
 }

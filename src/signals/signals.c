@@ -6,24 +6,28 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 16:31:47 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/21 15:05:43 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/24 16:46:38 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 // ~~~Interactive (TTY):
-// Ctrl+C (SIGINT): do not exit; print newline; redisplay prompt; clear current input.
+// Ctrl+C (SIGINT): do not exit; 
+//print newline; redisplay prompt; clear current input.
 // Ctrl+\ (SIGQUIT): ignore (no “Quit” message).
-// Ctrl+D: not a signal; readline returns NULL → exit cleanly (usually return 0).
+// Ctrl+D: not a signal; 
+//readline returns NULL → exit cleanly (usually return 0).
 // ~~~During command execution (child processes):
-// Ctrl+C: terminate foreground child; parent sets exit status to 130; print newline.
-// Ctrl+\: terminate foreground child; print “Quit: 3”; parent sets exit status to 131.
+// Ctrl+C: terminate foreground child; 
+//parent sets exit status to 130; print newline.
+// Ctrl+\: terminate foreground child; 
+//print “Quit: 3”; parent sets exit status to 131.
 // ~~~Non-interactive (piped input):
 // Usually let default signal behavior apply to children; parent should
-//not print prompts; if readline isn’t used (you use get_next_line), handle EOF by exiting.
+//not print prompts; if readline isn’t used 
+//(you use get_next_line), handle EOF by exiting.
 
 #include "signals_internal.h"
 #include "signals.h"
-volatile sig_atomic_t g_heredoc_interrupted = 0;
 
 void	set_signals_parent_interactive(void)
 {
@@ -87,43 +91,4 @@ void	set_signals_heredoc(void)
 	sa_quit.sa_flags = 0;
 	sigaction(SIGINT, &sa_int, NULL);
 	sigaction(SIGQUIT, &sa_quit, NULL);
-}
-
-//ctrl+c in interactive: print a newline, clear the current line, show a fresh prompt
-void	handle_sigint_parent(int sig)
-// sig - signal number that triggered the handler (2 in this case)
-{
-	(void)sig;
-	if (!g_heredoc_interrupted)
-		write(1, "\n", 1); // signal handler must use async-signal-safe functions
-	rl_on_new_line(); // updating internal cursor position
-	rl_replace_line("", 0); //clearing the current line
-	rl_redisplay(); // redrawing the prompt ($>) at screen
-}
-
-// //does nothing. another way - use SIG_IGN when defining
-// void	handle_sigquit_parent(int sig)
-// {
-// 	(void)sig;
-// }
-
-void	handle_sigint_heredoc(int sig)
-{
-	(void)sig;
-	g_heredoc_interrupted = 1;
-	// rl_replace_line("", 0);
-	// rl_on_new_line();
-	// rl_redisplay();
-	rl_done = 1;
-	write(STDOUT_FILENO, "\n", 1);
-	close(STDIN_FILENO);
-}
-
-void	disable_ctrl_echo(void)
-{
-	struct termios	term;
-	if (tcgetattr(STDIN_FILENO, &term) == -1)
-		return ;
-	term.c_lflag &= ~ECHOCTL;
-	tcsetattr(STDIN_FILENO, TCSANOW, &term);
 }

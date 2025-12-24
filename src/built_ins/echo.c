@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/29 16:26:58 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/07 03:13:50 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 14:21:46 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ int	bi_echo(char **args)
 	int	len;
 
 	flag = 0;
-	i = 1; // skipping echo
+	i = 1;
 	while (args[i] != NULL)
 	{
 		if (ft_strncmp(args[i], "-n", 2) == 0 && only_ns(args[i]))
