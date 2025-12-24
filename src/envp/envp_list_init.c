@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 00:31:15 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/24 00:36:05 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 03:48:59 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ char	*get_value(t_env *env, char *key)
 	t_env_pair	*cur;
 
 	cur = get_env_pair(env, key);
-	// return copy !!!
 	if (cur)
 		return (cur->value);
 	return (NULL);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_internal.h                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:36:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/23 00:34:40 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/24 03:53:15 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ void	is_double_quote(t_lex_inf *lex);
 void	is_operator(t_lex_inf *lex);
 
 //tokenizer
-void	new_token(t_lex_inf *lex, e_quotes_status status);
+void	new_token(t_lex_inf *lex, t_quotes_status status);
 void	simple_value(t_lex_inf *lex, t_token *tok);
 void	push_token(t_lex_inf *lex, t_token *tok);
 void	type_of_token(t_token *tok);
@@ -86,7 +86,7 @@ void	check_mixed(t_token *tok);
 void	mixed_value_assign(t_token *t);
 void	assign_s_quo_pieces(t_token *t, t_pieces_internal *pi);
 void	assign_d_quo_pieces(t_token *t, t_pieces_internal *pi);
-void	new_piece(t_token *t, t_pieces_internal *pi, e_quotes_status q);
+void	new_piece(t_token *t, t_pieces_internal *pi, t_quotes_status q);
 void	decide_on_extra(t_piece *p);
 void	decide_on_extra_in_token(t_token *t);
 void	extras_token(t_token *t);

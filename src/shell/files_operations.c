@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/18 16:08:32 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/19 13:36:22 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/23 22:55:12 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,15 @@ void	dup2_and_close(int oldfd, int newfd)
 	close(oldfd);
 }
 
-void	open_file_and_dup2(char *filename, int flags, int dup_fd,
-		t_shell *shell)
+void	dup2_and_close_both(int in_fd, int out_fd)
+{
+	if (in_fd != STDIN_FILENO)
+		dup2_and_close(in_fd, STDIN_FILENO);
+	if (out_fd != STDOUT_FILENO)
+		dup2_and_close(out_fd, STDOUT_FILENO);
+}
+
+int	open_file(char *filename, int flags, t_shell *shell)
 {
 	int	fd;
 	int	mode;
@@ -47,7 +54,14 @@ void	open_file_and_dup2(char *filename, int flags, int dup_fd,
 	fd = open(filename, flags, mode);
 	if (fd == -1)
 		output_error_and_exit(filename, NULL, shell, EXIT_FAILURE);
-	dup2(fd, dup_fd);
-	close(fd);
+	return (fd);
 }
 
+void	open_file_and_dup2(char *filename, int flags, int dup_fd,
+		t_shell *shell)
+{
+	int	fd;
+
+	fd = open_file(filename, flags, shell);
+	dup2_and_close(fd, dup_fd);
+}

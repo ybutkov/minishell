@@ -38,16 +38,23 @@ C_SHELL_FILES = \
 C_SHELL_FILES += \
  	shell/shell_core.c \
 	shell/shell_build.c \
-	shell/shell_execute.c \
-	shell/shell_execute_heredoc.c \
+	shell/shell_build_subshell.c \
+	shell/shell_build_redirs.c \
+	shell/shell_build_leaves.c \
+	shell/shell_execute_tree.c \
+	shell/shell_execute_pipe.c \
+	shell/shell_execute_heredoc_tree.c \
+	shell/shell_execute_heredoc_expand.c \
+	shell/shell_execute_heredoc_input.c \
 	shell/shell_execute_cmd.c \
+	shell/shell_execute_builtin_type.c \
 	shell/shell_node.c \
 	shell/redirect.c \
 	shell/commands.c \
 	shell/contex.c \
 	shell/enams.c \
 	shell/files_operations.c \
-	shell/validator.c
+	shell/shell_utils.c
 
 C_SHELL_FILES += \
 	error/output_error.c \
@@ -80,17 +87,22 @@ C_SHELL_FILES += \
 	built_ins/export.c \
 	built_ins/pwd.c \
 	built_ins/unset.c \
-	built_ins/bi_wrapper.c
+	built_ins/bi_wrapper_1.c \
+	built_ins/bi_wrapper_2.c
 
 C_SHELL_FILES += \
 	envp/envp_copy.c \
 	envp/copy_to_array.c \
-	envp/envp_list_init.c \
-	expansion/wildcards.c \
- 	parcer/get_cmd_path.c
+	envp/envp_list_init.c
 
 C_SHELL_FILES += \
 	expansion/expansion.c \
+	expansion/wildcards.c \
+	expansion/collecting.c \
+ 	parcer/get_cmd_path.c \
+	parcer/validator_checker.c \
+	parcer/validator_bools.c \
+	parcer/validator.c \
 	signals/signals.c
 
 C_FIlES = $(addprefix $(SRC)/, $(C_SHELL_FILES))

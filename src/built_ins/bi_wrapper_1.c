@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   bi_wrapper.c                                       :+:      :+:    :+:   */
+/*   bi_wrapper_1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/07 00:48:08 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/18 16:21:10 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 03:25:32 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,53 +15,21 @@
 #include "shell_utils.h"
 #include <fcntl.h>
 
-int	wrapper_pwd(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
-{
-	(void)cmd;
-	(void)shell;
-	(void)in_fd;
-	(void)out_fd;
-	return (bi_pwd());
-}
-
-int	wrapper_cd(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
-{
-	(void)in_fd;
-	(void)out_fd;
-	return (bi_cd(shell->ctx->env, cmd->argv));
-}
-
-int	wrapper_echo(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
-{
-	(void)shell;
-	(void)in_fd;
-	(void)out_fd;
-	return (bi_echo(cmd->argv));
-}
-
-int	wrapper_env(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
-{
-	(void)cmd;
-	(void)in_fd;
-	(void)out_fd;
-	return (bi_env(shell->ctx->env));
-}
-
-int	wrapper_exit(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
+static int	wrapper_exit(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 {
 	(void)in_fd;
 	(void)out_fd;
 	return (bi_exit(shell, cmd->argv));
 }
 
-int	wrapper_export(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
+static int	wrapper_export(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 {
 	(void)in_fd;
 	(void)out_fd;
 	return (bi_export(shell->ctx->env, cmd->argv));
 }
 
-int	wrapper_unset(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
+static int	wrapper_unset(t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 {
 	(void)in_fd;
 	(void)out_fd;
@@ -89,7 +57,7 @@ t_builtin_wrapper	bi_function(int bi_func)
 	return (NULL);
 }
 
-int	builtin(int bi_func, t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
+int	builtin(int bi_func, t_cmd *cmd, t_shell *shell, int in_out[2])
 {
 	t_builtin_wrapper	wrapper;
 	int					saved_stdin;
@@ -100,17 +68,8 @@ int	builtin(int bi_func, t_cmd *cmd, t_shell *shell, int in_fd, int out_fd)
 	saved_stdout = dup(STDOUT_FILENO);
 	if (saved_stdin == -1 || saved_stdout == -1)
 		return (EXIT_FAILURE);
-	if (in_fd != STDIN_FILENO)
-	{
-		dup2(in_fd, STDIN_FILENO);
-		close(in_fd);
-	}
-	if (out_fd != STDOUT_FILENO)
-	{
-		dup2(out_fd, STDOUT_FILENO);
-		close(out_fd);
-	}
-	apply_redirect(cmd, shell);
+	dup2_and_close_both(in_out[0], in_out[1]);
+	apply_cmd_redirects(cmd, shell);
 	wrapper = bi_function(bi_func);
 	if (wrapper)
 		result_status = wrapper(cmd, shell, STDIN_FILENO, STDOUT_FILENO);
