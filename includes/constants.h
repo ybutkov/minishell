@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:55:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 23:24:15 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 02:10:14 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@
 # define MSG_DECLARE_X "declare -x "
 # define MSG_EXIT_NL "exit\n"
 # define SHELL_ERROR_PREFIX "minishell: "
+# define MSG_WARNING_2_COLON "warning: "
 # define SYNTAX_ERROR "syntax error"
 # define MALLOC_ERROR "malloc error"
 # define FORK_ERROR "fork error"

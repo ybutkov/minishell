@@ -42,7 +42,9 @@ C_SHELL_FILES += \
 	shell/shell_build_redirs.c \
 	shell/shell_build_leaves.c \
 	shell/shell_execute.c \
-	shell/shell_execute_heredoc.c \
+	shell/shell_execute_heredoc_tree.c \
+	shell/shell_execute_heredoc_expand.c \
+	shell/shell_execute_heredoc_input.c \
 	shell/shell_execute_cmd.c \
 	shell/shell_node.c \
 	shell/redirect.c \
