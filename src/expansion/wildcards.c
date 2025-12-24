@@ -3,165 +3,108 @@
 /*                                                        :::      ::::::::   */
 /*   wildcards.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:36:45 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 02:00:35 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/24 23:13:37 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// • Wildcards * should work for the current working directory.
-//shell globbing -- shell's filename expansion
-// If the pattern starts with . (e.g., .*, .git*), then allow matches whose names start with ..
-// If the pattern does not start with ., skip any directory entry whose name starts with .
-//(both . and .., and all dotfiles). This mirrors typical shell globbing.
-// So: check pattern[0] == '.' → allow hidden; else if d_name[0] == '.' → skip.
-
-//bash sorts results alphabetically, but readddir() reads them in filesystem order
-
 #include "expansion_internal.h"
+#include "libft.h"
 
-char	**wildcard_expand(t_piece *piece)
+static void	wild_with_path(char **pattern, char **path)
 {
-	char			**result;
-	DIR				*dir;
-	int				size;
+	char	*temp_pattern;
+	char	*temp_path;
+	char	*last_slash;
+	int		len;
 
-	size = count_entries(piece);
-	if (size == 0)
+	last_slash = ft_strrchr(*pattern, '/');
+	if (last_slash == NULL)
+		return ((void)(*pattern = ft_strdup(*pattern)));
+	len = last_slash - *pattern + 1;
+	temp_path = malloc(sizeof(char) * (len + 1));
+	if (!temp_path)
+		return ;
+	ft_strlcpy(temp_path, *pattern, len);
+	temp_path[len] = '\0';
+	len = ft_strlen(last_slash + 1);
+	temp_pattern = malloc(sizeof(char) * (len + 1));
+	if (!temp_pattern)
 	{
-		result = malloc(sizeof(char *) * 2);
-		if (!result)
-			return (NULL);
-		result[0] = ft_strdup(piece->text);
-		result[1] = NULL;
-		return (result);
+		free(temp_path);
+		return ;
 	}
-	dir = opendir("."); // opendir returns a pointer to a DIR structure
-	result = malloc(sizeof(char *) * size);
-	if (!result)
-		return (NULL);
-	fill_matches(piece, result, dir);
-	sort_entries(result, size);
-	closedir(dir);
-	return (result);
+	ft_strcpy(temp_pattern, last_slash + 1);
+	*pattern = temp_pattern;
+	*path = temp_path;
 }
 
-void	fill_matches(t_piece *piece, char **result, DIR *dir)
+static char	*build_full_name(char *path, char *file)
 {
-	struct dirent	*direntry;
-	int				i;
-
-	i = 0;
-	direntry = readdir(dir);
-	while (direntry)
-	{
-		if (piece->text[0] != '.' && direntry->d_name[0] == '.')
-		{
-			direntry = readdir(dir);
-			continue ;
-		}
-		if (suits_the_pattern(piece->text, direntry->d_name, 0, 0))
-		{
-			result[i] = ft_strdup(direntry->d_name);
-			i++;
-		}
-		direntry = readdir(dir);
-	}
-	result[i] = NULL;
-}
-
-int	count_entries(t_piece *piece)
-{
-	int				count;
-	DIR				*dir;
-	struct dirent	*direntry;
-
-	count = 0;
-	dir = opendir(".");
-	if (!dir)
-		return (0);
-	while (1)
-	{
-		direntry = readdir(dir);
-		if (!direntry)
-			break ;
-		if (piece->text[0] != '.' && direntry->d_name[0] == '.')
-		{
-			direntry = readdir(dir);
-			continue ;
-		}
-		if (suits_the_pattern(piece->text, direntry->d_name, 0, 0))
-			count++;
-	}
-	closedir(dir);
-	return (count);
-}
-
-void	sort_entries(char **result, int size)
-{
-	int		i;
-	int		j;
+	char	*full_path;
 	char	*temp;
-	
+
+	temp = ft_strjoin(path, "/");
+	full_path = ft_strjoin(temp, file);
+	free(temp);
+	free(file);
+	return (full_path);
+}
+
+static void	add_prefix(char *path, char **result)
+{
+	int	i;
+
+	if (ft_strcmp(path, ".") == 0)
+		return ;
 	i = 0;
-	while (i < size)
+	while (result[i])
 	{
-		j = 0;
-		while (j < size - 1 - i) // -i because i elements at the end are already definitely sorted
-		{
-			if (ft_strcmp(result[j], result[j + 1]) > 0)
-			{
-				temp = result[j];
-				result[j] = result[j + 1];
-				result[j + 1] = temp;
-			}
-			j++;
-		}
+		result[i] = build_full_name(path, result[i]);
 		i++;
 	}
 }
 
-int	suits_the_pattern(char *pattern, char *filename, int i, int j)
+static char	**empty_result(char	*path, char *pattern)
 {
-	if (pattern[i] == '\0' && filename[j] == '\0')
-		return (1);
-	if (pattern[i] == '*')
-		return (suits_the_pattern(pattern, filename, i, j + 1)
-				|| suits_the_pattern(pattern, filename, i + 1, j));
-	// if (pattern[i] != filename[j])
-	// 	return (0);
-	if (pattern[i] == filename[j])
-		return (suits_the_pattern(pattern, filename, i + 1, j + 1));
-	return (0);
+	char	**result;
+
+	result = malloc(sizeof(char *) * 2);
+	if (!result)
+		return (NULL);
+	result[0] = ft_strdup(pattern);
+	result[1] = NULL;
+	add_prefix(path, result);
+	free(pattern);
+	free(path);
+	return (result);
 }
 
-// int	suits_the_pattern(char *pattern, char *filename)
-// {
-// 	int	i;
-// 	int	j;
-// 	int	len;
+char	**wildcard_expand(char *pattern)
+{
+	char	**result;
+	DIR		*dir;
+	int		size;
+	char	*path;
 
-// 	i = 0;
-// 	j = 0;
-// 	len = ft_strlen(pattern);
-// 	if (pattern[0] != '.' && filename[0] == '.')
-// 		return (0);
-// 	while (pattern[i] != '\0' && (pattern[i] == filename[j] || pattern[i] == '*'))
-// 	{
-// 		if (pattern[i] == '*')
-// 		{
-// 			if (pattern[i + 1] == '\0')
-// 				return (1);
-// 			while (filename[j] != pattern[i] && filename[j])
-// 				j++;
-// 			if (filename[j] == pattern[i])
-// 				i++;
-// 		}
-// 		i++;
-// 		j++;
-// 	}
-// 	if (i == len)
-// 		return (1);
-// 	return (0);
-// }
+	path = NULL;
+	wild_with_path(&pattern, &path);
+	if (path == NULL)
+		path = ft_strdup(".");
+	size = count_entries(pattern, path);
+	if (size == 0)
+		return (empty_result(path, pattern));
+	dir = opendir(path);
+	result = malloc(sizeof(char *) * (size + 1));
+	if (!result)
+		return (NULL);
+	fill_matches(pattern, result, dir);
+	sort_entries(result, size);
+	closedir(dir);
+	add_prefix(path, result);
+	free(pattern);
+	free(path);
+	return (result);
+}

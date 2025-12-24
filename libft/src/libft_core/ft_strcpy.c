@@ -1,23 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   ft_strcpy.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/05 17:13:00 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 16:19:31 by ybutkov          ###   ########.fr       */
+/*   Created: 2025/12/24 16:15:52 by ybutkov           #+#    #+#             */
+/*   Updated: 2025/12/24 16:17:09 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strdup(const char *s1)
+char	*ft_strcpy(char *dst, const char *src)
 {
-	void	*res;
+	char	*res;
 
-	res = malloc((ft_strlen(s1) + 1) * sizeof(char));
-	if (res == NULL)
-		return (NULL);
-	return (ft_strcpy(res, s1));
+	if (dst == NULL || src == NULL)
+		return (dst);
+	res = dst;
+	while (*src)
+		*dst++ = *src++;
+	*dst = '\0';
+	return (res);
 }

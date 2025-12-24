@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 04:35:57 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 22:37:17 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include "signals.h"
 #include <sys/types.h>
 #include <dirent.h>
+#include <sys/stat.h>
 
 int	collect_tokens_in_cmd(t_shell *shell, t_list **arg_list,
 	t_token *start_tkn)
@@ -63,14 +64,25 @@ int	collect_argv(t_shell *shell, t_cmd *cmd)
 
 void	validate_argv(t_cmd *cmd, t_shell *shell)
 {
-	if (cmd->argv == NULL)
+	struct stat	sb;
+
+	if (cmd->argv == NULL || cmd->argv[0] == NULL || cmd->argv[0][0] == '\0')
 	{
 		shell->free(shell);
 		exit(EXIT_SUCCESS);
 	}
-	if (opendir(cmd->argv[0]) != NULL)
-		output_error_and_exit(cmd->argv[0], MSG_IS_DIRECTORY, shell,
-			EXIT_CMD_CANNOT_EXEC);
+	if (cmd->path)
+	{
+		if (stat(cmd->path, &sb) == 0 && S_ISDIR(sb.st_mode))
+			output_error_and_exit(cmd->argv[0], MSG_IS_DIRECTORY, shell,
+				EXIT_CMD_CANNOT_EXEC);
+	}
+	else
+	{
+		if (stat(cmd->argv[0], &sb) == 0 && S_ISDIR(sb.st_mode))
+			output_error_and_exit(cmd->argv[0], MSG_IS_DIRECTORY, shell,
+				EXIT_CMD_CANNOT_EXEC);
+	}
 	if (!cmd->path || access(cmd->path, X_OK) != 0)
 		output_error_and_exit(cmd->argv[0], CMD_NOT_FOUND_MSG, shell,
 			EXIT_CMD_NOT_FOUND);

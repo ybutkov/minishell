@@ -1,1 +1,6 @@
+
 (pwd; cd ..; pwd)>out | ((cd ..| pwd; ls -la | grep ell)>out2; pwd) > out3
+
+echo 111 > out1 | echo 222 >> out2 | echo 333 > out3
+
+(echo A > a1; echo B >> a1) | (echo C > b1; echo D >> b1)

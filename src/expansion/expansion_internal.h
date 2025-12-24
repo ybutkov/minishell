@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_internal.h                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 12:38:12 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/14 02:00:25 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/24 16:20:39 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@
 # include "envp_copy.h"
 
 //wildcards
-char	**wildcard_expand(t_piece *piece);
-void	fill_matches(t_piece *piece, char **result, DIR *dir);
-int		count_entries(t_piece *piece);
+char	**wildcard_expand(char *pattern);
+void	fill_matches(char *pattern, char **result, DIR *dir);
+int		count_entries(char *pattern, char *path);
 void	sort_entries(char **result, int size);
 int		suits_the_pattern(char *pattern, char *filename, int i, int j);
 

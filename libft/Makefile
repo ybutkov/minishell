@@ -21,6 +21,7 @@ LIBFT_CORE_FILES = ft_isalpha.c \
 		ft_memcpy.c \
 		ft_memmove.c \
 		ft_strlcpy.c \
+		ft_strcpy.c \
 		ft_strlcat.c \
 		ft_toupper.c \
 		ft_tolower.c \
@@ -59,6 +60,7 @@ LIBFT_CORE_FILES = ft_isalpha.c \
 		ft_lstsize_bonus.c \
 		ft_lstlast_bonus.c \
 		ft_lstadd_back_bonus.c \
+		ft_lstadd_back_array_bonus.c \
 		ft_lstdelone_bonus.c \
 		ft_lstclear_bonus.c \
 		ft_lstiter_bonus.c \
