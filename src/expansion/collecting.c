@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 21:14:18 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 19:55:12 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 22:57:17 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int	collect_exp_args_to_list(char **expanded_args, char **new_arg,
 
 void	expand_wild_card(t_list **arg_list, char *new_arg)
 {
-	char **lines;
+	char	**lines;
 
 	lines = wildcard_expand(new_arg);
 	ft_lstadd_back_array(arg_list, (void **)lines);

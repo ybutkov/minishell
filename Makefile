@@ -91,7 +91,7 @@ C_SHELL_FILES += \
 	built_ins/pwd.c \
 	built_ins/unset.c \
 	built_ins/bi_wrapper_1.c \
-	built_ins/bi_wrapper_2.c 
+	built_ins/bi_wrapper_2.c
 
 C_SHELL_FILES += \
 	envp/envp_copy.c \
@@ -101,6 +101,7 @@ C_SHELL_FILES += \
 C_SHELL_FILES += \
 	expansion/expansion.c \
 	expansion/wildcards.c \
+	expansion/wildcards_utils.c \
 	expansion/collecting.c \
  	parcer/get_cmd_path.c \
 	parcer/validator_checker.c \
@@ -146,7 +147,6 @@ $(BUILD_DIRS):
 	@mkdir -p $@
 
 $(BUILD_DIR)/%.o : %.c
-# ???
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< -o $@
 

@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/24 16:25:17 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 22:37:49 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,9 +83,10 @@ typedef struct s_token
 
 char				*get_cmd_path(t_env *env, char *cmd_name);
 t_token				*lexicalization(char *line);
-t_token				*read_and_lexicalize();
+t_token				*read_and_lexicalize(void);
 char				**wildcard_expand(char *pattern);
-char 				**expand_and_split_token(t_token *token, t_env *env, int last_exit_status);
+char				**expand_and_split_token(t_token *token, t_env *env,
+						int last_exit_status);
 
 int					validate_tokens(t_token *start);
 void				free_tokens(t_token *tokens);

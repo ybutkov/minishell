@@ -6,14 +6,14 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 16:36:45 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/24 18:23:10 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 23:13:37 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "expansion_internal.h"
 #include "libft.h"
 
-void	wild_with_path(char **pattern, char **path)
+static void	wild_with_path(char **pattern, char **path)
 {
 	char	*temp_pattern;
 	char	*temp_path;
@@ -22,10 +22,6 @@ void	wild_with_path(char **pattern, char **path)
 
 	last_slash = ft_strrchr(*pattern, '/');
 	if (last_slash == NULL)
-	// {
-	// 	*pattern = ft_strdup(*pattern);
-	// 	return ;
-	// }
 		return ((void)(*pattern = ft_strdup(*pattern)));
 	len = last_slash - *pattern + 1;
 	temp_path = malloc(sizeof(char) * (len + 1));
@@ -45,7 +41,7 @@ void	wild_with_path(char **pattern, char **path)
 	*path = temp_path;
 }
 
-char	*build_full_name(char *path, char *file)
+static char	*build_full_name(char *path, char *file)
 {
 	char	*full_path;
 	char	*temp;
@@ -57,7 +53,7 @@ char	*build_full_name(char *path, char *file)
 	return (full_path);
 }
 
-void	add_prefix(char *path, char **result)
+static void	add_prefix(char *path, char **result)
 {
 	int	i;
 
@@ -71,7 +67,7 @@ void	add_prefix(char *path, char **result)
 	}
 }
 
-char	**empty_result(char	*path, char *pattern)
+static char	**empty_result(char	*path, char *pattern)
 {
 	char	**result;
 
@@ -111,84 +107,4 @@ char	**wildcard_expand(char *pattern)
 	free(pattern);
 	free(path);
 	return (result);
-}
-
-void	fill_matches(char *pattern, char **result, DIR *dir)
-{
-	struct dirent	*direntry;
-	int				i;
-
-	i = 0;
-	while ((direntry = readdir(dir)))
-	{
-		if (pattern[0] != '.' && direntry->d_name[0] == '.')
-			continue ;
-		if (suits_the_pattern(pattern, direntry->d_name, 0, 0))
-		{
-			result[i] = ft_strdup(direntry->d_name);
-			i++;
-		}
-	}
-	result[i] = NULL;
-}
-
-int	count_entries(char *pattern, char *path)
-{
-	int				count;
-	DIR				*dir;
-	struct dirent	*direntry;
-
-	count = 0;
-	dir = opendir(path);
-	if (!dir)
-		return (0);
-	while ((direntry = readdir(dir)))
-	{
-		if (pattern[0] != '.' && direntry->d_name[0] == '.')
-			continue ;
-		if (suits_the_pattern(pattern, direntry->d_name, 0, 0))
-			count++;
-	}
-	closedir(dir);
-	return (count);
-}
-
-void	sort_entries(char **result, int size)
-{
-	int		i;
-	int		j;
-	char	*temp;
-
-	i = 0;
-	while (i < size)
-	{
-		j = 0;
-		while (j < size - 1 - i)
-		{
-			if (ft_strcmp(result[j], result[j + 1]) > 0)
-			{
-				temp = result[j];
-				result[j] = result[j + 1];
-				result[j + 1] = temp;
-			}
-			j++;
-		}
-		i++;
-	}
-}
-
-int	suits_the_pattern(char *pattern, char *filename, int i, int j)
-{
-	if (pattern[i] == '\0' && filename[j] == '\0')
-		return (1);
-	if (pattern[i] == '*')
-	{
-		if (filename[j] == '\0')
-			return (suits_the_pattern(pattern, filename, i + 1, j));
-		return (suits_the_pattern(pattern, filename, i, j + 1)
-			|| suits_the_pattern(pattern, filename, i + 1, j));
-	}
-	if (pattern[i] == filename[j])
-		return (suits_the_pattern(pattern, filename, i + 1, j + 1));
-	return (0);
 }

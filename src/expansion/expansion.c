@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/06 22:15:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 03:53:48 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 22:54:08 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,15 +67,35 @@ char	*expand_piece(t_piece *piece, t_quotes_status stat, t_env *env,
 	return (result);
 }
 
+void	split_expanded_piece(t_list **res_list, char *expanded)
+{
+	char	**array;
+	int		i;
+
+	array = ft_split(expanded, ' ');
+	if (expanded != NULL && *res_list
+		&& is_char_space(expanded[0]) == OK)
+		ft_lstadd_back(res_list, ft_lstnew(ft_strdup(" ")));
+	i = 0;
+	while (array[i])
+	{
+		if (i > 0)
+			ft_lstadd_back(res_list, ft_lstnew(ft_strdup(" ")));
+		ft_lstadd_back(res_list, ft_lstnew(array[i++]));
+	}
+	if (expanded != NULL && i > 0
+		&& is_char_space(expanded[ft_strlen(expanded) - 1]) == OK)
+		ft_lstadd_back(res_list, ft_lstnew(ft_strdup(" ")));
+	free(array);
+}
+
 char	**expand_and_split_token(t_token *token, t_env *env,
-	int last_exit_status)
+	int exit_status)
 {
 	t_piece	*piece;
 	t_list	*res_list;
 	char	*expanded;
 	char	**result_array;
-	char	**array;
-	int		i;
 
 	res_list = NULL;
 	piece = token->pieces;
@@ -83,26 +103,9 @@ char	**expand_and_split_token(t_token *token, t_env *env,
 	{
 		if ((piece->has_env_v || piece->has_tilde) && piece->quotes != SINGLE_Q)
 		{
-			expanded = expand_piece(piece, piece->quotes, env, last_exit_status);
+			expanded = expand_piece(piece, piece->quotes, env, exit_status);
 			if (piece->quotes == NO_QUOTES)
-			{
-				array = ft_split(expanded, ' ');
-				if (expanded != NULL && res_list
-					&& is_char_space(expanded[0]) == OK)
-					ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
-				i = 0;
-				while (array[i])
-				{
-					if (i > 0)
-						ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
-					ft_lstadd_back(&res_list, ft_lstnew(array[i++]));
-				}
-				if (expanded != NULL && i > 0
-					&& is_char_space(expanded[ft_strlen(expanded) - 1]) == OK)
-					ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(" ")));
-
-				free(array);
-			}
+				split_expanded_piece(&res_list, expanded);
 			else
 				ft_lstadd_back(&res_list, ft_lstnew(ft_strdup(expanded)));
 			free(expanded);

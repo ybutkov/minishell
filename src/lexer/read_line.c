@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/27 11:38:35 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/24 22:13:42 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 22:36:49 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ t_token	*read_and_lexicalize(void)
 			continue ;
 		}
 		add_history(line);
-		// line = preprocessing(line);
 		tokens = lexicalization(line);
 		free(line);
 		if (tokens == NULL)
@@ -62,4 +61,3 @@ t_token	*read_and_lexicalize(void)
 		return (tokens);
 	}
 }
-

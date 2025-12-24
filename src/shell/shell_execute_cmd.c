@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 22:11:29 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 22:37:17 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	collect_argv(t_shell *shell, t_cmd *cmd)
 
 void	validate_argv(t_cmd *cmd, t_shell *shell)
 {
-	struct stat sb;
+	struct stat	sb;
 
 	if (cmd->argv == NULL || cmd->argv[0] == NULL || cmd->argv[0][0] == '\0')
 	{
