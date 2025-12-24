@@ -85,10 +85,12 @@ C_SHELL_FILES += \
 	built_ins/env.c \
 	built_ins/exit.c \
 	built_ins/export.c \
+	built_ins/export1.c \
+	built_ins/export2.c \
 	built_ins/pwd.c \
 	built_ins/unset.c \
 	built_ins/bi_wrapper_1.c \
-	built_ins/bi_wrapper_2.c
+	built_ins/bi_wrapper_2.c 
 
 C_SHELL_FILES += \
 	envp/envp_copy.c \

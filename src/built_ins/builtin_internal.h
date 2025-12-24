@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/30 16:47:16 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/24 16:34:18 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/24 16:36:27 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,11 +47,11 @@ int					bi_unset(t_env *env, char **args);
 int					bi_env(t_env *envp);
 int					bi_exit(t_shell *shell, char **args);
 
-static void			split_key(char *line, t_export_par *var, char *separator);
-static int			is_valid_key(char *key);
+void				split_key(char *line, t_export_par *var, char *separator);
+int					is_valid_key(char *key);
 void				sort_pointers_array(t_env_pair **array, int size);
 void				print_pointers_array(t_env_pair **array, int size);
-static void			print_export_sorted(t_env *env);
+void				print_export_sorted(t_env *env);
 void				output_declare(t_env *env);
 int					check_flags(t_env *env, char **args, int *i);
 void				safe_error_output(int *status, char *arg);

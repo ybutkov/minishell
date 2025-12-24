@@ -6,14 +6,14 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 16:30:16 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/24 16:33:20 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/24 16:38:08 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "builtin_internal.h"
 #include "error.h"
 
-static void	split_key(char *line, t_export_par *var, char *separator)
+void	split_key(char *line, t_export_par *var, char *separator)
 {
 	char	*split_sign;
 
@@ -33,7 +33,7 @@ static void	split_key(char *line, t_export_par *var, char *separator)
 // char	*ft_substr(char const *s, unsigned int start, size_t len)
 //mallocs
 
-static int	is_valid_key(char *key)
+int	is_valid_key(char *key)
 {
 	int	i;
 
@@ -101,7 +101,7 @@ void	print_pointers_array(t_env_pair **array, int size)
 	}
 }
 
-static void	print_export_sorted(t_env *env)
+void	print_export_sorted(t_env *env)
 {
 	int			count;
 	t_env_pair	**pointers_arr;
