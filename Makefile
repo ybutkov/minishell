@@ -62,6 +62,7 @@ C_SHELL_FILES += \
 	utils/heredoc_file_util.c \
 	utils/list_to_array.c \
 	printer/print_shell.c \
+	printer/print_shell2.c \
 	printer/print_tokens.c
 
 C_SHELL_FILES += \
