@@ -6,11 +6,12 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/23 21:14:18 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 21:31:36 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/24 19:17:20 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "shell.h"
+#include "libft.h"
 
 int	collect_exp_args_to_list(char **expanded_args, char **new_arg,
 	t_list **arg_list)
@@ -33,6 +34,16 @@ int	collect_exp_args_to_list(char **expanded_args, char **new_arg,
 	return (OK);
 }
 
+void	expand_wild_card(t_list **arg_list, char *new_arg)
+{
+	char **lines;
+
+	lines = wildcard_expand(new_arg);
+	ft_lstadd_back_array(arg_list, (void **)lines);
+	free(lines);
+	free(new_arg);
+}
+
 int	collect_pieces_to_strings(t_shell *shell, t_token *curr_tkn,
 	t_list **arg_list)
 {
@@ -48,7 +59,9 @@ int	collect_pieces_to_strings(t_shell *shell, t_token *curr_tkn,
 			return (free(expanded_args), NO);
 		if (collect_exp_args_to_list(expanded_args, &new_arg, arg_list) == NO)
 			return (NO);
-		if (new_arg)
+		if (new_arg && curr_tkn->has_wild)
+			expand_wild_card(arg_list, new_arg);
+		else if (new_arg)
 			ft_lstadd_back(arg_list, ft_lstnew(new_arg));
 		free_str_array(expanded_args);
 	}
