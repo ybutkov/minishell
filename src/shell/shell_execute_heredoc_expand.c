@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 02:20:16 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 02:20:20 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/25 22:45:45 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,6 +70,7 @@ int	expand_heredoc_line(char **line, t_shell *shell)
 			append_and_free(&res, ft_substr((*line), start, i - start));
 			expand_var_name(*line, &i, &res, shell->ctx);
 			start = i;
+			continue ;
 		}
 		i++;
 	}
