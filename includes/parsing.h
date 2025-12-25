@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.h                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/12 12:52:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/24 22:37:49 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/25 19:46:37 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ typedef enum e_quotes_status
 	SINGLE_Q = 2,
 	DOUBLE_Q = 3,
 	MIXED = 4,
+	UNCLOSED = 5
 }					t_quotes_status;
 
 typedef struct s_piece
@@ -76,6 +77,7 @@ typedef struct s_token
 	t_piece			*pieces_tail;
 	int				has_env_v;
 	int				has_wild;
+	int				error;
 	struct s_token	*prev;
 	struct s_token	*next;
 	void			(*free)(struct s_token *token);

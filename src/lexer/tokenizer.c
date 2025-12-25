@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizer.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
+/*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/16 15:26:13 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/24 03:53:36 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/25 19:52:05 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ static t_token	*create_token(void)
 	token_init(token);
 	token->has_wild = 0;
 	token->has_env_v = 0;
+	token->error = 0;
 	token->free = free_token;
 	return (token);
 }
@@ -35,6 +36,11 @@ void	new_token(t_lex_inf *lex, t_quotes_status status)
 		return ;
 	tok->stat = status;
 	simple_value(lex, tok);
+	if (tok->stat == UNCLOSED)
+	{
+		tok->error = 1;
+		return;
+	}
 	check_mixed(tok);
 	if (tok->stat == MIXED)
 		mixed_value_assign(tok);

@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/23 22:22:09 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/23 00:34:56 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/25 19:37:57 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,8 @@ void	quotes_within(t_lex_inf *l)
 		}
 		l->i++;
 	}
+	if (l->line[l->i] == '\0' && quo_closed != ALL_CLOSED)
+		new_token(l, UNCLOSED);
 }
 // ckkshd"nclmc klxld"mcldl'cockelpps x x cdcf 'jofijo4f
 
@@ -63,6 +65,8 @@ void	is_single_quote(t_lex_inf *lex)
 	lex->start = lex->i;
 	while (lex->line[lex->i] != '\'' && lex->line[lex->i] != '\0')
 		lex->i++;
+	if (lex->line[lex->i] == '\0')
+		new_token(lex, UNCLOSED);
 	if (lex->line[lex->i] == '\'')
 	{
 		if (is_whitespace_or_special(lex->line[lex->i + 1]) || is_special(lex))
@@ -88,6 +92,8 @@ void	is_double_quote(t_lex_inf *lex)
 	lex->start = lex->i;
 	while (lex->line[lex->i] != '"' && lex->line[lex->i] != '\0')
 		lex->i++;
+	if (lex->line[lex->i] == '\0')
+		new_token(lex, UNCLOSED);
 	if (lex->line[lex->i] == '"')
 	{
 		if (is_whitespace_or_special(lex->line[lex->i + 1]) || is_special(lex))
