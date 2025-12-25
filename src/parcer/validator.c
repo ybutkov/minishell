@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 15:33:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 03:41:40 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/25 22:12:57 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,35 +15,34 @@
 #include "libft.h"
 #include "validator_internal.h"
 
-static const char	*get_token_str(t_token *token)
-{
-	if (!token)
-		return ("newline");
-	if (token->type == TOKEN_PIPE || token->type == TOKEN_OR
-		|| token->type == TOKEN_AND || token->type == TOKEN_SEMICOLON
-		|| token->type == TOKEN_LEFT_PAREN || token->type == TOKEN_RIGHT_PAREN
-		|| token->type == TOKEN_REDIR_IN || token->type == TOKEN_REDIR_OUT
-		|| token->type == TOKEN_REDIR_APPEND || token->type == TOKEN_HEREDOC)
-		return (token->value);
-	return ("newline");
-}
-
-int	syntax_error_token(t_token *token)
+static int	syntax_error_symbol(char *symbol)
 {
 	char	*msg;
 
 	msg = ft_strdup(SYNTAX_ERROR_UNEXPECTED_TOKEN);
-	ft_strappend(&msg, (char *)get_token_str(token));
+	ft_strappend(&msg, symbol);
 	ft_strappend(&msg, "'");
 	output_error(NULL, msg);
 	free(msg);
 	return (0);
 }
 
+int	syntax_error_token(t_token *token)
+{
+	return (syntax_error_symbol((char *)get_token_str(token)));
+}
+
 static int	syntax_error_eof(void)
 {
 	output_error(SYNTAX_ERROR, SYNTAX_ERROR_UNEXPECTED_EOF);
 	return (0);
+}
+
+static int	check_token_errors(t_token *token)
+{
+	if (token->error == OK)
+		return (syntax_error_symbol("quote"));
+	return (OK);
 }
 
 int	validate_tokens(t_token *start)
@@ -63,14 +62,14 @@ int	validate_tokens(t_token *start)
 		if (paren_depth < 0)
 			return (syntax_error_token(curr));
 		if (!check_empty_parens(curr) || !check_redir_target(curr)
-			|| !check_operators(curr, prev) || !check_paren_place(curr, prev))
-			return (0);
+			|| !check_operators(curr, prev) || !check_paren_place(curr, prev)
+			|| !check_token_errors(curr))
+			return (NO);
 		prev = curr;
 		curr = curr->next;
 	}
-	if (paren_depth > 0)
+	if (paren_depth > 0 || (prev && is_token_operator(prev)
+			&& prev->type != TOKEN_SEMICOLON))
 		return (syntax_error_eof());
-	if (prev && is_token_operator(prev) && prev->type != TOKEN_SEMICOLON)
-		return (syntax_error_eof());
-	return (1);
+	return (OK);
 }
