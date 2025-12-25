@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/22 18:50:42 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/22 23:16:35 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/25 20:57:26 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ void	end_token(t_lex_inf *lex)
 {
 	t_token	*tok;
 
+	if (lex->head == NULL)
+		return ;
 	tok = malloc(sizeof(t_token));
 	if (!tok)
 		return ;

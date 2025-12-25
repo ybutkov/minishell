@@ -6,7 +6,7 @@
 /*   By: ashadrin <ashadrin@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/20 16:32:29 by ashadrin          #+#    #+#             */
-/*   Updated: 2025/12/23 00:35:01 by ashadrin         ###   ########.fr       */
+/*   Updated: 2025/12/25 20:53:38 by ashadrin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,7 @@ void	token_init(t_token *tok)
 	tok->next = NULL;
 	tok->has_env_v = 0;
 	tok->has_wild = 0;
+	tok->error = 0;
 	tok->free = free_token;
 }
 
@@ -79,5 +80,6 @@ void	init_token(t_token *tok, t_token_type type)
 	tok->next = NULL;
 	tok->has_env_v = 0;
 	tok->has_wild = 0;
+	tok->error = 0;
 	tok->free = free_token;
 }
