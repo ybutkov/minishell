@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 02:52:06 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 04:35:34 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/26 03:00:33 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ int	execute_shell_node(t_ast_node *node, t_shell *shell, int in_fd, int out_fd)
 {
 	t_shell_node	*shell_node;
 
+	if (node == NULL)
+		return (1);
 	shell_node = (t_shell_node *)node->get_content(node);
 	if (shell_node->type == NODE_SUBSHELL)
 		return (execute_subshell(node, shell, in_fd, out_fd));

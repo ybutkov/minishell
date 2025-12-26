@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/07 15:41:23 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 04:20:24 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/26 03:47:59 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,14 @@ static int	minishell(char **envp)
 		if (!tokens)
 			break ;
 		shell->build(shell, &tokens);
+
 		free_tokens(tokens);
 		tokens = NULL;
+
+		print_shell_tree(shell);
+		// shell->clear(shell);
+		// continue ;
+
 		if (shell->collect_heredoc(shell) == EXIT_TERMINATED_BY_SIGINT)
 			shell->ctx->last_exit_status = EXIT_TERMINATED_BY_SIGINT;
 		else

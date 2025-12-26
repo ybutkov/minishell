@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/24 02:20:32 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 02:20:33 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/26 02:59:43 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,8 @@ int	collect_heredoc_node(t_ast_node *node, t_shell *shell)
 {
 	t_shell_node	*shell_node;
 
+	if (node == NULL)
+		return (1);
 	shell_node = (t_shell_node *)node->get_content(node);
 	if (shell_node->type == NODE_SUBSHELL)
 		return (collect_heredoc_subshell(node, shell));

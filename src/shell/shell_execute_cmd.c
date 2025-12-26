@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:57:40 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/24 22:37:17 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/26 03:27:20 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,18 +91,18 @@ void	validate_argv(t_cmd *cmd, t_shell *shell)
 int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int in_fd,
 		int out_fd)
 {
-	pid_t	pid;
-	int		status;
+	// pid_t	pid;
+	// int		status;
 
 	set_signals_waiting_parent();
-	pid = fork();
-	if (pid < 0)
-	{
-		output_error(FORK_ERROR, NULL);
-		return (EXIT_FAILURE_CREATE_FORK);
-	}
-	else if (pid == 0)
-	{
+	// pid = fork();
+	// if (pid < 0)
+	// {
+	// 	output_error(FORK_ERROR, NULL);
+	// 	return (EXIT_FAILURE_CREATE_FORK);
+	// }
+	// else if (pid == 0)
+	// {
 		set_signals_child();
 		dup2_and_close_both(in_fd, out_fd);
 		apply_cmd_redirects(cmd, shell);
@@ -111,9 +111,9 @@ int	execute_single_in_fork(t_cmd *cmd, t_shell *shell, int in_fd,
 			shell->ctx->env->to_array(shell->ctx->env));
 		shell->free(shell);
 		exit(EXIT_FAILURE);
-	}
-	waitpid(pid, &status, 0);
-	return (return_status(status));
+	// }
+	// waitpid(pid, &status, 0);
+	// return (return_status(status));
 }
 
 int	execute_cmd(t_cmd *cmd, t_shell *shell, int input_fd, int output_fd)

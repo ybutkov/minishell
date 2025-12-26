@@ -6,7 +6,7 @@
 /*   By: ybutkov <ybutkov@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/09 17:53:42 by ybutkov           #+#    #+#             */
-/*   Updated: 2025/12/23 20:50:45 by ybutkov          ###   ########.fr       */
+/*   Updated: 2025/12/25 23:03:06 by ybutkov          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,11 @@ int	create_ast_node_for_lvl(t_shell *shell, t_ast_node **node,
 		if (is_subshell_start(start_end_tokens[0]))
 			return (create_node_for_subshell(shell, node, start_end_tokens[0],
 					start_end_tokens[1]));
+		if ((*node)->get_content(*node) != NULL)
+		{
+			create_leaves(shell, node, curr_tkn, start_end_tokens);
+			return (OK);
+		}
 		shell_node = create_shell_node(NODE_CMD, NULL);
 		(*node)->set_content(*node, shell_node);
 		shell_node->data.cmd = create_cmd_from_tokens(shell,
